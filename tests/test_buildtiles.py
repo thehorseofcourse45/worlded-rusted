@@ -20,7 +20,7 @@ def tbx(width, height, floors, rooms=2, extra_attrs=""):
               WestDoor="gr_010", NorthDoor="gr_011"),
         entry("doors", West="door_000", North="door_001"),
         entry("door_frames", West="frame_000", North="frame_001"),
-        entry("windows", West="win_000", North="win_001"),
+        entry("windows", West="fixtures_windows_white_016", North="fixtures_windows_white_017"),
         entry("curtains", West="cur_000", East="cur_001", North="cur_002", South="cur_003"),
         entry("shutters", WestBelow="sh_000", WestAbove="sh_001", NorthLeft="sh_002", NorthRight="sh_003"),
         entry("floors", Floor="floorA_000"),
@@ -94,17 +94,80 @@ class BuildTilesTests(unittest.TestCase):
     def test_a_window_with_curtains_and_shutters(self):
         obj = dict(type="window", x=2, y=3, dir="N", CurtainsTile=7, ShuttersTile=8)
         t = tbx(5, 3, [(grid(5, 3), [obj])])
-        self.assertEqual(self.square(t, 2, 3), ["ew_21", "sh_2", "sh_3", "win_1"])
+        self.assertEqual(self.square(t, 2, 3), ["ew_21", "sh_2", "sh_3", "fixtures_windows_white_17"])
         self.assertEqual(self.square(t, 1, 3), ["ew_1", "tr_1", "gr_1", "sh_2"])
         self.assertEqual(self.square(t, 3, 3), ["ew_1", "tr_1", "gr_1", "sh_3"])
         self.assertEqual(self.square(t, 2, 2), ["floorA_0", "cur_3"])               # on the inside
         inside = dict(type="window", x=2, y=0, dir="N", CurtainsTile=7)
         t = tbx(5, 3, [(grid(5, 3), [inside])])
-        self.assertEqual(self.square(t, 2, 0), ["floorA_0", "iwA_21", "win_1", "cur_2"])
+        self.assertEqual(self.square(t, 2, 0), ["floorA_0", "iwA_21", "fixtures_windows_white_17", "cur_2"])
 
     def test_a_floor_with_the_wrong_number_of_rooms_is_refused(self):
         with self.assertRaises(ValueError):
             parse_tbx(tbx(4, 3, [(grid(3, 3), [])]))
+
+
+def small_building(floors, furniture=()):
+    """A 4 x 3 building of one room whose floor tile is F, with a set of stairs and curtains."""
+    from knoxbuild.buildtiles import Building
+    entries = [
+        {"Floor": "F"},                                                  # 1 floor
+        {"West": "iw_w", "North": "iw_n", "NorthWest": "iw_nw"},          # 2 interior walls
+        {"West1": "st1", "West2": "st2", "West3": "st3", "North1": "sn1", "North2": "sn2", "North3": "sn3"},  # 3
+        {"South": "cur_s", "North": "cur_n", "East": "cur_e", "West": "cur_w"},                              # 4
+    ]
+    room = {"Floor": "1", "InteriorWall": "2", "InteriorWallTrim": "0", "Ceiling": "0"}
+    return Building(4, 3, {"Stairs": "3"}, entries, [room], floors, list(furniture))
+
+
+class FurnitureStairsTests(unittest.TestCase):
+    def floors(self, objects, upper=None):
+        from knoxbuild.buildtiles import Floor
+        full = [[1] * 4 for _ in range(3)]
+        out = [Floor(full, objects)]
+        if upper is not None:
+            out.append(Floor([[1] * 4 for _ in range(3)], []))
+        return out
+
+    def test_stairs_make_three_steps_and_a_hole_above(self):
+        b = small_building(self.floors([dict(type="stairs", x=0, y=1, dir="W", Tile=3)], upper=True))
+        ground = level_tiles(b, 0)
+        self.assertEqual([ground[(x, 1)][-1] for x in (1, 2, 3)], ["st3", "st2", "st1"])
+        above = level_tiles(b, 1)
+        self.assertTrue(all((x, 1) not in above for x in (1, 2, 3)))        # no floor over the stairwell
+        self.assertIn((0, 1), above)
+        b = small_building(self.floors([dict(type="stairs", x=2, y=-1, dir="N", Tile=3)], upper=True))
+        self.assertEqual([level_tiles(b, 0)[(2, y)][-1] for y in (0, 1, 2)], ["sn3", "sn2", "sn1"])
+
+    def test_furniture_layers_stack_in_buildinged_order(self):
+        furn = [
+            {"layer": "", "orients": {"N": [(0, 0, "table")]}},                               # 0 ordinary
+            {"layer": "WallFurniture", "orients": {"N": [(0, 0, "paint_n")], "E": [(0, 0, "paint_e")]}},   # 1
+            {"layer": "FloorFurniture", "orients": {"N": [(0, 0, "rug")]}},                   # 2
+            {"layer": "", "orients": {"N": [(0, 0, "big_a"), (1, 0, "big_b")]}},              # 3 two tiles
+        ]
+        objs = [dict(type="furniture", FurnitureTiles=0, orient="N", x=1, y=1),
+                dict(type="furniture", FurnitureTiles=1, orient="E", x=1, y=1),
+                dict(type="furniture", FurnitureTiles=1, orient="N", x=1, y=1),
+                dict(type="furniture", FurnitureTiles=2, orient="N", x=1, y=1)]
+        b = small_building(self.floors(objs), furn)
+        # rug under everything, wall furniture facing north before the table, facing east after it
+        self.assertEqual(level_tiles(b, 0)[(1, 1)], ["F", "rug", "paint_n", "table", "paint_e"])
+        # the second tile of a piece stands above the curtains
+        objs = [dict(type="furniture", FurnitureTiles=3, orient="N", x=1, y=1),
+                dict(type="window", x=2, y=0, dir="N", CurtainsTile=4, ShuttersTile=0, Tile=3)]
+        b = small_building(self.floors(objs), furn)
+        t = level_tiles(b, 0)
+        self.assertEqual(t[(1, 1)], ["F", "big_a"])
+        self.assertEqual(t[(2, 1)], ["F", "big_b"])
+
+    def test_window_variant_follows_the_sprite_pair(self):
+        from knoxbuild.buildtiles import _window_variant
+        self.assertEqual([_window_variant(f"fixtures_windows_white_{n}") for n in (16, 17, 10, 11, 24, 25)],
+                         [9, 9, 6, 6, 13, 13])
+        self.assertEqual(_window_variant("fixtures_windows_metal_15"), 8)
+        self.assertEqual(_window_variant("fixtures_windows_wood_9"), 5)
+        self.assertEqual(_window_variant("fixtures_windows_01_24"), 0)
 
 
 if __name__ == "__main__":

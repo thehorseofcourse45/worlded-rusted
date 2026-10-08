@@ -76,6 +76,8 @@ CASES = {
     "wEcs": (6, 5, [{"rooms": block(6, 5), "objects": [dict(type="window", CurtainsTile=5, ShuttersTile=23, x=6, y=2, dir="W", Tile=21)]}]),
     "ceil1": (6, 5, [{"rooms": block(6, 5)}, {"rooms": [[0] * 6 for _ in range(5)]}]),
     "ceil2": (6, 5, [{"rooms": block(6, 5)}, {"rooms": block(6, 5)}, {"rooms": [[0] * 6 for _ in range(5)]}]),
+    "stairsW": (9, 6, [{"rooms": block(9, 6), "objects": [dict(type="stairs", x=1, y=1, dir="W", Tile=6)]}, {"rooms": block(9, 6)}, {"rooms": [[0] * 9 for _ in range(6)]}]),
+    "stairsN": (6, 9, [{"rooms": block(6, 9), "objects": [dict(type="stairs", x=1, y=1, dir="N", Tile=6)]}, {"rooms": block(6, 9)}, {"rooms": [[0] * 6 for _ in range(9)]}]),
     "window": (6, 5, [{"rooms": block(6, 5), "objects": [dict(type="window", CurtainsTile=0, ShuttersTile=0, x=2, y=0, dir="N", Tile=21)]}]),
     "two": (6, 5, [{"rooms": two_rooms(6, 5)}]),
     "floors2": (6, 5, [{"rooms": block(6, 5)}, {"rooms": block(6, 5)}]),

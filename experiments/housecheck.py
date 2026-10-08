@@ -84,3 +84,21 @@ if "--trim" in sys.argv:
                 print(f"square ({dx},{dy}) room {r} W-nb {rr(dx-1,dy)} N-nb {rr(dx,dy-1)}  trim attr {b.rooms[r-1].get('InteriorWallTrim') if r else None}")
                 print("    ours   ", pred.get((dx, dy), []))
                 print("    WorldEd", actual)
+
+
+if "--diff" in sys.argv:
+    TERRAIN = ("blends_", "vegetation_foliage", "e_", "d_", "lighting_outdoor", "overlay_grime_floor")
+    zsel = int(sys.argv[sys.argv.index("--diff") + 1])
+    pred = level_tiles(b, zsel)
+    shown = 0
+    for dy in range(-1, b.height + 2):
+        for dx in range(-1, b.width + 2):
+            actual = list(sq.get((ORIGIN + lx + dx - cx * 256, ly + dy - cy * 256, zsel), []))
+            want = pred.get((dx, dy), [])
+            a2 = [t for t in actual if not t.startswith(TERRAIN)]
+            if a2 != want and shown < 8:
+                shown += 1
+                rr = lambda x, y: b.floors[zsel].rooms[y][x] if 0 <= x < b.width and 0 <= y < b.height else 0
+                print(f"square ({dx},{dy}) room {rr(dx,dy)} W-nb {rr(dx-1,dy)} N-nb {rr(dx,dy-1)}")
+                print("    ours   ", want)
+                print("    WorldEd", a2)

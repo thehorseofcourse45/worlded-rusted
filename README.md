@@ -37,13 +37,15 @@ read WorldEd's source should say so in their pull request, so the record stays h
 | Blank `chunkdata` | | tested in-game (Build 42): a map with every `chunkdata` blank played normally, so it need not be reproduced |
 | Ground tiles from the landscape and vegetation pictures | `knoxbuild/rules.py`, `terrain.py`, `tools/terrain_source.py` | per-colour tile choice matches WorldEd's shares; about 49 ms a cell, parallel across rows, strips of the picture only |
 | Edge blends | `knoxbuild/blends.py` | overlay squares and kinds identical to WorldEd on a road map (3,126 squares) and a water map (603) |
-| Building tiles from a `.tbx` | `knoxbuild/buildtiles.py`, `buildroofs.py` | floors, interior and exterior walls, corners, doors, windows, curtains, shutters, ceilings and every roof type KnoxMap writes (flat, 45-degree peaks of every depth with caps, 30-degree peaks and hips) match WorldEd exactly on hand-made buildings. On a real 4-level house the two roof levels match on every square (1,548 and 1,260); the two storeys match on about two thirds of squares, the rest being furniture and lights |
+| Building tiles from a `.tbx` | `knoxbuild/buildtiles.py`, `buildroofs.py` | floors, walls, corners, doors, windows (variant by sprite), curtains, shutters, furniture (layer order), stairs with the hole above, ceilings and the roof types KnoxMap writes match WorldEd. One real 4-level house matches on every building square of every level. A set of 113 real KnoxMap buildings (a map made from cached downloads, compiled by WorldEd): 98.5% of squares identical, 12 buildings perfect; the rest is listed under "does not exist yet" |
 
 ## What does not exist yet
 
-- Building: furniture and lights (the largest gap), stairs, indoor vegetation, floor and wall grime
-  on rooms that ask for it; `Peak30Quad` roofs that are not square; windows other than variant 9
-  are an assumption (every sample used it).
+- Building, seen in the 113-building test (`experiments/allcheck.py`): some 30-degree roofs
+  (shapes the first experiments did not cover); a shutter tile we add beside a window where
+  WorldEd does not; exterior floors and walls on squares where lots overlap (not yet separated
+  from genuine misses); stair-like escalators; window families other than white, metal and wood
+  are taken as the plain window wall.
 - Fences, vehicles zones, world objects, the `.pzw` conversion of KnoxMap's buildings into tile layers.
 - A `compile_map.py` backend that calls `knoxlots` instead of WorldEd.
 - The meaning of two header fields (always 8, 8), the room-object numbers, `chunkdata`'s layout
