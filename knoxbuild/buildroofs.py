@@ -84,6 +84,8 @@ def roof_squares(entry, attrs: dict, o: dict) -> dict[tuple[int, int], list[str]
                     for x in range(x0 + k, x0 + w - k):
                         cap(x, y, "CapGapS3")
     elif kind == "Peak30WE":
+        # WorldEd limits the cross-section to eleven squares, anchored at the north edge.
+        h = min(h, 11)
         k = (h - 1) // 2
         for x in range(x0, x0 + w):
             for i in range(1, k + 1):
@@ -97,6 +99,8 @@ def roof_squares(entry, attrs: dict, o: dict) -> dict[tuple[int, int], list[str]
                     cap(x, y0 + h - i, f"CapSlope30RiseE{i}")
                 cap(x, y0 + k, f"CapPeak30E{k + 1}")
     elif kind == "Peak30NS":
+        # WorldEd limits the cross-section to eleven squares, anchored at the west edge.
+        w = min(w, 11)
         k = (w - 1) // 2
         for y in range(y0, y0 + h):
             for i in range(1, k + 1):
@@ -165,8 +169,8 @@ def band_squares(entry, attrs: dict, o: dict) -> dict[tuple[int, int], list[str]
     return {(x, y): [tile] for y in range(y0, y0 + h) for x in range(x0 + 3, x0 + w - 3)}
 
 
-def upper_level(entry, attrs: dict, width: int, height: int, room_defs: list[dict],
-                floors: list, z: int) -> dict[tuple[int, int], list[str]]:
+def upper_layers(entry, attrs: dict, width: int, height: int, room_defs: list[dict],
+                 floors: list, z: int) -> tuple[dict, dict]:
     """What goes on level z because of the storey below it and the roofs: ceilings over the
     rooms of level z - 1 where level z has no room, flat roofs listed on level z - 1 (they
     replace the ceiling), and the pitched roofs listed on level z. `floors` have .rooms and
@@ -187,9 +191,19 @@ def upper_level(entry, attrs: dict, width: int, height: int, room_defs: list[dic
                 out.update(flat_squares(entry, attrs, o))
             elif o.get("type") == "roof":
                 out.update(band_squares(entry, attrs, o))
+    pitched: dict[tuple[int, int], list[str]] = {}
     if z < len(floors):
         for o in floors[z].objects:
             if o.get("type") == "roof" and o.get("RoofType") != "FlatTop":
                 for pos, tiles in roof_squares(entry, attrs, o).items():
-                    out[pos] = out.get(pos, []) + tiles
+                    pitched[pos] = pitched.get(pos, []) + tiles
+    return out, pitched
+
+
+def upper_level(entry, attrs: dict, width: int, height: int, room_defs: list[dict],
+                floors: list, z: int) -> dict[tuple[int, int], list[str]]:
+    """Combined upper layers, for callers that only need the roof and ceiling tiles."""
+    out, pitched = upper_layers(entry, attrs, width, height, room_defs, floors, z)
+    for pos, tiles in pitched.items():
+        out[pos] = out.get(pos, []) + tiles
     return out

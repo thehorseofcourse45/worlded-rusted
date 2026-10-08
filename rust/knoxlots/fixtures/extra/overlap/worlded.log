@@ -1,0 +1,58 @@
+
+2026-10-08 18:45:08.133 [INFO] [pid:17340 thread:7118] Logging to C:\KnoxMap\vendor\PZMappingTools\settings\logs\PZWorldEd-20261008-184508-132-17340.log
+2026-10-08 18:45:08.134 [INFO] [pid:17340 thread:7118] Installation root C:\KnoxMap\vendor\PZMappingTools
+2026-10-08 18:45:08.134 [INFO] [pid:17340 thread:7118] Application configuration C:\KnoxMap\vendor\PZMappingTools\config
+2026-10-08 18:45:08.134 [INFO] [pid:17340 thread:7118] Settings file C:\KnoxMap\vendor\PZMappingTools\settings\TheIndieStone\PZWorldEd.ini
+2026-10-08 18:45:08.134 [INFO] [pid:17340 thread:7118] Machine OS: Windows 10 Version 2009 | kernel: winnt 10.0.26200 | architecture: x86_64
+2026-10-08 18:45:08.135 [INFO] [pid:17340 thread:7118] Machine CPU: AMD Ryzen 7 2700 Eight-Core Processor | logical processors: 16
+2026-10-08 18:45:08.135 [INFO] [pid:17340 thread:7118] Machine RAM: total 31.9 GiB | available at startup: 13.9 GiB
+2026-10-08 18:45:08.136 [INFO] [pid:17340 thread:7118] Machine GPU/display adapters: AMD Radeon RX 6700 XT [active]
+2026-10-08 18:45:08.136 [INFO] [pid:17340 thread:7118] Runtime: Qt 5.14.2 | Qt build ABI: x86_64-little_endian-llp64 | process: 64 bit
+2026-10-08 18:45:08.136 [INFO] [pid:17340 thread:7118] Application Build 20260909f
+2026-10-08 18:45:08.263 [INFO] [pid:17340 thread:7118] Effective shared configuration directory C:\KnoxMap\vendor\PZMappingTools\config
+2026-10-08 18:45:08.263 [INFO] [pid:17340 thread:7118] Effective Tiles directory C:\KnoxMap\vendor\PZMappingTools\Tiles
+2026-10-08 18:45:08.263 [INFO] [pid:17340 thread:7118] Effective Project Zomboid directory c:\program files (x86)\steam\steamapps\common\ProjectZomboid
+2026-10-08 18:45:08.265 [INFO] [pid:17340 thread:7118] Portable basement source directory C:\KnoxMap\vendor\PZMappingTools\pzby_tbx\basement_access [available] TBX/TMX files: 147
+2026-10-08 18:45:08.266 [INFO] [pid:17340 thread:7118] Portable basement PZBY directory C:\KnoxMap\vendor\PZMappingTools\pzby_tbx\binmap [available] PZBY/TBX/TMX files: 356
+2026-10-08 18:45:08.757 [INFO] [pid:17340 thread:7118] Map reader workers: 8 for 16 logical processors
+2026-10-08 18:45:08.760 [INFO] [pid:17340 thread:7118] Tileset image loading: 8 workers
+2026-10-08 18:45:08.970 [INFO] [pid:17340 thread:7118] Startup main-window size: QSize(1920, 1080) requested, QSize(1920, 1040) available-screen fit
+2026-10-08 18:45:09.021 [INFO] [pid:17340 thread:7118] Dock dimensions restored: left 0 right 0 left heights 0 0 right heights 0 0
+2026-10-08 18:45:09.505 [DEBUG] [pid:17340 thread:7118] TileDefWatcher read  "C:/program files (x86)/steam/steamapps/common/ProjectZomboid/media/newtiledefinitions.tiles"
+2026-10-08 18:45:09.692 [DEBUG] [pid:17340 thread:7118] TileDefWatcher read  "C:/program files (x86)/steam/steamapps/common/ProjectZomboid/media/tiledefinitions_erosion.tiles"
+2026-10-08 18:45:09.698 [DEBUG] [pid:17340 thread:7118] TileDefWatcher read  "C:/program files (x86)/steam/steamapps/common/ProjectZomboid/media/tiledefinitions_overlays.tiles"
+2026-10-08 18:45:09.702 [DEBUG] [pid:17340 thread:7118] TileDefWatcher read  "C:/program files (x86)/steam/steamapps/common/ProjectZomboid/media/tiledefinitions_b42chunkcaching.tiles"
+2026-10-08 18:45:09.704 [DEBUG] [pid:17340 thread:7118] TileDefWatcher read  "C:/program files (x86)/steam/steamapps/common/ProjectZomboid/media/tiledefinitions_noiseworks.patch.tiles"
+2026-10-08 18:45:09.716 [DEBUG] [pid:17340 thread:7118] TileDefWatcher read  "C:/program files (x86)/steam/steamapps/common/ProjectZomboid/media/jumbo_trees_big.tiles"
+2026-10-08 18:45:09.719 [DEBUG] [pid:17340 thread:7118] TileDefWatcher read  "C:/program files (x86)/steam/steamapps/common/ProjectZomboid/media/jumbo_trees.tiles"
+2026-10-08 18:45:21.812 [INFO] [pid:17340 thread:7118] Tileset readiness check: requested 646 load-attempts 646 loaded 646 missing 0 pending 0
+2026-10-08 18:45:21.825 [INFO] [pid:17340 thread:7118] WorldEd loaded the complete tileset catalog before project startup: 646 entries
+2026-10-08 18:45:21.841 [INFO] [pid:17340 thread:7118] Tileset image cache: 646 sheets, 60733 tiles, 49244 nonempty images, 47249 unique pixel buffers, 2018.0 MiB logical, 1961.9 MiB resident, 0.0 MiB retained CPU atlases, 1995 exact duplicates sharing 56.1 MiB
+2026-10-08 18:45:27.100 [INFO] [pid:17340 thread:7118] World project composition: cells 9, lots 2, objects 0, InGameMap features 0
+2026-10-08 18:45:27.164 [INFO] [pid:17340 thread:7118] Zombie Heatmap loaded: "C:/Users/TheTaZe/AppData/Local/Temp/claude/C--KnoxMap/cf336669-7001-42fe-9302-983424f5daee/scratchpad/bx/door/door_ZombieSpawnMap.bmp" QSize(90, 90) expected QSize(90, 90) grid "legacy-300" raw red-channel; B42 preview x40
+2026-10-08 18:45:27.185 [DEBUG] [pid:17340 thread:7118] current document was  QObject(0x0)  is becoming  WorldDocument(0x2040ba43a60)
+2026-10-08 18:45:27.222 [INFO] [pid:17340 thread:7118] BMP to TMX: skipped, 9 cells already have maps
+2026-10-08 18:45:27.243 [INFO] [pid:17340 thread:7118] Generate Lots 8x8: cells QRect(0,0 1x1) ( 1 )
+2026-10-08 18:45:27.243 [INFO] [pid:17340 thread:7118] LOT export geometry: grid "legacy-300" source-cell-size 300 world-origin QPoint(70,0) world-size QSize(3, 3) output-cell-bounds QRect(82,0 4x4)
+2026-10-08 18:45:27.243 [INFO] [pid:17340 thread:7118] LOT export inputs: source TMX cells 9 placed TBX lots 2
+2026-10-08 18:45:27.303 [INFO] [pid:17340 thread:7118] Lot generation workers: 1 for 16 logical processors, maximum 16
+2026-10-08 18:45:27.303 [INFO] [pid:17340 thread:7118] Expecting 4 output cells
+2026-10-08 18:45:27.333 [INFO] [pid:17340 thread:7118] Dismissed dialog: Generate Lots
+2026-10-08 18:45:27.547 [INFO] [pid:17340 thread:7118] Loading complete ordered TMX tileset header: 646 declared, 0 used "C:/Users/TheTaZe/AppData/Local/Temp/claude/C--KnoxMap/cf336669-7001-42fe-9302-983424f5daee/scratchpad/bx/door/tmx/door_70_0.tmx"
+2026-10-08 18:45:27.547 [INFO] [pid:17340 thread:7118] Loading complete ordered TMX tileset header: 648 declared, 5 used "C:/Users/TheTaZe/Documents/Codex/2026-10-08/i-wan/work/experiments2/overlap/buildings/building.tbx"
+2026-10-08 18:45:27.548 [INFO] [pid:17340 thread:7118] Loading complete ordered TMX tileset header: 648 declared, 5 used "C:/Users/TheTaZe/Documents/Codex/2026-10-08/i-wan/work/experiments2/overlap/buildings/second.tbx"
+2026-10-08 18:45:28.846 [INFO] [pid:17340 thread:7118] LOT output cell 82,0 complete: direct TBX 2, cross-cell TBX 0, input room rects 2, exported buildings 1, rooms 2, room rects 2, north-west-owned buildings excluded 0
+2026-10-08 18:45:29.018 [INFO] [pid:17340 thread:7118] Loading complete ordered TMX tileset header: 646 declared, 0 used "C:/Users/TheTaZe/AppData/Local/Temp/claude/C--KnoxMap/cf336669-7001-42fe-9302-983424f5daee/scratchpad/bx/door/tmx/door_71_0.tmx"
+2026-10-08 18:45:30.813 [INFO] [pid:17340 thread:7118] LOT output cell 83,0 complete: direct TBX 2, cross-cell TBX 0, input room rects 2, exported buildings 0, rooms 0, room rects 0, north-west-owned buildings excluded 1
+2026-10-08 18:45:30.982 [INFO] [pid:17340 thread:7118] Loading complete ordered TMX tileset header: 646 declared, 0 used "C:/Users/TheTaZe/AppData/Local/Temp/claude/C--KnoxMap/cf336669-7001-42fe-9302-983424f5daee/scratchpad/bx/door/tmx/door_70_1.tmx"
+2026-10-08 18:45:33.485 [INFO] [pid:17340 thread:7118] LOT output cell 82,1 complete: direct TBX 2, cross-cell TBX 0, input room rects 2, exported buildings 0, rooms 0, room rects 0, north-west-owned buildings excluded 1
+2026-10-08 18:45:33.664 [INFO] [pid:17340 thread:7118] Loading complete ordered TMX tileset header: 646 declared, 0 used "C:/Users/TheTaZe/AppData/Local/Temp/claude/C--KnoxMap/cf336669-7001-42fe-9302-983424f5daee/scratchpad/bx/door/tmx/door_71_1.tmx"
+2026-10-08 18:45:37.422 [INFO] [pid:17340 thread:7118] LOT output cell 83,1 complete: direct TBX 2, cross-cell TBX 0, input room rects 2, exported buildings 0, rooms 0, room rects 0, north-west-owned buildings excluded 1
+2026-10-08 18:45:37.427 [DEBUG] [pid:17340 thread:7118] LotFilesManager256: Stopping threads
+2026-10-08 18:45:37.427 [DEBUG] [pid:17340 thread:7118] LotFilesManager256: quitting thread # 0
+2026-10-08 18:45:37.427 [DEBUG] [pid:17340 thread:6f4c] LotFilesManager256: worker thread finished # 0
+2026-10-08 18:45:37.469 [DEBUG] [pid:17340 thread:7118] LotFilesManager256: Stopped threads
+2026-10-08 18:45:37.994 [INFO] [pid:17340 thread:7118] LOT export complete: output cells 4, buildings 1, rooms 2, room rects 2, room objects 0, reported issues 0
+2026-10-08 18:45:38.059 [INFO] [pid:17340 thread:7118] Dismissed dialog: Generate Lot Files
+2026-10-08 18:45:38.072 [INFO] [pid:17340 thread:7118] Generate Lots wrote 4 of 4 cells to C:/Users/TheTaZe/Documents/Codex/2026-10-08/i-wan/work/experiments2/overlap/lots
+2026-10-08 18:45:38.072 [INFO] [pid:17340 thread:7118] Map generated: C:\Users\TheTaZe\Documents\Codex\2026-10-08\i-wan\work\experiments2\overlap\overlap.pzw

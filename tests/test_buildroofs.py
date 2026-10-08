@@ -71,6 +71,20 @@ class PeakTests(unittest.TestCase):
 
 
 class ThirtyDegreeTests(unittest.TestCase):
+    def test_wide_roofs_keep_the_eleven_square_cross_section_at_the_origin(self):
+        table = {1: {f"{stem}{i}": f"{stem}{i}" for stem in
+                      ("Slope30W", "Slope30E", "Slope30N", "Slope30S", "Peak30WE", "Peak30NS")
+                      for i in range(1, 7)},
+                 2: {f"{stem}{i}": f"{stem}{i}" for stem in
+                      ("CapSlope30RiseS", "CapSlope30FallS", "CapSlope30RiseE", "CapSlope30FallE", "CapPeak30S", "CapPeak30E")
+                      for i in range(1, 7)}}
+        for kind, w, h, caps, peak in (("Peak30WE", 4, 13, "WE", (3, 9)),
+                                     ("Peak30NS", 13, 4, "NS", (8, 4))):
+            with self.subTest(kind=kind):
+                s = roof_squares(lambda n: table.get(int(n), {}), {}, roof(kind, "Zero", 3, 4, w, h, caps))
+                self.assertTrue(any("Peak30" in t for t in s[peak]))
+                self.assertNotIn((3, 15) if kind == "Peak30WE" else (14, 4), s)
+
     def test_slopes_both_sides_of_a_peak_row(self):
         s = squares("Peak30WE", "Zero", 0, 0, 2, 5)
         self.assertEqual([s[(0, y)] for y in range(5)],

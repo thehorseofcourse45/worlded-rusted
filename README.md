@@ -37,28 +37,26 @@ read WorldEd's source should say so in their pull request, so the record stays h
 | Blank `chunkdata` | | tested in-game (Build 42): a map with every `chunkdata` blank played normally, so it need not be reproduced |
 | Ground tiles from the landscape and vegetation pictures | `knoxbuild/rules.py`, `terrain.py`, `tools/terrain_source.py` | per-colour tile choice matches WorldEd's shares; about 49 ms a cell, parallel across rows, strips of the picture only |
 | Edge blends | `knoxbuild/blends.py` | overlay squares and kinds identical to WorldEd on a road map (3,126 squares) and a water map (603) |
-| Building tiles from a `.tbx` | `knoxbuild/buildtiles.py`, `buildroofs.py` | floors, walls, corners, doors, windows (variant by sprite), curtains, shutters, furniture (layer order), stairs with the hole above, ceilings and the roof types KnoxMap writes match WorldEd. One real 4-level house matches on every building square of every level. A set of 113 real KnoxMap buildings (a map made from cached downloads, compiled by WorldEd): 98.5% of squares identical, 12 buildings perfect; the rest is listed under "does not exist yet" |
+| Building tiles from a `.tbx` | `knoxbuild/buildtiles.py`, `buildroofs.py` | floors, walls, corners, doors, windows, curtains, shutters, furniture, stairs, ceilings, roofs, and painted tile layers (porch lights) match WorldEd on the 113-building test map (99.4% of building squares before ground is added; 100% of squares of the whole map once it is) |
+| Header room and building tables | `knoxbuild/buildheader.py`, `fixtures/headercheck.py` | rooms and buildings built from the `.tbx` files equal WorldEd's headers on 8 of 9 cells of the test map; room objects are not written |
+| A whole map from a project folder | `tools/map_source.py`, `tools/cell_check.py` | ground, blends, buildings, fences, lights and header tables for all 9 cells of `fixtures/real/real1`; compiled by `knoxlots compile`, **every square of every level equals WorldEd's** (422,696 squares; random tile picks compared by Rules.txt alias) |
 
 ## What does not exist yet
 
-- Building, seen in the 113-building test (`experiments/allcheck.py`): some 30-degree roofs
-  (shapes the first experiments did not cover); a shutter tile we add beside a window where
-  WorldEd does not; exterior floors and walls on squares where lots overlap (not yet separated
-  from genuine misses); stair-like escalators; window families other than white, metal and wood
-  are taken as the plain window wall.
-- Fences, vehicles zones, world objects, the `.pzw` conversion of KnoxMap's buildings into tile layers.
-- A `compile_map.py` backend that calls `knoxlots` instead of WorldEd.
-- The meaning of two header fields (always 8, 8), the room-object numbers, `chunkdata`'s layout
-  (found to be unneeded, not decoded), and the room values inside squares (KnoxMap maps carry
-  none; another author's map carries numbers that do not match the header's room table).
+- Room objects in headers (a few markers in about 7% of buildings, no rule found), two rare WorldEd
+  room merges, vehicle zones, world objects.
+- Only one real map is compared whole (9 cells); the rules are fitted to it. More maps, other
+  tilesets and window families, and 30-degree roof shapes seen only there may still differ.
+- A `compile_map.py` backend in KnoxMap that calls `knoxlots` instead of WorldEd.
+- The meaning of two header fields (always 8, 8), `chunkdata`'s layout (unneeded).
 - Validation that the game accepts a map made entirely by these tools.
 
 ## Layout
 
 ```
 rust/knoxlots/     the Rust crate and command line (verify, rebuild, export, compile, compare)
-knoxbuild/         Python: rules.py, terrain.py, blends.py, kcell.py, buildtiles.py
-tools/             terrain_source.py (make cell sources), terrain_check.py, blend_check.py
+knoxbuild/         Python: rules.py, terrain.py, blends.py, kcell.py, buildtiles.py, buildroofs.py, buildheader.py
+tools/             map_source.py (a whole map), cell_check.py (compare with WorldEd), terrain_source.py, terrain_check.py, blend_check.py
 tests/             unit tests for the Python parts
 experiments/       the scripts used to find all of the above (see below)
 ```
@@ -72,7 +70,10 @@ installs them for the experiments and for `Rules.txt` / `Blends.txt`.
 
 ```
 cd rust/knoxlots && cargo test --release && cargo build --release
-python -m unittest tests.test_terrain tests.test_blends tests.test_terrain_source tests.test_buildtiles
+python -m unittest discover -s tests -p "test_[bt]*.py"
+python tools/map_source.py rust/knoxlots/fixtures/real/real1 out.src --worlded-seams
+knoxlots compile out.src out.lots
+python tools/cell_check.py out.lots rust/knoxlots/fixtures/real/real1/lots
 ```
 
 The Rust command line: see `rust/knoxlots/README.md`.
@@ -90,3 +91,5 @@ WorldEd; `ground.py`, `blendtest.py`, `blendtable.py` ground tiles and blend rul
 
 Change one thing, have WorldEd compile it, read exactly what it wrote, state the rule, implement it,
 and compare square by square. A rule is only kept when it reproduces WorldEd on every square tested.
+
+Fixture maps under `rust/knoxlots/fixtures` hold geometry derived from OpenStreetMap data (ODbL, (c) OpenStreetMap contributors).
