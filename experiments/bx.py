@@ -74,6 +74,8 @@ CASES = {
     "wNcs": (6, 5, [{"rooms": block(6, 5), "objects": [dict(type="window", CurtainsTile=5, ShuttersTile=23, x=2, y=0, dir="N", Tile=21)]}]),
     "wWcs": (6, 5, [{"rooms": block(6, 5), "objects": [dict(type="window", CurtainsTile=5, ShuttersTile=23, x=0, y=2, dir="W", Tile=21)]}]),
     "wEcs": (6, 5, [{"rooms": block(6, 5), "objects": [dict(type="window", CurtainsTile=5, ShuttersTile=23, x=6, y=2, dir="W", Tile=21)]}]),
+    "ceil1": (6, 5, [{"rooms": block(6, 5)}, {"rooms": [[0] * 6 for _ in range(5)]}]),
+    "ceil2": (6, 5, [{"rooms": block(6, 5)}, {"rooms": block(6, 5)}, {"rooms": [[0] * 6 for _ in range(5)]}]),
     "window": (6, 5, [{"rooms": block(6, 5), "objects": [dict(type="window", CurtainsTile=0, ShuttersTile=0, x=2, y=0, dir="N", Tile=21)]}]),
     "two": (6, 5, [{"rooms": two_rooms(6, 5)}]),
     "floors2": (6, 5, [{"rooms": block(6, 5)}, {"rooms": block(6, 5)}]),
@@ -84,6 +86,47 @@ CASES = {
     "furn": (6, 5, [{"rooms": block(6, 5), "objects": [dict(type="furniture", FurnitureTiles=0, orient="E", x=2, y=2)]}]),
     "outside": (6, 5, [{"rooms": block(4, 3, rw=4, rh=3) and [[0, 0, 0, 0, 0, 0], [0, 1, 1, 1, 1, 0], [0, 1, 1, 1, 1, 0], [0, 1, 1, 1, 1, 0], [0, 0, 0, 0, 0, 0]]}]),
 }
+
+
+def roof_obj(rtype, depth, w, h, x, y, caps=""):
+    return dict(type="roof", width=w, height=h, RoofType=rtype, Depth=depth,
+                cappedW=str("W" in caps).lower(), cappedN=str("N" in caps).lower(),
+                cappedE=str("E" in caps).lower(), cappedS=str("S" in caps).lower(),
+                CapTiles=27, SlopeTiles=25, TopTiles=26, x=x, y=y)
+
+
+ROOF_SETS = {
+    # (RoofType, Depth, w, h, caps)
+    "roofsA": [("PeakWE", "Three", 8, 6, ""), ("PeakWE", "Three", 8, 6, "WE"), ("PeakWE", "Three", 8, 6, "W"),
+               ("PeakWE", "TwoPoint5", 8, 5, ""), ("PeakWE", "Two", 8, 4, ""), ("PeakWE", "OnePoint5", 8, 3, ""),
+               ("PeakWE", "One", 8, 2, ""), ("PeakWE", "Point5", 8, 1, "")],
+    "roofsB": [("PeakNS", "Three", 6, 8, ""), ("PeakNS", "Three", 6, 8, "NS"), ("PeakNS", "TwoPoint5", 5, 8, ""),
+               ("PeakNS", "Two", 4, 8, ""), ("PeakNS", "OnePoint5", 3, 8, ""), ("PeakNS", "One", 2, 8, ""),
+               ("PeakNS", "Point5", 1, 8, ""), ("PeakNS", "Three", 7, 8, "N")],
+    "roofsD": [("PeakWE", "Three", 8, 7, ""), ("PeakWE", "Three", 8, 8, ""), ("PeakWE", "Three", 8, 9, ""),
+               ("PeakWE", "Three", 8, 12, ""), ("PeakWE", "Two", 8, 4, "WE"), ("PeakWE", "TwoPoint5", 8, 5, "WE"),
+               ("PeakWE", "OnePoint5", 8, 3, "WE"), ("PeakWE", "One", 8, 2, "WE"), ("PeakWE", "Point5", 8, 1, "WE")],
+    "roofsE": [("PeakWE", "Three", 8, 7, "WE"), ("PeakWE", "Three", 8, 8, "WE"), ("PeakWE", "Three", 8, 9, "WE"),
+               ("PeakWE", "Three", 8, 12, "WE"), ("PeakNS", "Three", 7, 8, "NS"), ("PeakNS", "Two", 4, 8, "NS"),
+               ("PeakNS", "TwoPoint5", 5, 8, "NS"), ("PeakNS", "One", 2, 8, "NS"), ("PeakNS", "Three", 12, 8, "NS")],
+    "roofsC": [("Peak30WE", "Zero", 10, 5, ""), ("Peak30WE", "Zero", 10, 7, ""), ("Peak30WE", "Zero", 10, 5, "WE"),
+               ("Peak30NS", "Zero", 5, 10, ""), ("Peak30NS", "Zero", 7, 10, "NS"),
+               ("Peak30Quad", "Zero", 5, 5, ""), ("Peak30Quad", "Zero", 7, 7, ""), ("Peak30WE", "Zero", 10, 9, "")],
+}
+for _n, _roofs in ROOF_SETS.items():
+    _objs = []
+    for _i, (_t, _d, _w, _h, _c) in enumerate(_roofs):
+        _objs.append(roof_obj(_t, _d, _w, _h, 2 + _i * 13, 2, _c))
+    _W = 2 + len(_roofs) * 13
+    CASES[_n] = (_W, 16, [{"rooms": block(_W, 16)}, {"rooms": [[0] * _W for _ in range(16)], "objects": _objs}])
+
+ROOF_SETS["roofsF"] = ROOF_SETS["roofsE"]
+ROOF_SETS["roofsG"] = ROOF_SETS["roofsD"]
+CASES["roofsF"] = (CASES["roofsE"][0], 16, CASES["roofsE"][2] + [{"rooms": [[0] * CASES["roofsE"][0] for _ in range(16)]}])
+CASES["roofsG"] = (CASES["roofsD"][0], 16, CASES["roofsD"][2] + [{"rooms": [[0] * CASES["roofsD"][0] for _ in range(16)]}])
+CASES["flat"] = (40, 14, [{"rooms": block(40, 14), "objects": [
+    roof_obj("FlatTop", "Three", 6, 5, 2, 2), roof_obj("FlatTop", "Three", 3, 3, 12, 2),
+    roof_obj("FlatTop", "Three", 9, 9, 18, 2)]}, {"rooms": [[0] * 40 for _ in range(14)]}])
 
 
 def make(name):

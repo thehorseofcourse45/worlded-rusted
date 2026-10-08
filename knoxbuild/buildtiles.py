@@ -1,8 +1,8 @@
 """Tiles for a building, from its .tbx (BuildingEd's building file).
 
 What each part of a building becomes was worked out from WorldEd's own output for
-small hand-made buildings (rooms, walls here; see the notes at each rule). Unfinished:
-doors, windows, stairs, roofs, furniture and upper levels are not done.
+small hand-made buildings (see the notes at each rule). Unfinished: stairs, furniture and
+lights are not done.
 
 A .tbx holds:
   tile_entry (many)   a numbered list (from 1) of tile sets; each maps names like West,
@@ -16,6 +16,8 @@ from __future__ import annotations
 import re
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass, field
+
+from .buildroofs import upper_level
 
 
 @dataclass
@@ -173,9 +175,11 @@ def level_tiles(b: Building, z: int) -> dict[tuple[int, int], list[str]]:
                 add(x, y - 1, sh.get("WestAbove", ""))
                 add(x, y + 1, sh.get("WestBelow", ""))
 
+    upper = upper_level(lambda n: _entry(b, n), b.attrs, w, h, b.rooms, b.floors, z)
     out: dict[tuple[int, int], list[str]] = {}
-    for pos in set(floors) | set(walls) | set(extra):
-        stack = [t for t in floors.get(pos, []) + walls.get(pos, []) + extra.get(pos, []) if t]
+    for pos in set(floors) | set(walls) | set(extra) | set(upper):
+        stack = [t for t in floors.get(pos, []) + walls.get(pos, []) + extra.get(pos, [])
+                 + upper.get(pos, []) if t]
         if stack:
             out[pos] = stack
     return out
