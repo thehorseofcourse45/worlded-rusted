@@ -72,7 +72,7 @@ def placed_rooms(lots) -> list[tuple[int, int, list[dict]]]:
 
     - Buildings are taken by 300-tile source cell, row by row, then in project order, and where a
       later building has a room on a square the square leaves the earlier building's room.
-    - Buildings that touch are one building: a large building KnoxMap cut into parts is a single
+    - Buildings that touch (corners count) are one building: a large building KnoxMap cut into parts is a single
       entry. (Touching rooms of one name stay separate rooms; WorldEd joins two such pairs in
       the 113-building map, out of 75, for no reason the data shows.)
     The result has one item per building group, at the north-west corner of its first part."""
@@ -112,7 +112,7 @@ def placed_rooms(lots) -> list[tuple[int, int, list[dict]]]:
 
     for k in parts:
         for (x, y) in squares[k]:
-            for dx, dy in ((1, 0), (0, 1)):
+            for dx, dy in ((1, 0), (0, 1), (1, 1), (1, -1)):     # touching includes corners
                 for dz in (0,):
                     n = at.get((x + dx, y + dy, k[1] + dz))
                     if n and n[0] != k[0]:

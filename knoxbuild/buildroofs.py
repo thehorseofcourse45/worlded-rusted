@@ -12,7 +12,7 @@ half facing the camera, plus caps at the gable ends.
       gap tile. A cap shares its square with the slope tile, under it.
   Peak30WE / Peak30NS (30 degrees): slopes on both sides of a middle row (column) of peak
       tiles; caps the same way.
-  Peak30Quad: rings of slope and corner tiles round a centre tile (square roofs only).
+  Peak30Quad: rings of slope and corner tiles round a centre tile (a rectangle is cut from the square of its longer side).
   FlatTop: the top tile on every square, on the level above the storey it is listed on.
   Ceilings: the ceiling tile goes on the level above a room wherever that level has no room.
 """
@@ -113,15 +113,17 @@ def roof_squares(entry, attrs: dict, o: dict) -> dict[tuple[int, int], list[str]
                     cap(x0 + i - 1, y, f"CapSlope30RiseS{i}")
                     cap(x0 + w - i, y, f"CapSlope30FallS{i}")
                 cap(x0 + k, y, f"CapPeak30S{k + 1}")
-    elif kind == "Peak30Quad" and w == h and w % 2 == 1:
-        k = (w - 1) // 2
+    elif kind == "Peak30Quad" and max(w, h) % 2 == 1:
+        # A rectangle is cut from the square of its longer side, anchored at the north-west.
+        side = max(w, h)
+        k = (side - 1) // 2
         for dy in range(h):
             for dx in range(w):
-                r = min(dx, dy, w - 1 - dx, h - 1 - dy) + 1
+                r = min(dx, dy, side - 1 - dx, side - 1 - dy) + 1
                 if r == k + 1:
                     enum = f"Peak30Quad{k + 1}"
                 else:
-                    top, bottom, left, right = dy == r - 1, dy == h - r, dx == r - 1, dx == w - r
+                    top, bottom, left, right = dy == r - 1, dy == side - r, dx == r - 1, dx == side - r
                     if top and left:
                         enum = f"OuterSlope30NW{r}"
                     elif top and right:

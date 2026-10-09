@@ -51,7 +51,7 @@ def _tile_grid(text: str, user_tiles: list[str], w: int, h: int) -> list[list[st
     if len(values) != (w + 1) * (h + 1):        # a layer is one square wider and taller
         raise ValueError(f"a tile layer has {len(values)} values, expected {(w + 1) * (h + 1)}")
     names = [user_tiles[v - 1] if 0 < v <= len(user_tiles) else "" for v in values]
-    return [names[y * (w + 1):y * (w + 1) + w] for y in range(h)]
+    return [names[y * (w + 1):(y + 1) * (w + 1)] for y in range(h + 1)]   # the extra column and row hold wall tiles
 
 
 def parse_tbx(text: str) -> Building:
@@ -351,8 +351,14 @@ def level_layers(b: Building, z: int) -> dict[tuple[int, int], list[tuple[str, s
     out: dict[tuple[int, int], list[tuple[str, str]]] = {}
     # bottom to top: floor, rugs, walls, wall furniture (north/west), door frames, doors,
     # windows, ordinary furniture, curtains, wall furniture (east/south), roof furniture
+    painted: dict[tuple[int, int], list[str]] = {}
+    for _layer, grid in floor.tile_layers:        # tiles painted on the floor, with the wall furniture
+        for y, row in enumerate(grid):
+            for x, tile in enumerate(row):
+                if tile:
+                    painted.setdefault((x, y), []).append(tile)
     groups = [("floor", floors), ("floor", upper_floor), ("floor_furniture", furn_floor),
-              ("walls", walls), ("wall_furniture_nw", furn_before), ("openings", extra),
+              ("walls", walls), ("wall_furniture_nw", furn_before), ("painted", painted), ("openings", extra),
               ("curtains_nw", curtains_before), ("stairs", stair_tiles), ("furniture", furn_mid),
               ("curtains_se", curtains), ("wall_furniture_se", furn_after), ("roof", upper),
               ("roof_furniture", furn_roof)]
@@ -371,12 +377,6 @@ def level_layers(b: Building, z: int) -> dict[tuple[int, int], list[tuple[str, s
                 stack.append((channel, tile))
         if stack:
             out[pos] = stack
-    # painted tile layers go on top, one channel per layer
-    for layer, grid in floor.tile_layers:
-        for y, row in enumerate(grid):
-            for x, tile in enumerate(row):
-                if tile:
-                    out.setdefault((x, y), []).append((f"tiles_{layer}", tile))
     return out
 
 
