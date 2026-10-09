@@ -403,5 +403,8 @@ def compose_lots(lots) -> dict[tuple[int, int, int], list[str]]:
                     world[pos] = new
                 else:
                     channels = {layer for layer, _ in new}
-                    world[pos] = [(layer, tile) for layer, tile in world.get(pos, []) if layer not in channels] + new
+                    old = world.get(pos, [])
+                    if "floor" in channels:     # a floor tile (a flat roof is one) takes the square
+                        old = []
+                    world[pos] = [(layer, tile) for layer, tile in old if layer not in channels] + new
     return {pos: [tile for _, tile in items] for pos, items in world.items() if items}
