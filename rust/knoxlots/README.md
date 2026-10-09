@@ -92,3 +92,11 @@ Not known yet, and kept exactly as read:
 2. A writer that takes a plain description (tiles per square, rooms, buildings) and
    produces these files; first test: rebuild an existing cell from its own decoded data.
 3. Check a rebuilt map in the game.
+
+## Release
+
+`.github/workflows/knoxlots.yml` builds `knoxlots.exe` (Windows) and `knoxlots` (Linux). KnoxMap
+looks for it beside `KnoxMap.exe`, so the release zip must carry the binary in its root: add a
+step to the job that makes the zip that downloads this workflow's artifact and copies it there
+(`knoxlots-windows-x86_64.exe` -> `knoxlots.exe`). `.gitattributes` keeps `fixtures/` out of a
+zip made with `git archive`; a job that zips the checkout itself must exclude them too.
