@@ -151,7 +151,15 @@ def cell_tables(cell_x: int, cell_y: int, placed: list[tuple[int, int, list[dict
     # By source cell, row by row (the project file lists them column by column), then in the
     # order the project gives within a source cell.
     for tx, ty, entries in sorted(placed, key=lambda p: (p[1] // 300, p[0] // 300)):
-        if not (x0 <= tx < x0 + CELL and y0 <= ty < y0 + CELL) or not entries:
+        if not entries:
+            continue
+        # The cell of the north-west corner of its rooms: the first lot's corner, unless a later
+        # part of a large building reaches further north or west (a rect must not be negative).
+        # ponytail: matches WorldEd on 16 of 25 cells of a 1500 m map; the rule WorldEd uses for
+        # such buildings is not found.
+        tx = min(tx, min(r[0] for e in entries for r in e["rects"]))
+        ty = min(ty, min(r[1] for e in entries for r in e["rects"]))
+        if not (x0 <= tx < x0 + CELL and y0 <= ty < y0 + CELL):
             continue
         buildings.append(list(range(len(rooms), len(rooms) + len(entries))))
         for e in entries:
