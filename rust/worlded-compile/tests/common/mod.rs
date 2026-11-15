@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 //! Helpers for tests that compare against the Python oracle (tools/dump_for_rust.py).
 use std::path::PathBuf;
 use std::process::Command;

@@ -5,7 +5,9 @@ pub mod bmp;
 pub mod buildroofs;
 pub mod buildtiles;
 pub mod header;
+pub mod pipeline;
 pub mod rules;
+pub mod source;
 pub mod tbx;
 pub mod terrain;
 

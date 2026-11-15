@@ -129,7 +129,7 @@ def _row(project: str, out: str, cy: int, band: list[tuple], placed, seed: int, 
                 st = merge_stack(g, bt, (wx, wy, 0) in room_squares)
                 if st:
                     stacks[(xx, yy, 0)] = st
-        for (wx, wy, z), bt in world.items():
+        for (wx, wy, z), bt in sorted(world.items()):   # sorted: tile table order does not depend on dict order
             if z > 0 and wx0 <= wx < wx0 + SIDE and wy0 <= wy < wy0 + SIDE:
                 stacks[(wx - wx0, wy - wy0, z)] = bt
         nlev = max((z for _, _, z in stacks), default=0) + 1
