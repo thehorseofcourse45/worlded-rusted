@@ -2,7 +2,10 @@
 pub mod blend_layers;
 pub mod blends;
 pub mod bmp;
+pub mod buildroofs;
+pub mod buildtiles;
 pub mod rules;
+pub mod tbx;
 pub mod terrain;
 
 use std::path::PathBuf;

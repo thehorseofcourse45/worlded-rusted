@@ -87,6 +87,29 @@ def main(argv):
         out.append("P|" + "|".join(pal.names))
         emit(out)
         return 0
+    if what == "tiles":  # tiles <tbx>... -> per file, per level: x y|layer=tile;layer=tile
+        from knoxbuild.buildtiles import level_layers, parse_tbx
+        out = []
+        for path in argv[1:]:
+            out.append("F|" + os.path.basename(path))
+            try:
+                b = parse_tbx(open(path, encoding="utf-8").read())
+                for z in range(len(b.floors)):
+                    out.append(f"Z|{z}")
+                    for (x, y), items in sorted(level_layers(b, z).items()):
+                        out.append(f"{x} {y}|" + ";".join(f"{l}={t}" for l, t in items))
+            except Exception as e:  # noqa: BLE001
+                out.append("ERR|" + type(e).__name__)
+        emit(out)
+        return 0
+    if what == "compose":  # compose <tbx> x y base ... -> x y z|tile;tile
+        from knoxbuild.buildtiles import compose_lots, parse_tbx
+        lots = []
+        a = argv[1:]
+        for i in range(0, len(a), 4):
+            lots.append((parse_tbx(open(a[i], encoding="utf-8").read()), int(a[i + 1]), int(a[i + 2]), int(a[i + 3])))
+        emit([f"{x} {y} {z}|" + ";".join(t) for (x, y, z), t in sorted(compose_lots(lots).items())])
+        return 0
     print("unknown dump", what, file=sys.stderr)
     return 2
 
