@@ -1,152 +1,119 @@
-# Stage 4a: Lots from the Cells' TMX Implementation Plan
+# Stage 4a: Lots from the Cells' TMX Implementation Plan (revised)
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** `worlded <project>.pzw` compiles lot files from the cells' `.tmx` maps (ground, blends, vegetation and every tile layer), so tile edits made in the viewer reach the game files without WorldEd or bitmaps.
+**Goal:** `worlded <project>.pzw` compiles lot files from the cells' `.tmx` maps the way WorldEd does: ground generated from the pictures embedded in each `.tmx`, merged with the tile layers, plus buildings, so tile edits reach the game files without WorldEd.
 
-**Architecture:** A new `tmxground` module in `worlded-compile` produces the same padded layer grids per lot window that the bitmap step produces, from the `.tmx` cells instead. `pipeline::compile_map` picks the ground source by input (`.pzw` path = TMX mode); the stack step is generalised to route layers to levels. Buildings, rooms, spawn and `compile_cell` are shared and untouched.
+**Architecture:** `worlded-core` decodes the embedded pictures. `tmxground` in `worlded-compile` builds each cell's effective layers (generate with the existing bitmap code, merge with the `.tmx` layers by WorldEd's rule) and serves padded per-window layer grids. `pipeline::compile_map` picks the ground source by input (`.pzw` path = TMX mode); the stack step routes layers to levels. Buildings, rooms, spawn and `compile_cell` are shared and untouched.
 
-**Tech Stack:** Rust 2021; `worlded-core` (`parse_tmx`, `parse_pzw`), `knoxlots`, existing `worlded-compile` modules. Python only for opt-in oracle scripts.
+**Tech Stack:** Rust 2021; `worlded-core` (`parse_tmx_str`, `parse_pzw`, `resolve_map`, `flate2`), `knoxlots`, existing `worlded-compile` modules.
 
-**Spec:** `docs/superpowers/specs/2026-11-15-lots-from-tmx-design.md`
+**Spec:** `docs/superpowers/specs/2026-11-15-lots-from-tmx-design.md` (read its Findings first).
 
 ## Global Constraints
 
-- TMX mode is selected by a path ending in `.pzw`; any other path is a map folder (bitmap mode, behaviour unchanged, existing tests pass untouched).
-- World origin must be `70,0` (`pipeline::ORIGIN_X = 70 * 300`); any other origin is an error naming it.
-- A `.tmx` cell is 300 x 300 tiles; a lot window is `SIDE` = 256 x 256. A window can touch up to four `.tmx` cells; a `.tmx` cell is read by at most three window rows (a row of windows loads what it needs and drops it).
-- Layer key is `"<level>_<name>"` (`Floor` with `level="0"` is `0_Floor`); layer order is `<layer>` file order within a level.
+- TMX mode is selected by a path ending in `.pzw`; any other path is a map folder (bitmap mode unchanged, existing tests pass untouched).
+- World origin must be `70,0` (`pipeline::ORIGIN_X = 70 * 300`).
+- A `.tmx` cell is 300 x 300 tiles; a lot window is `SIDE` = 256 x 256; a `.tmx` cell is read by at most three window rows.
+- Layer key is `"<level>_<name>"`; order is level, then file order.
+- Merge rule per layer the bitmap generates, per square: generated tile if nonzero, else the `.tmx` layer's tile; layers it does not generate are the `.tmx` layer alone.
+- Rules come from `Rules.txt` / `Blends.txt` in the compiler's config folder; the seed is the embedded picture's `seed`; blends are per cell (`seams = Some(300)`), global tile origin `(300 i, 300 j)`.
 - `--seed` and `--worlded-seams` are errors in `.pzw` mode.
-- A named `.tmx` that is missing is a warning on stderr, not an error; a cell without `map` has no ground.
-- A damaged `.tmx` is an error naming the file; never a panic.
+- A missing named `.tmx` is a warning; a damaged `.tmx` or picture is an error naming the file; never a panic.
 - The 64-level limit error stays.
-- Tests come first. Clean-room: layouts come from real files and WorldEd's observed output.
-- Commit messages end with `Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>`.
+- Tests come first. Clean-room. Commit messages end with `Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>`.
+- Editing multi-line source with Python heredocs corrupts newlines in this shell: use the Edit tool.
 
 ## Review Focus
 
-- A gid in a `.tmx` that no tileset covers: skipped (no tile), one warning per cell, no panic (Task 2).
-- Cells whose layer sets differ (one has `Walls2`, its neighbour does not): the window uses the union of keys; a missing layer is empty (Task 2).
-- A window at the map edge or partly outside the world: squares outside have no tiles, no panic (Task 2).
-- A project where no cell has a `.tmx`: clear error "no cell has a .tmx file", nothing written (Task 5).
-- A cell with upper-level layers and a building room on the same square: ground dropped on that level, building tiles kept (Task 4).
+- A cell whose `.tmx` has no `<bmp-image>`: layers alone, no error (Task 3).
+- A picture colour no rule knows: no generated tile, the hand-edited tile shows (Task 3).
+- Cells whose layer sets differ, and a generated layer the file does not list: union of keys, empty where missing (Task 3).
+- A window at the world edge or partly outside the world: no tiles outside, no panic (Task 3).
+- A project where no cell has a `.tmx`: clear error, nothing written (Task 6).
 
-## File Structure
+## Status
 
-- `rust/worlded-core/src/pzw.rs`: gains `resolve_map` (moved from the app).
-- `rust/worlded-compile/src/tmxground.rs` (new): `TmxWorld`, `RowCells`, window building.
-- `rust/worlded-compile/src/pipeline.rs`: ground source switch, level routing, `.pzw` entry.
-- `rust/worlded-compile/src/bin/worlded.rs`: `.pzw` mode and option errors.
-- `rust/worlded-compile/tests/tmx_mode.rs` (new): oracle, levels, seam, error and edit round-trip tests.
-- `rust/worlded-compile/tests/data/tmx_oracle/` (new fixture): `rt.pzw`, `tmx/rt_70_0.tmx`, `rt_ZombieSpawnMap.bmp`, `lots/` from WorldEd.
-- `tools/make_tmx_oracle.py` (new, opt-in): project with buildings, converted and lot-generated by WorldEd.
+- Task 1 (`resolve_map` in core): DONE, commit `df752ec`.
+- `tmxground.rs` exists on `main` from the first plan (layers only: `TmxWorld::open`, `size_tiles`, `has_maps`, `load_rows`, `RowCells::window`/`skipped`, 5 tests). Task 3 extends it.
+- Branch `stage4a-wip` holds the pipeline TMX-mode edits (compile_map entry, `strips`/`rows` ground switch, level-0 only) and the oracle fixture project `tests/data/tmx_oracle/`; Task 4 restores them with `git checkout stage4a-wip -- <paths>` and replaces the failing byte-for-WorldEd test.
 
-### Task 1: One tile-map resolver in core
+### Task 2: Embedded pictures in worlded-core
 
-**Files:**
-- Modify: `rust/worlded-core/src/pzw.rs`, `rust/worlded-app/src/world_view.rs` (use the core one; delete its copy)
-- Test: `rust/worlded-core/tests/pzw.rs`
+**Files:** Modify `rust/worlded-core/src/tmx.rs`, Test `rust/worlded-core/tests/tmx.rs` (or a new `tests/bmpimage.rs`).
 
 **Interfaces:**
-- Produces: `pub fn resolve_map(cell: &Cell, pzw_dir: &Path) -> Option<PathBuf>` in `worlded_core::pzw`: the cell's `map` path if it exists, else the same file name in `pzw_dir`, else in `pzw_dir/tmx`; `None` when `map` is absent or no file is found.
+- Produces: `pub struct BmpImage { pub index: u32, pub seed: i64, pub colors: Vec<[u8; 3]>, pub width: u32, pub height: u32, pub pixels: Vec<u32> }` (pixels: 1-based index into `colors`, 0 = none) and `pub fn parse_bmp_images(text: &str) -> Result<Vec<BmpImage>, CoreError>`. Pixel data is base64 of gzip; decoded size must be `4 * width * height` where `width = height = 300` (the cell size); gzip output is capped at that size + 1 (zip bomb = error); an index beyond `colors.len()` is an error.
 
-- [ ] **Step 1: Write failing test** `resolve_map_tries_the_path_then_the_pzw_folder_then_its_tmx_folder` in `tests/pzw.rs` (temp folders: cell with absolute existing path, with a stale absolute path whose file name exists in `<pzw dir>/tmx`, with an empty map, with a missing file; assert `Some`/`None` accordingly).
-- [ ] **Step 2: Run** `cd rust && cargo test --release -p worlded-core --test pzw`; expect FAIL (no function).
-- [ ] **Step 3: Move** the function body from `world_view.rs` (lines 19-28) to `pzw.rs`; make the app call `worlded_core::pzw::resolve_map`; keep the app's existing `world_view` tests passing.
-- [ ] **Step 4: Run** `cargo test --release`; expect all PASS.
-- [ ] **Step 5: Commit** `refactor: one resolve_map in worlded-core`.
+- [ ] **Step 1: Write failing tests** on `real_cell_a.tmx`: `real_fixture_has_two_pictures` (indexes 0 and 1, seed 1, 11 and 10 colours, 300 x 300, every pixel index <= colour count, first pixel of image 0 maps to colour `(201, 31, 201)`); `file_without_pictures_gives_empty_list`; `damaged_gzip_wrong_size_and_bad_index_are_errors` (synthetic text built with `flate2` in the test).
+- [ ] **Step 2: Run** `cd rust && cargo test --release -p worlded-core --test bmpimage`; expect FAIL.
+- [ ] **Step 3: Implement** with `roxmltree` (`<bmp-image>` children `<color rgb>` and `<pixels>`) and `flate2::read::GzDecoder` with `take`.
+- [ ] **Step 4: Run** the whole workspace; PASS. **Step 5: Commit** `feat(core): embedded bitmap pictures of a TMX`.
 
-### Task 2: TMX ground source
+### Task 3: Effective layers: generate, then merge
 
-**Files:**
-- Create: `rust/worlded-compile/src/tmxground.rs`
-- Modify: `rust/worlded-compile/src/lib.rs` (`pub mod tmxground;`), `rust/worlded-compile/Cargo.toml` (`worlded-core = { path = "../worlded-core" }`)
-- Test: unit tests in `tmxground.rs`
+**Files:** Modify `rust/worlded-compile/src/tmxground.rs`.
 
 **Interfaces:**
-- Consumes: `worlded_core::pzw::{parse_pzw, resolve_map}`, `worlded_core::tmx::{parse_tmx, tile_name, Tmx}`, `terrain::{Palette, Layers, Grid}` (`Palette::of(&mut self, &str) -> u32`, `Layers::entry(&mut self, &str, w, h) -> &mut Grid`).
-- Produces:
-  - `pub struct TmxWorld { pub cells_x: u32, pub cells_y: u32, pub warnings: Vec<String>, .. }`
-  - `TmxWorld::open(pzw: &Path) -> Result<TmxWorld, CompileError>`: reads the `.pzw`; error if origin is not `(70, 0)`; records each cell's resolved `.tmx` (missing named file: pushes a warning, treated as no ground).
-  - `TmxWorld::size_tiles(&self) -> (i64, i64)`: `(300 * cells_x, 300 * cells_y)`.
-  - `TmxWorld::has_maps(&self) -> bool`.
-  - `TmxWorld::load_rows(&self, y_lo: i64, y_hi: i64) -> Result<RowCells, CompileError>`: parses every `.tmx` cell that overlaps tile rows `[y_lo, y_hi)` (map-pixel space of the bitmap mode: tile 0,0 is the north-west corner of cell 0,0); error names the file; a `.tmx` not 300 x 300 is an error naming the file.
-  - `RowCells::window(&self, x0: i64, y0: i64, win: usize, pal: &mut Palette) -> (Layers, Vec<bool>)`: `win x win` squares starting at tile `(x0, y0)`; layer key `"<level>_<name>"` for the union of layer keys of the cells touched, in level order then first-seen file order; tile names from `tile_name` interned with `pal.of`; the mask is true where the square lies inside the world. A gid no tileset covers is skipped (counted; `RowCells::skipped` gives the total for the warning).
+- Consumes: `parse_bmp_images`, `terrain::{ground_layers, Palette, Layers, Grid}`, `blend_layers::blend_layers`, `rules::Ruleset`, `blends::Blend`.
+- Produces: `TmxWorld::load_rows(&self, y_lo: i64, y_hi: i64, gen: &Generator) -> Result<RowCells, CompileError>` where `pub struct Generator<'a> { pub rules: &'a Ruleset, pub blends: &'a [Blend] }`; `RowCells::window` unchanged in signature but its layers are the effective layers; `RowCells` keeps its own palette for the generated tile ids and re-interns names in the caller's palette. Public pure helper for testing: `pub fn merge_layer(generated: &Grid, manual: &Grid) -> Grid` (square-wise: generated if nonzero else manual; both same size).
 
-- [ ] **Step 1: Write failing tests** (synthetic `.tmx` text written to a temp project, 300 x 300 with `<tileset firstgid="1" name="t">` and csv layers):
-  - `layer_keys_use_level_and_file_order`: layers `Floor`(level 0), `Walls`(level 1), `Furniture`(level 0) give keys `0_Floor, 0_Furniture, 1_Walls`.
-  - `window_spans_two_cells_and_masks_outside_the_world`: a 2 x 1 cell world, a tile at x = 299 and x = 300 both land in a window starting at x = 290; squares left of 0 and right of 600 are masked out.
-  - `layer_sets_that_differ_between_cells_use_the_union`: left cell has `Walls2`, right does not; the key exists, right-hand squares are empty.
-  - `unknown_gid_is_skipped_and_counted`: gid 999 with one tileset gives no tile and `skipped() == 1`.
-  - `wrong_origin_missing_file_and_wrong_size`: origin `71,0` is an error naming the origin; a named missing `.tmx` is a warning, no error; a 299-wide `.tmx` is an error naming the file.
-- [ ] **Step 2: Run** `cargo test --release -p worlded-compile tmxground`; expect FAIL.
-- [ ] **Step 3: Implement** the interfaces above. Cells read once per `load_rows` call; no cross-call cache.
-- [ ] **Step 4: Run**; expect PASS. **Step 5: Commit** `feat(compile): TMX ground source`.
+- [ ] **Step 1: Write failing tests** (synthetic `.tmx` with pictures: build with a helper that gzips and base64-encodes `u32` indexes; tiny rules text in the test, as `tests/data/rules_small.txt` is used by existing tests, or the repo `config/Rules.txt` with a known colour such as `90 100 35` = Dark Grass):
+  - `hand_edit_on_floor_is_overwritten_where_the_picture_gives_ground`.
+  - `hand_edit_on_furniture_stays`.
+  - `hand_edit_on_vegetation_stays_where_the_picture_gives_none` (vegetation picture colour with no rule tile).
+  - `cell_without_pictures_uses_its_layers_alone`.
+  - `unknown_colour_gives_no_generated_tile`.
+  - `merge_layer_prefers_generated_nonzero`.
+  - The five `tmxground` tests from the first plan keep passing (adapted to pass a `Generator` made from `common`/config rules).
+- [ ] **Step 2: Run** `cargo test --release -p worlded-compile --lib tmxground`; expect FAIL.
+- [ ] **Step 3: Implement**: per cell with `index 0` and `index 1` pictures, RGB from colour lists, `ground_layers(land, veg, 300, 300, rules, &mut cellpal, seed, 300 i, 300 j)`, then `blend_layers(floor, rules, blends, &mut cellpal, seed, 300 i, 300 j, Some(300))` and `layers.update`; merge per key with the cell's `.tmx` layers (key `"<level>_<name>"`); a key only the generator has is added after the file's layers of its level. Use the seed of image 0 for both (they agree in WorldEd files).
+- [ ] **Step 4: Run** the lib tests; PASS. **Step 5: Commit** `feat(compile): effective layers from embedded pictures and layers`.
 
-### Task 3: TMX mode in the pipeline, checked against WorldEd
+### Task 4: TMX mode in the pipeline, oracles
 
-**Files:**
-- Create: `rust/worlded-compile/tests/tmx_mode.rs`, fixture folder `rust/worlded-compile/tests/data/tmx_oracle/` (`rt.pzw`, `tmx/rt_70_0.tmx`, `rt_ZombieSpawnMap.bmp`, `lots/*` = WorldEd's output)
-- Modify: `rust/worlded-compile/src/pipeline.rs`
+**Files:** Modify `rust/worlded-compile/src/pipeline.rs`; Create `rust/worlded-compile/tests/tmx_mode.rs`, fixture `rust/worlded-compile/tests/data/tmx_oracle/` (restore from `stage4a-wip`: `rt.pzw`, `tmx/rt_70_0.tmx`, `rt_ZombieSpawnMap.bmp` (force-add, `*.bmp` is ignored), `lots/` = WorldEd's output).
 
-**Interfaces:**
-- Consumes: `TmxWorld`, `RowCells` (Task 2).
-- Produces: `compile_map(project: &Path, out: &Path, opts: &Options, progress) -> Result<usize, CompileError>` unchanged in signature; when `project` has the extension `pzw` it compiles in TMX mode: name = file stem, folder = parent, buildings in `<folder>/buildings`, spawn map `<folder>/<name>_ZombieSpawnMap.bmp`, size from `TmxWorld::size_tiles`. Ground layers come from `RowCells::window(wx0 - 1, wy0 - 1, SIDE + 2, pal)`; the bitmap strips, `ground_layers` and `blend_layers` are skipped; the stack order is the layer order the window returned (not `stack_order`). Level 0 only in this task.
+**Interfaces:** `compile_map(input: &Path, out, opts, progress)` as on `stage4a-wip` (`.pzw` entry, `Shared.tmx`/`skipped`, `rows` ground switch, stack order from the window's layers), plus `Generator` built from the rules/blends `do_row` already loads.
 
-- [ ] **Step 1: Build the fixture** from the existing WorldEd run (`C:\wr_demo\real_tmx3\rt` after `tools/worlded_lots.py`, or rerun `python tools/make_real_tmx.py <dir>` then `python tools/worlded_lots.py <dir>/rt`): copy the 1 `.tmx` (same bytes as `worlded-core/tests/data/real_cell_a.tmx`), the 30 x 30 black spawn BMP, the four `lots` cells (`82_0`,`82_1`,`83_0`,`83_1`: `.lotheader`, `world_*.lotpack`, `chunkdata_*.bin`), and write `rt.pzw` with one cell whose `map="tmx/rt_70_0.tmx"` (relative), `worldOrigin origin="70,0"`, no lots. Record fixture size in the commit message.
-- [ ] **Step 2: Write failing test** `tmx_mode_equals_worlded_lot_files_ground_only` in `tests/tmx_mode.rs`: compile the fixture `.pzw` to a temp folder with default `Options` (rules from `common::repo().join("config/Rules.txt")`), assert the file list equals the fixture `lots` list and every file is byte-identical.
-- [ ] **Step 3: Run**; expect FAIL (TMX mode missing).
-- [ ] **Step 4: Implement** the `.pzw` entry and the ground source switch in `compile_map`/`do_row` (`Shared` gains the ground source: bitmap strips or `TmxWorld`; `do_row` loads `load_rows(wy0 - 1, wy0 + SIDE + 1)` once per row). Print `tmxground` warnings and a one-line skipped-gid count to stderr once at the end.
-- [ ] **Step 5: Run** the new test and the whole `worlded-compile` suite. Expected: PASS. **If the bytes differ** this task is the risk check of the spec (layer order, tile choice): stop, find the first differing square with `knoxlots` (`rust/knoxlots` export/compare tools), report the cause to the user, and do not continue to Task 4 until the spec is updated.
-- [ ] **Step 6: Commit** `feat(compile): compile lots from cell TMX files`.
+- [ ] **Step 1: Restore** the wip pipeline edits and fixture: `git checkout stage4a-wip -- rust/worlded-compile/src/pipeline.rs rust/worlded-compile/tests/data/tmx_oracle`; adapt `load_rows` call to pass the `Generator`.
+- [ ] **Step 2: Write failing tests** in `tests/tmx_mode.rs`:
+  - `tmx_mode_equals_bitmap_mode_byte_for_byte`: write the fixture's two pictures as 24-bit BMPs (`rt.bmp`, `rt_veg.bmp`, helper in the test) into a temp project named `rt` with the same `.pzw`; compile in bitmap mode (`seams: true`, `seed: 1`) and in TMX mode; same file list, every file byte-identical.
+  - `tmx_mode_matches_worlded_by_alias`: compile the fixture in TMX mode; for every square of the four lot cells compare tile names with WorldEd's lots (`lots/`) after mapping each name to its alias group from `Rules.txt` (a name in the same alias as the other counts as equal; names not in any alias must be equal), reading cells with `knoxlots::kcell`/lot readers or the existing helpers in `tests/header.rs`/`tests/common`; `chunkdata` files ignored. Report the number of squares compared and differing.
+- [ ] **Step 3: Run**; expect FAIL. **Step 4: Implement/fix** until both pass. If the bitmap-vs-TMX bytes differ, find the first differing square and fix the generation (origin, seams, seed) before anything else; if only the WorldEd alias test differs, report the squares and stop for the user (the generation rule is then wrong).
+- [ ] **Step 5: Run** the whole `worlded-compile` suite incl. bitmap tests; PASS. **Step 6: Commit** `feat(compile): compile lots from cell TMX files`.
 
-### Task 4: Upper levels and rooms
+### Task 5: Upper levels and rooms
 
-**Files:**
-- Modify: `rust/worlded-compile/src/pipeline.rs`
-- Test: `rust/worlded-compile/tests/tmx_mode.rs`
+**Files:** Modify `rust/worlded-compile/src/pipeline.rs`, Test `tests/tmx_mode.rs`.
 
-**Interfaces:**
-- Consumes: Task 3. Produces: the stack step routes each ground layer to the level in its key prefix; at each level a square's stack is ground tiles in layer order then building tiles; a room square at that level keeps only building tiles (`merge_stack`, now applied on every level). The level-0 `0_Furniture`/fence rule is unchanged.
+**Interfaces:** the stack step routes each ground layer to the level in its key prefix; at each level a square's stack is ground tiles in layer order then building tiles; a room square at that level keeps only building tiles (`merge_stack` on every level); the `0_Furniture` fence rule unchanged.
 
-- [ ] **Step 1: Write failing tests** (synthetic project in a temp folder, written by the test; read results back with `knoxlots::kcell::KCell` via `keep_source` cell sources):
-  - `tmx_layer_at_level_2_lands_on_level_2`: a layer `Walls` with `level="2"` and a tile at (5,5): the `.kcell` has that tile name on level 2 at (5,5), nothing on level 1.
-  - `room_square_drops_ground_on_its_level_and_keeps_building_tiles`: a tbx building with a room covering (5,5) at level 0 and a ground tile there: level 0 holds only the building's tiles; (6,6) outside the room keeps ground then building.
-  - `tiles_across_the_300_tile_seam_land_in_the_right_lot_cells`: a 2 x 1 cell world with a tile at x = 299 and one at x = 300: the first is in lot cell column 82 (x = 255 in that cell's source for 21000 + 299), the second in column 83.
-  - `more_than_64_levels_is_still_an_error`.
-- [ ] **Step 2: Run**; expect FAIL. **Step 3: Implement** level routing (parse the key prefix as the level; levels with no tiles produce no stacks).
-- [ ] **Step 4: Run** the whole suite incl. bitmap-mode tests; expect PASS. **Step 5: Commit** `feat(compile): upper levels from TMX layers`.
+- [ ] **Step 1: Write failing tests** (synthetic project; read `.kcell` via `keep_source`): `tmx_layer_at_level_2_lands_on_level_2`; `room_square_drops_ground_on_its_level_and_keeps_building_tiles`; `tiles_across_the_300_tile_seam_land_in_the_right_lot_cells` (2 x 1 cell world, tiles at x = 299 and 300); `more_than_64_levels_is_still_an_error`.
+- [ ] **Step 2: Run**; FAIL. **Step 3: Implement.** **Step 4: Run** the suite; PASS. **Step 5: Commit** `feat(compile): upper levels from TMX layers`.
 
-### Task 5: Command line and errors
+### Task 6: Command line and errors
 
-**Files:**
-- Modify: `rust/worlded-compile/src/bin/worlded.rs`, `rust/worlded-compile/src/pipeline.rs`
-- Test: `rust/worlded-compile/tests/cli.rs`, `tests/tmx_mode.rs`
+**Files:** Modify `rust/worlded-compile/src/bin/worlded.rs`, Test `tests/cli.rs`, `tests/tmx_mode.rs`.
 
-**Interfaces:**
-- Produces: `worlded <x>.pzw [<out>] [--threads N] [--keep-source DIR]` runs TMX mode, default out `<pzw folder>/lots`; `--seed N` or `--worlded-seams` with a `.pzw` exits with an error naming the option; USAGE text documents both modes.
+**Interfaces:** `worlded <x>.pzw [<out>] [--threads N] [--keep-source DIR]` runs TMX mode (default out `<pzw folder>/lots`); `--seed N` / `--worlded-seams` with a `.pzw` exit with an error naming the option; USAGE documents both modes.
 
-- [ ] **Step 1: Write failing tests**: `cli_compiles_a_pzw_into_its_lots_folder` (copy the Task 3 fixture to a temp folder, run the binary, expect exit 0 and the four cells); `cli_rejects_seed_and_seams_in_pzw_mode`; `project_without_any_tmx_is_an_error` (message contains "no cell has a .tmx file", nothing written); `damaged_tmx_names_the_file`; `missing_named_tmx_warns_and_compiles_the_rest` (two cells, one file missing: exit 0, stderr contains the file name, the other cell's lots exist).
-- [ ] **Step 2: Run**; expect FAIL. **Step 3: Implement**; make `--seed`/`--worlded-seams` detectable (track whether given). **Step 4: Run** the suite; PASS. **Step 5: Commit** `feat(worlded): .pzw mode on the command line`.
+- [ ] **Step 1: Write failing tests**: `cli_compiles_a_pzw_into_its_lots_folder` (fixture copy, exit 0, four cells); `cli_rejects_seed_and_seams_in_pzw_mode`; `project_without_any_tmx_is_an_error`; `damaged_tmx_and_damaged_picture_name_the_file`; `missing_named_tmx_warns_and_compiles_the_rest`.
+- [ ] **Step 2: Run**; FAIL. **Step 3: Implement** (make `--seed`/`--worlded-seams` detectable). **Step 4: Run** the suite; PASS. **Step 5: Commit** `feat(worlded): .pzw mode on the command line`.
 
-### Task 6: Edit round trip and the buildings oracle
+### Task 7: Edit round trip and the buildings oracle
 
-**Files:**
-- Create: `tools/make_tmx_oracle.py`
-- Test: `rust/worlded-compile/tests/tmx_mode.rs`
+**Files:** Create `tools/make_tmx_oracle.py`; Test `tests/tmx_mode.rs`.
 
-**Interfaces:**
-- Produces: `python tools/make_tmx_oracle.py <out folder>`: builds a test map with `<lot>` placements from the real1 buildings (`tools/make_test_map.py` layout, absolute paths written as `make_real_tmx.py` does), runs WorldEd's BMP to TMX and lot generation (`tools/worlded_lots.py` helpers), leaves `tmx/`, `lots/`, `buildings/`, the `.pzw` and spawn map in `<out>/rt`.
+**Interfaces:** `python tools/make_tmx_oracle.py <out folder>` builds a test map with `<lot>` placements from the real1 buildings, runs WorldEd's BMP to TMX and lot generation (helpers of `make_real_tmx.py` / `worlded_lots.py`), leaves `rt/` with `tmx/`, `lots/`, `buildings/`, `.pzw`, spawn map.
 
-- [ ] **Step 1: Write failing tests**: `edit_one_square_changes_only_that_squares_stack` (open the fixture `.tmx` with `worlded_core::tmxdoc::open`, `set_gid` one square on layer 0 to a gid of another tile in the file, save to a temp project; compile both; read all `.kcell` sources with `keep_source`; assert the only differing square stack is that one and its new top-of-layer-0 tile name is the edited tile); `tmx_mode_equals_worlded_with_buildings` (opt-in: skipped unless `WORLDED_ACCEPTANCE=1`, the WorldEd CLI and Python are available; runs the script, compiles the result, compares every lot file byte for byte).
-- [ ] **Step 2: Run**; the first expected to FAIL only if a gap remains, else PASS; the second skipped by default.
-- [ ] **Step 3: Write** `tools/make_tmx_oracle.py`; run the opt-in test once: `WORLDED_ACCEPTANCE=1 cargo test --release -p worlded-compile --test tmx_mode with_buildings -- --nocapture`. Record in the spec the result: identical, or the differing squares (fix the compiler for real differences; a building tile WorldEd places differently is a bug in the shared building code and is reported, not worked around).
+- [ ] **Step 1: Write failing tests**: `edit_changes_only_where_worlded_lets_it` (fixture opened with `worlded_core::tmxdoc::open`; set one `Furniture` square and one `Floor` square; compile; the `Furniture` tile is in that stack, the `Floor` edit is not, every other square's stack equals the unedited compile); `tmx_mode_matches_worlded_with_buildings` (opt-in `WORLDED_ACCEPTANCE=1`: runs the script, compiles the result in TMX mode, compares with WorldEd's lots by alias as in Task 4).
+- [ ] **Step 2: Run** the first; PASS or fix. **Step 3: Write** the script; run the opt-in test once; record the outcome in the spec (identical or the differing squares; fix real differences in the shared building code or report them).
 - [ ] **Step 4: Commit** `test: TMX edit round trip and WorldEd oracle with buildings`.
 
-### Task 7: Docs and release
+### Task 8: Docs and release
 
-**Files:**
-- Modify: `README.md`, `FORMATS.md` (TMX to stacks rules: key, order, levels), `HANDOFF.md`, the spec (append a "Results" section with the oracle outcomes and what was not checked)
-- Release: `worlded.exe` zip (with `config/`, README, LICENSE as the v0.4.0 zip), tag `v0.6.0` pre-release
+**Files:** Modify `README.md`, `FORMATS.md` (embedded picture format, merge rule), `HANDOFF.md`, the spec (a "Results" section: what was compared and what not).
+**Release:** `worlded.exe` zip (with `config/`, README, LICENSE as the v0.4.0 zip), tag `v0.6.0` pre-release.
 
-- [ ] **Step 1: Write** the docs above; **Step 2: Run** `cd rust && cargo test --release` (all PASS) and run the `.zip` from a clean folder on the fixture `.pzw` (expect the four cells compiled). **Step 3: Build** `cargo build --release -p worlded-compile`, zip, commit `feat: lots from TMX, v0.6.0`, push, `gh release create v0.6.0 ... --prerelease` with notes that state what was and was not compared (never loaded in the game).
+- [ ] **Step 1: Write** the docs. **Step 2: Run** `cd rust && cargo test --release` (all PASS) and the zip from a clean folder on the fixture `.pzw` (four cells compiled). **Step 3: Build** `cargo build --release -p worlded-compile`, zip, commit `feat: lots from TMX, v0.6.0`, push, `gh release create v0.6.0 ... --prerelease` with notes saying what was and was not compared (never loaded in the game; hand edits to generated layers are overwritten, as in WorldEd).
