@@ -159,3 +159,55 @@ pub fn encode_data(gids: &[u32], encoding: &str, compression: &str) -> Result<St
         _ => Err(bad("unsupported data encoding")),
     }
 }
+
+/// Side of the embedded pictures: one picture pixel per tile of a 300 x 300 cell.
+const PICTURE_SIDE: u32 = 300;
+
+/// One of the pictures a map editor embeds in a cell `.tmx` (`<bmp-image>`): index 0 is the
+/// landscape, 1 the vegetation.
+pub struct BmpImage {
+    pub index: u32,
+    /// Seed of the random tile picks made from this picture.
+    pub seed: i64,
+    pub colors: Vec<[u8; 3]>,
+    pub width: u32,
+    pub height: u32,
+    /// Row-major; 1-based index into `colors`, 0 = no colour.
+    pub pixels: Vec<u32>,
+}
+
+/// The embedded pictures of a cell `.tmx`; empty when it has none. The pixels are base64 of gzip
+/// of `width * height` little-endian `u32`; any other size, an unreadable stream or an index beyond
+/// the colour list is an error.
+pub fn parse_bmp_images(text: &str) -> Result<Vec<BmpImage>, CoreError> {
+    let doc = roxmltree::Document::parse(text).map_err(|e| CoreError::Parse(e.to_string()))?;
+    let bad = |m: &str| CoreError::Parse(m.to_string());
+    let want = PICTURE_SIDE as usize * PICTURE_SIDE as usize;
+    let mut out = Vec::new();
+    for n in doc.root_element().children().filter(|n| n.has_tag_name("bmp-image")) {
+        let index = n.attribute("index").and_then(|v| v.parse().ok()).ok_or_else(|| bad("bmp-image without a numeric index"))?;
+        let seed = n.attribute("seed").and_then(|v| v.parse().ok()).unwrap_or(0);
+        let colors = n
+            .children()
+            .filter(|c| c.has_tag_name("color"))
+            .map(|c| {
+                let v: Vec<u8> = c.attribute("rgb").unwrap_or("").split_whitespace().filter_map(|p| p.parse().ok()).collect();
+                <[u8; 3]>::try_from(v).map_err(|_| bad("bmp-image colour is not three 0-255 numbers"))
+            })
+            .collect::<Result<Vec<_>, _>>()?;
+        let text = n.children().find(|c| c.has_tag_name("pixels")).and_then(|p| p.text()).ok_or_else(|| bad("bmp-image without pixels"))?;
+        let clean: String = text.chars().filter(|c| !c.is_whitespace()).collect();
+        let packed = base64::engine::general_purpose::STANDARD.decode(clean).map_err(|_| bad("bmp-image pixels are not base64"))?;
+        let mut bytes = Vec::new();
+        flate2::read::GzDecoder::new(&packed[..]).take(want as u64 * 4 + 1).read_to_end(&mut bytes).map_err(|_| bad("bmp-image pixels are not valid gzip"))?;
+        if bytes.len() != want * 4 {
+            return Err(bad(&format!("bmp-image has {} bytes of pixels, a {PICTURE_SIDE} x {PICTURE_SIDE} picture needs {}", bytes.len(), want * 4)));
+        }
+        let pixels: Vec<u32> = bytes.chunks_exact(4).map(|c| u32::from_le_bytes([c[0], c[1], c[2], c[3]])).collect();
+        if pixels.iter().any(|&p| p as usize > colors.len()) {
+            return Err(bad("bmp-image pixel refers to a colour that is not listed"));
+        }
+        out.push(BmpImage { index, seed, colors, width: PICTURE_SIDE, height: PICTURE_SIDE, pixels });
+    }
+    Ok(out)
+}
