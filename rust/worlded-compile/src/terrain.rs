@@ -146,7 +146,7 @@ pub fn ground_layers(land: &[u8], veg: &[u8], w: usize, h: usize, rules: &Rulese
         }
         let src = if rule.bitmap == 0 { &land_key } else { &veg_key };
         let cond = rule.condition.map(key);
-        let mut hit: Vec<usize> = (0..w * h).filter(|&i| src[i] == k && cond.map_or(true, |c| land_key[i] == c)).collect();
+        let hit: Vec<usize> = (0..w * h).filter(|&i| src[i] == k && cond.map_or(true, |c| land_key[i] == c)).collect();
         if hit.is_empty() {
             continue;
         }

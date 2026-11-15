@@ -66,6 +66,27 @@ def main(argv):
         out.append("P|" + "|".join(pal.names))
         emit(out)
         return 0
+    if what == "blendapply":  # blendapply <rules> <blends> w h x0 y0 seed seam <floor names ; separated, - = none>
+        import numpy as np
+        from knoxbuild.blends import blend_layers, load_blends
+        from knoxbuild.rules import load_rules
+        from knoxbuild.terrain import Palette
+        rules, blends = load_rules(argv[1]), load_blends(argv[2])
+        w, h, x0, y0, seed, seam = (int(v) for v in argv[3:9])
+        names = argv[9].split(";")
+        pal = Palette()
+        floor = np.zeros((h, w), np.int64)
+        for y in range(h):
+            for x in range(w):
+                nm = names[((x // 2) * 5 + (y // 2) * 3 + ((x // 4) * (y // 3)) % 4) % len(names)]
+                floor[y, x] = 0 if nm == "-" else pal.of(nm)
+        out = []
+        for name, arr in blend_layers(floor, rules, blends, pal, seed, x0, y0, seam or None).items():
+            out.append("L|" + name)
+            out += [" ".join(map(str, row.tolist())) for row in arr]
+        out.append("P|" + "|".join(pal.names))
+        emit(out)
+        return 0
     print("unknown dump", what, file=sys.stderr)
     return 2
 

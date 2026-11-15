@@ -1,4 +1,5 @@
 //! Map compiler: map folder to lot files. A port of knoxbuild/ and tools/map_source.py.
+pub mod blend_layers;
 pub mod blends;
 pub mod bmp;
 pub mod rules;
