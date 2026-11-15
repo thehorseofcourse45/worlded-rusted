@@ -3,6 +3,7 @@ mod atlas;
 mod cell_view;
 mod document;
 mod iso;
+mod palette;
 mod settings;
 mod tools;
 mod world_view;
@@ -22,6 +23,7 @@ struct App {
     world_state: world_view::ViewState,
     cell: Option<cell_view::CellState>,
     atlas: atlas::Atlas,
+    palette: palette::Palette,
     message: String,
     /// A close or "back to world" waiting for an answer about unsaved changes.
     confirm: Option<Confirm>,
@@ -47,6 +49,7 @@ impl App {
             world_state: Default::default(),
             cell: None,
             atlas: Default::default(),
+            palette: Default::default(),
             message: String::new(),
             confirm: None,
             allow_quit: false,
@@ -82,6 +85,7 @@ impl App {
                 Ok(_) | Err(_) => format!("No tile packs found in {}: tiles are drawn as placeholders.", dir.display()),
             },
         };
+        self.palette = palette::Palette::new(self.packs.as_ref());
         if let Some(c) = &mut self.cell {
             c.reset_art();
         }
@@ -165,6 +169,15 @@ impl eframe::App for App {
                 ui.heading(format!("{}{}", c.title, if c.doc.is_dirty() { " *" } else { "" }));
                 c.layers_panel(ui);
             });
+        }
+        if let Some(c) = &mut self.cell {
+            if c.doc.read_only.is_none() {
+                egui::SidePanel::right("palette").default_width(260.0).show(ctx, |ui| {
+                    if let Some(name) = self.palette.show(ui, &mut self.atlas, self.packs.as_ref(), &c.selected_tile) {
+                        c.selected_tile = name;
+                    }
+                });
+            }
         }
         let mut open = None;
         egui::CentralPanel::default().show(ctx, |ui| {

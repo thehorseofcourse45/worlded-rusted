@@ -156,6 +156,11 @@ impl PackSet {
         self.packs.get(pack).ok_or_else(|| CoreError::Parse("no such pack".into()))?.page_rgba(page)
     }
 
+    /// Every tile name once, in no particular order.
+    pub fn tile_names(&self) -> Vec<&str> {
+        self.index.keys().map(String::as_str).collect()
+    }
+
     pub fn tile_count(&self) -> usize {
         self.index.len()
     }

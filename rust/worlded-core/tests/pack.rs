@@ -102,3 +102,18 @@ fn pack_set_finds_tiles_across_a_folder_and_skips_junk() {
     assert_eq!(set.page_rgba(pack, e.page).unwrap().0, 2);
     assert!(set.lookup("zzz").is_none());
 }
+
+#[test]
+fn pack_set_lists_every_tile_name_once() {
+    let dir = std::env::temp_dir().join(format!("wc_names_{}", std::process::id()));
+    let _ = std::fs::remove_dir_all(&dir);
+    std::fs::create_dir_all(&dir).unwrap();
+    // Two packs holding the same two names: each name is still listed once.
+    std::fs::write(dir.join("a.pack"), synthetic()).unwrap();
+    std::fs::write(dir.join("b.pack"), synthetic()).unwrap();
+    let (set, errs) = worlded_core::pack::PackSet::open_dir(&dir).unwrap();
+    assert!(errs.is_empty());
+    let mut names = set.tile_names();
+    names.sort();
+    assert_eq!(names, vec!["t_0", "t_1"]);
+}
