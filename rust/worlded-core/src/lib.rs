@@ -3,6 +3,7 @@ pub mod edit;
 pub mod gids;
 pub mod pack;
 pub mod pzw;
+pub mod save;
 pub mod tmx;
 pub mod tmxdoc;
 pub mod tools;
