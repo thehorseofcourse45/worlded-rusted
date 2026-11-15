@@ -1,0 +1,11 @@
+[package]
+name = "worlded-core"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+
+[dependencies]
+roxmltree = "0.20"
+flate2 = "1"
+image = { version = "0.25", default-features = false, features = ["png"] }
+base64 = "0.22"
