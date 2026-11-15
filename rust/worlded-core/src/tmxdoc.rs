@@ -22,6 +22,8 @@ pub struct TmxDoc {
     raws: Vec<RawLayer>,
     spans: Vec<Option<Span>>,
     dirty: Vec<bool>,
+    /// Each layer as opened, so a layer edited back to its original is not rewritten.
+    orig: Vec<Vec<u32>>,
 }
 
 pub fn open(text: String) -> Result<TmxDoc, CoreError> {
@@ -55,7 +57,8 @@ pub fn open(text: String) -> Result<TmxDoc, CoreError> {
         }
     }
     let dirty = vec![false; spans.len()];
-    Ok(TmxDoc { tmx, read_only, text, raws, spans, dirty })
+    let orig = raws.iter().map(|r| r.raw.clone()).collect();
+    Ok(TmxDoc { tmx, read_only, text, raws, spans, dirty, orig })
 }
 
 impl TmxDoc {
@@ -91,7 +94,7 @@ impl TmxDoc {
     }
 
     pub fn dirty_layers(&self) -> Vec<usize> {
-        (0..self.dirty.len()).filter(|&i| self.dirty[i]).collect()
+        (0..self.dirty.len()).filter(|&i| self.dirty[i] && self.raws[i].raw != self.orig[i]).collect()
     }
 
     /// The original text with every edited layer's `<data>` body re-encoded in its own

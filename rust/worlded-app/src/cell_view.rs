@@ -5,7 +5,7 @@ use crate::iso::{self, Rect};
 use crate::tools::{line, Tool};
 use eframe::egui::{self, epaint, Color32, Mesh, Pos2, Sense, Shape};
 use std::collections::HashMap;
-use worlded_core::gids::gid_for;
+use worlded_core::gids::{gid_for, lookup_gid};
 use worlded_core::pack::PackSet;
 use worlded_core::tmx::{tile_name, Tmx};
 use worlded_core::tools as core_tools;
@@ -17,6 +17,8 @@ const LOD_ZOOM: f32 = 0.15;
 const NEW_TILESET_COLUMNS: u32 = 8;
 /// Most squares of a brush or rectangle preview that are drawn.
 const PREVIEW_MAX: usize = 400;
+/// Placeholder gid while a tile from a tileset the file lacks is previewed in an edit.
+const STAND_IN_GID: u32 = 0x1FFF_FFFF;
 
 pub struct CellState {
     pub title: String,
@@ -30,7 +32,7 @@ pub struct CellState {
     pub selected_tile: String,
     pub status: String,
     /// Indexed by gid: `None` = not looked up yet, `Some(None)` = no art (placeholder).
-    sprites: Vec<Option<Option<Sprite>>>,
+    sprites: HashMap<u32, Option<Sprite>>,
     zoom: f32,
     pan: egui::Vec2,
     pub hover: Option<(i32, i32)>,
@@ -61,7 +63,7 @@ impl CellState {
             brush: 1,
             selected_tile: String::new(),
             status: String::new(),
-            sprites: Vec::new(),
+            sprites: HashMap::new(),
             zoom: 0.0,
             pan: egui::Vec2::ZERO,
             hover: None,
@@ -137,18 +139,28 @@ impl CellState {
     }
 
     pub fn save_as(&mut self, path: &std::path::Path) {
+        let old_dir = self.doc.path.parent().map(|p| p.to_path_buf());
         self.status = match self.doc.save_as(path) {
+            Ok(()) if old_dir.as_deref() != path.parent() => {
+                format!("saved {}; tileset image paths in it are relative to the old folder", path.display())
+            }
             Ok(()) => format!("saved {}", path.display()),
             Err(e) => format!("save failed: {e}"),
         };
     }
 
-    fn tile_gid(&mut self) -> Result<u32, String> {
-        let name = self.selected_tile.trim().to_string();
+    /// `(gid, known)`: the gid of the selected tile when its tileset is already in the file
+    /// (`known`), else a stand-in that is only swapped for the real gid once an edit really
+    /// happens, so a refused or empty edit never adds a tileset to the file.
+    fn tile_gid(&self) -> Result<(u32, bool), String> {
+        let name = self.selected_tile.trim();
         if name.is_empty() {
             return Err("no tile selected: type a name or use the eyedropper".into());
         }
-        gid_for(&mut self.doc.doc, &name, NEW_TILESET_COLUMNS).map_err(|e| e.to_string())
+        match lookup_gid(&self.doc.doc, name).map_err(|e| e.to_string())? {
+            Some(g) => Ok((g, true)),
+            None => Ok((STAND_IN_GID, false)),
+        }
     }
 
     /// Run a tool on the active layer. Refusals (read-only, hidden, locked, no tile) land in the
@@ -160,7 +172,7 @@ impl CellState {
             self.status = e;
             return;
         }
-        let gid = if needs_tile {
+        let (gid, known) = if needs_tile {
             match self.tile_gid() {
                 Ok(g) => g,
                 Err(e) => {
@@ -169,10 +181,24 @@ impl CellState {
                 }
             }
         } else {
-            0
+            (0, true)
         };
         match make(&self.doc.doc.tmx, l, gid) {
-            Some(edit) => {
+            Some(mut edit) => {
+                if edit.0.is_empty() {
+                    self.status = "nothing to change there (outside the map, or already that tile)".into();
+                    return;
+                }
+                if !known {
+                    // Now the edit is real: add the tileset and use its gid.
+                    match gid_for(&mut self.doc.doc, self.selected_tile.trim(), NEW_TILESET_COLUMNS) {
+                        Ok(g) => edit.0.iter_mut().for_each(|c| c.new = g),
+                        Err(e) => {
+                            self.status = e.to_string();
+                            return;
+                        }
+                    }
+                }
                 self.status.clear();
                 let _ = self.doc.apply(l, vis, lock, edit);
             }
@@ -266,14 +292,17 @@ impl CellState {
         let level = self.tmx().layers.get(self.active_layer).map_or(0, |l| l.level);
         self.hover = resp.hover_pos().map(|p| tile_at_level(p, origin, zoom, level));
 
-        if editing && !space {
+        if editing {
             let (pressed, down, released) = ui.input(|i| (i.pointer.primary_pressed(), i.pointer.primary_down(), i.pointer.primary_released()));
-            match (self.hover, pressed && resp.hovered()) {
-                (Some(at), true) => self.press(at),
-                (Some(at), false) if down && self.stroke.is_some() => self.drag_to(at),
-                _ => {}
+            if !space {
+                match (self.hover, pressed && resp.hovered()) {
+                    (Some(at), true) => self.press(at),
+                    (Some(at), false) if down && self.stroke.is_some() => self.drag_to(at),
+                    _ => {}
+                }
             }
-            if released {
+            // A stroke ends when the button is up, whatever else happened (space held, pointer away).
+            if released || (!down && self.stroke.is_some()) {
                 self.release();
             }
         }
@@ -296,11 +325,7 @@ impl CellState {
         let mut flat = Mesh::default();
         let to_screen = |x: f32, y: f32| Pos2::new(origin.x + x * zoom, origin.y + y * zoom);
         iso::visible_tiles(tmx, &visible, clip, |_, gid, _, _, fx, fy| {
-            let g = gid as usize;
-            if sprites.len() <= g {
-                sprites.resize(g + 1, None);
-            }
-            let s = *sprites[g].get_or_insert_with(|| tile_name(tmx, gid).and_then(|n| atlas.sprite(&ctx, packs, &n)));
+            let s = *sprites.entry(gid).or_insert_with(|| tile_name(tmx, gid).and_then(|n| atlas.sprite(&ctx, packs, &n)));
             match s {
                 Some(s) => {
                     // frames larger than 128 x 256 (trees) are anchored bottom-centre on the tile
@@ -414,5 +439,37 @@ mod tests {
         c.release();
         assert!(c.tmx().layers[0].gids.iter().all(|g| *g == 0));
         assert!(!c.doc.is_dirty());
+    }
+
+    #[test]
+    fn a_refused_or_empty_edit_never_adds_a_tileset() {
+        let mut c = cell();
+        let before = c.doc.doc.text().to_string();
+        c.selected_tile = "newset_3".into();
+        c.press((-9, -9)); // off the map: empty edit
+        c.release();
+        assert!(c.status.contains("nothing to change"), "{}", c.status);
+        c.locked[0] = true;
+        c.press((1, 1));
+        c.release();
+        c.locked[0] = false;
+        c.tool = Tool::Bucket;
+        c.press((-1, 0));
+        assert_eq!(c.doc.doc.text(), before, "no tileset added by edits that did nothing");
+        assert!(!c.doc.is_dirty());
+        // A real edit adds it once and paints with its gid.
+        c.tool = Tool::Paint;
+        c.press((1, 1));
+        c.release();
+        assert_eq!(c.tmx().tilesets.len(), 2);
+        let gid = c.tmx().layers[0].gids[5];
+        assert_eq!(tile_name(c.tmx(), gid).unwrap(), "newset_3");
+        // A hostile name is refused with a reason and changes nothing.
+        let text = c.doc.doc.text().to_string();
+        c.selected_tile = "a\"b_1".into();
+        c.press((2, 2));
+        c.release();
+        assert_eq!(c.doc.doc.text(), text);
+        assert!(!c.status.is_empty());
     }
 }

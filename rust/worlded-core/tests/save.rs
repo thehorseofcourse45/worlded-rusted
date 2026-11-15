@@ -46,3 +46,21 @@ fn save_as_a_new_path_makes_no_bak() {
     Saver::new().save(&f, "x").unwrap();
     assert!(!d.join("b.tmx.bak").exists());
 }
+
+#[test]
+fn a_read_only_original_does_not_leave_a_read_only_bak() {
+    let d = dir("ro");
+    let f = d.join("a.tmx");
+    std::fs::write(&f, "original").unwrap();
+    let mut perm = std::fs::metadata(&f).unwrap().permissions();
+    perm.set_readonly(true);
+    std::fs::set_permissions(&f, perm).unwrap();
+    let _ = Saver::new().save(&f, "one"); // may fail on a read-only target; the .bak must stay writable
+    assert!(!std::fs::metadata(d.join("a.tmx.bak")).unwrap().permissions().readonly());
+    // Clear the flag as a user would, then a new session can save.
+    let mut perm = std::fs::metadata(&f).unwrap().permissions();
+    perm.set_readonly(false);
+    std::fs::set_permissions(&f, perm).unwrap();
+    Saver::new().save(&f, "two").unwrap();
+    assert_eq!(std::fs::read_to_string(&f).unwrap(), "two");
+}

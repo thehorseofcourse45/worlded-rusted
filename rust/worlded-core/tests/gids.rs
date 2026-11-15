@@ -60,3 +60,28 @@ fn tileset_columns_from_the_pack_set_the_new_entry_size() {
     assert!(text.contains("name=\"n\"") || text.contains("name=\"n\" "), "tileset named n");
     assert!(text.contains("width=\"512\" height=\"384\""), "8 columns x 3 rows of 64x128");
 }
+
+#[test]
+fn hostile_or_out_of_range_names_are_errors_and_change_nothing() {
+    let mut d = open(MAP.to_string()).unwrap();
+    assert!(gid_for(&mut d, "a\"b_1", 8).is_err(), "quote in a tileset name");
+    assert!(gid_for(&mut d, "a<b_1", 8).is_err());
+    assert!(gid_for(&mut d, "zz_999999999", 8).is_err(), "huge index on a new tileset");
+    assert!(gid_for(&mut d, "t_4294967295", 8).is_err());
+    assert!(gid_for(&mut d, "a_01_32", 8).is_err(), "a_01 holds 32 tiles (next firstgid is 33)");
+    assert_eq!(gid_for(&mut d, "a_01_31", 8).unwrap(), 32);
+    assert!(gid_for(&mut d, "b_02_1024", 8).is_err(), "last tileset is capped too");
+    assert_eq!(d.to_text().unwrap(), MAP, "nothing was added");
+}
+
+#[test]
+fn lookup_does_not_add_and_a_crlf_file_gets_crlf_elements() {
+    use worlded_core::gids::lookup_gid;
+    let crlf = MAP.replace('\n', "\r\n");
+    let mut d = open(crlf).unwrap();
+    assert_eq!(lookup_gid(&d, "c_03_5").unwrap(), None);
+    gid_for(&mut d, "c_03_5", 8).unwrap();
+    let text = d.to_text().unwrap();
+    assert_eq!(text.matches('\n').count(), text.matches("\r\n").count(), "no bare LF");
+    assert!(parse_tmx_str(&text).is_ok());
+}

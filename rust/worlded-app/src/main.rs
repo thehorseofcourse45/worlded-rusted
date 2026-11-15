@@ -31,10 +31,12 @@ struct App {
     last_title: String,
 }
 
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Clone, PartialEq)]
 enum Confirm {
     Back,
     Quit,
+    /// Open this project once the unsaved cell is dealt with.
+    Open(PathBuf),
 }
 
 impl App {
@@ -131,7 +133,11 @@ impl eframe::App for App {
             ui.horizontal(|ui| {
                 if ui.button("Open project...").clicked() {
                     if let Some(p) = rfd::FileDialog::new().add_filter("WorldEd project", &["pzw"]).pick_file() {
-                        self.open_project(p);
+                        if self.cell.as_ref().is_some_and(|c| c.doc.is_dirty()) {
+                            self.confirm = Some(Confirm::Open(p));
+                        } else {
+                            self.open_project(p);
+                        }
                     }
                 }
                 if ui.button("Set Project Zomboid folder...").clicked() {
@@ -235,7 +241,7 @@ impl App {
                 self.last_title = title;
             }
         }
-        if let Some(what) = self.confirm {
+        if let Some(what) = self.confirm.clone() {
             let name = self.cell.as_ref().map(|c| c.title.clone()).unwrap_or_default();
             let mut choice = None;
             egui::Window::new("Unsaved changes").collapsible(false).resizable(false).anchor(egui::Align2::CENTER_CENTER, [0.0, 0.0]).show(ctx, |ui| {
@@ -264,6 +270,7 @@ impl App {
                     self.confirm = None;
                     match what {
                         Confirm::Back => self.cell = None,
+                        Confirm::Open(p) => self.open_project(p),
                         Confirm::Quit => {
                             self.allow_quit = true;
                             ctx.send_viewport_cmd(egui::ViewportCommand::Close);

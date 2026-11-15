@@ -17,7 +17,11 @@ pub struct Document {
 impl Document {
     pub fn open(path: &Path) -> Result<Document, String> {
         let text = std::fs::read_to_string(path).map_err(|e| e.to_string())?;
-        Document::from_text(path, text)
+        let mut d = Document::from_text(path, text)?;
+        if d.read_only.is_none() && std::fs::metadata(path).is_ok_and(|m| m.permissions().readonly()) {
+            d.read_only = Some("the file is marked read-only".into());
+        }
+        Ok(d)
     }
 
     pub fn from_text(path: &Path, text: String) -> Result<Document, String> {
@@ -65,6 +69,8 @@ impl Document {
     /// On failure the document stays dirty and the file on disk is untouched.
     fn write_to(&mut self, path: &Path) -> Result<(), String> {
         let text = self.doc.to_text().map_err(|e| e.to_string())?;
+        // Never write what the reader cannot read back.
+        tmxdoc::open(text.clone()).map_err(|e| format!("refusing to save, the result would not reopen: {e}"))?;
         self.saver.save(path, &text).map_err(|e| e.to_string())?;
         self.history.mark_saved();
         Ok(())

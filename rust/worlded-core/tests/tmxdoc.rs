@@ -82,3 +82,13 @@ fn unknown_encoding_opens_but_refuses_to_save() {
     assert!(doc.to_text().is_err());
     assert!(doc.dirty_layers().is_empty(), "an unreadable layer cannot be edited");
 }
+
+#[test]
+fn editing_a_layer_back_to_its_original_rewrites_nothing() {
+    let text = real();
+    let mut doc = open(text.clone()).unwrap();
+    doc.set_gid(0, 3, 3, 9);
+    doc.set_gid(0, 3, 3, 0);
+    assert!(doc.dirty_layers().is_empty());
+    assert_eq!(doc.to_text().unwrap(), text);
+}

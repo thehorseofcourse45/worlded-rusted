@@ -15,6 +15,17 @@ fn with_suffix(path: &Path, suffix: &str) -> PathBuf {
     PathBuf::from(s)
 }
 
+fn set_writable(path: &Path) {
+    if let Ok(meta) = std::fs::metadata(path) {
+        let mut perm = meta.permissions();
+        if perm.readonly() {
+            #[allow(clippy::permissions_set_readonly_false)]
+            perm.set_readonly(false);
+            let _ = std::fs::set_permissions(path, perm);
+        }
+    }
+}
+
 impl Saver {
     pub fn new() -> Saver {
         Saver::default()
@@ -23,7 +34,11 @@ impl Saver {
     /// On any error the old file is untouched and no temp file is left behind.
     pub fn save(&mut self, path: &Path, text: &str) -> Result<(), CoreError> {
         if path.exists() && !self.backed_up.contains(path) {
-            std::fs::copy(path, with_suffix(path, ".bak"))?;
+            let bak = with_suffix(path, ".bak");
+            // A copy of a read-only file is read-only too, and would block every later save.
+            set_writable(&bak);
+            std::fs::copy(path, &bak)?;
+            set_writable(&bak);
             self.backed_up.insert(path.to_path_buf());
         }
         let tmp = with_suffix(path, ".tmp");
