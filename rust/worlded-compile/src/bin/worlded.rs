@@ -11,7 +11,15 @@ use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 use worlded_compile::pipeline::{compile_map, Options};
 
-const USAGE: &str = "worlded: compile a map folder into lot files, no WorldEd or KnoxMap needed.\n\n    worlded <map folder> [<out folder>] [--seed N] [--worlded-seams] [--keep-source DIR] [--threads N]\n\nThe map folder holds <name>.bmp, <name>_veg.bmp, <name>.pzw and buildings/*.tbx.\nWrites the .lotheader / .lotpack / chunkdata files into <out folder> (default <map folder>/lots).\nDouble-click to be asked for the folder, or drag a map folder onto worlded.exe.";
+const USAGE: &str = "worlded: compile a map into lot files, no WorldEd or KnoxMap needed.
+
+    worlded <map folder> [<out folder>] [--seed N] [--worlded-seams] [--keep-source DIR] [--threads N]
+    worlded <project>.pzw [<out folder>] [--keep-source DIR] [--threads N]
+
+A map folder holds <name>.bmp, <name>_veg.bmp, <name>.pzw and buildings/*.tbx.
+A .pzw project compiles from the .tmx maps its cells list (ground from the pictures embedded in them, merged with their tile layers), plus buildings/*.tbx beside it.
+Writes the .lotheader / .lotpack / chunkdata files into <out folder> (default: <map folder>/lots, or lots beside the .pzw).
+Double-click to be asked for the folder, or drag a map folder onto worlded.exe.";
 
 /// True when this program owns its console alone, i.e. it was started from Explorer and the window
 /// will vanish when it ends.
@@ -54,11 +62,18 @@ fn find_rules() -> Result<PathBuf, String> {
 fn run(args: Vec<String>) -> Result<(), String> {
     let mut positional: Vec<String> = Vec::new();
     let (mut seed, mut seams, mut keep, mut threads) = (1i64, false, None::<PathBuf>, None::<usize>);
+    let mut given: Vec<&'static str> = Vec::new(); // options only the bitmap mode takes
     let mut it = args.into_iter();
     while let Some(a) = it.next() {
         match a.as_str() {
-            "--worlded-seams" => seams = true,
-            "--seed" => seed = it.next().and_then(|v| v.parse().ok()).ok_or("--seed needs a number")?,
+            "--worlded-seams" => {
+                seams = true;
+                given.push("--worlded-seams");
+            }
+            "--seed" => {
+                seed = it.next().and_then(|v| v.parse().ok()).ok_or("--seed needs a number")?;
+                given.push("--seed");
+            }
             "--threads" => threads = Some(it.next().and_then(|v| v.parse().ok()).ok_or("--threads needs a number")?),
             "--keep-source" => keep = Some(it.next().ok_or("--keep-source needs a folder")?.into()),
             _ if a.starts_with("--") => return Err(format!("unknown option {a}\n\n{USAGE}")),
@@ -77,7 +92,14 @@ fn run(args: Vec<String>) -> Result<(), String> {
         return Err(USAGE.to_string());
     }
     let project = PathBuf::from(positional.remove(0));
-    let out = positional.pop().map(PathBuf::from).unwrap_or_else(|| project.join("lots"));
+    let pzw_mode = project.extension().is_some_and(|e| e.eq_ignore_ascii_case("pzw"));
+    if pzw_mode {
+        if let Some(opt) = given.first() {
+            return Err(format!("{opt} is for a map folder; a .pzw project takes its seed and blending from the maps\n\n{USAGE}"));
+        }
+    }
+    let default_out = if pzw_mode { project.parent().filter(|p| !p.as_os_str().is_empty()).unwrap_or(Path::new(".")).join("lots") } else { project.join("lots") };
+    let out = positional.pop().map(PathBuf::from).unwrap_or(default_out);
     let opts = Options { seed, seams, workers: threads, keep_source: keep, rules: find_rules()? };
     let started = std::time::Instant::now();
     let n = compile_map(&project, &out, &opts, &|done, rows| println!("row {done} of {rows}")).map_err(|e| e.to_string())?;

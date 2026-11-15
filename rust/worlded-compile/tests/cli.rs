@@ -74,3 +74,84 @@ fn no_arguments_asks_for_the_folder() {
     assert!(String::from_utf8_lossy(&out.stdout).contains("Map folder"));
     assert!(!out.status.success());
 }
+
+// ---- .pzw mode ------------------------------------------------------------------------------
+
+fn fixture() -> PathBuf {
+    PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/data/tmx_oracle")
+}
+
+/// A copy of the oracle project; returns its `.pzw`.
+fn pzw_project(tag: &str) -> PathBuf {
+    let dir = tmp(tag).join("p");
+    std::fs::create_dir_all(dir.join("tmx")).unwrap();
+    for f in ["rt.pzw", "rt_ZombieSpawnMap.bmp", "tmx/rt_70_0.tmx"] {
+        std::fs::copy(fixture().join(f), dir.join(f)).unwrap();
+    }
+    dir.join("rt.pzw")
+}
+
+#[test]
+fn cli_compiles_a_pzw_into_its_lots_folder() {
+    let pzw = pzw_project("wcc_pzw_ok");
+    let out = exe().arg(&pzw).output().unwrap();
+    assert!(out.status.success(), "{}", String::from_utf8_lossy(&out.stderr));
+    assert!(String::from_utf8_lossy(&out.stdout).contains("4 cells compiled"));
+    let lots = pzw.parent().unwrap().join("lots");
+    for f in ["82_0.lotheader", "world_83_1.lotpack", "chunkdata_82_1.bin"] {
+        assert!(lots.join(f).exists(), "{f}");
+    }
+    assert_eq!(std::fs::read_dir(&lots).unwrap().count(), 12);
+}
+
+#[test]
+fn cli_rejects_seed_and_seams_in_pzw_mode() {
+    let pzw = pzw_project("wcc_pzw_opts");
+    for opt in [vec!["--seed", "3"], vec!["--worlded-seams"]] {
+        let out = exe().arg(&pzw).args(&opt).output().unwrap();
+        assert!(!out.status.success(), "{opt:?}");
+        assert!(String::from_utf8_lossy(&out.stderr).contains(opt[0]), "{opt:?}: {}", String::from_utf8_lossy(&out.stderr));
+    }
+    assert!(!pzw.parent().unwrap().join("lots").exists(), "nothing written");
+}
+
+#[test]
+fn project_without_any_tmx_is_an_error_and_writes_nothing() {
+    let pzw = pzw_project("wcc_pzw_none");
+    std::fs::remove_file(pzw.parent().unwrap().join("tmx/rt_70_0.tmx")).unwrap();
+    std::fs::write(&pzw, std::fs::read_to_string(&pzw).unwrap().replace("tmx/rt_70_0.tmx", "")).unwrap();
+    let out = exe().arg(&pzw).output().unwrap();
+    assert!(!out.status.success());
+    assert!(String::from_utf8_lossy(&out.stderr).contains("no cell has a .tmx file"));
+    assert!(!pzw.parent().unwrap().join("lots").exists());
+}
+
+#[test]
+fn damaged_tmx_and_damaged_picture_name_the_file() {
+    let pzw = pzw_project("wcc_pzw_bad");
+    let tmx = pzw.parent().unwrap().join("tmx/rt_70_0.tmx");
+    let good = std::fs::read_to_string(&tmx).unwrap();
+    std::fs::write(&tmx, &good[..good.len() / 2]).unwrap();
+    let out = exe().arg(&pzw).output().unwrap();
+    assert!(!out.status.success());
+    assert!(String::from_utf8_lossy(&out.stderr).contains("rt_70_0.tmx"));
+    // a picture whose pixel data is not gzip
+    let start = good.find("<pixels>").unwrap() + "<pixels>".len();
+    std::fs::write(&tmx, format!("{}AAAA{}", &good[..start], &good[good[start..].find("</pixels>").unwrap() + start..])).unwrap();
+    let out = exe().arg(&pzw).output().unwrap();
+    assert!(!out.status.success());
+    let err = String::from_utf8_lossy(&out.stderr);
+    assert!(err.contains("rt_70_0.tmx") && !err.contains("panicked"), "{err}");
+}
+
+#[test]
+fn missing_named_tmx_warns_and_compiles_the_rest() {
+    let pzw = pzw_project("wcc_pzw_warn");
+    // a second cell that names a map which does not exist
+    let text = std::fs::read_to_string(&pzw).unwrap().replace("width=\"1\"", "width=\"2\"").replace("</world>", " <cell x=\"1\" y=\"0\" map=\"tmx/gone_71_0.tmx\">\n </cell>\n</world>");
+    std::fs::write(&pzw, text).unwrap();
+    let out = exe().arg(&pzw).output().unwrap();
+    assert!(out.status.success(), "{}", String::from_utf8_lossy(&out.stderr));
+    assert!(String::from_utf8_lossy(&out.stderr).contains("gone_71_0.tmx"));
+    assert!(pzw.parent().unwrap().join("lots/82_0.lotheader").exists());
+}
