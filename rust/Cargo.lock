@@ -3904,6 +3904,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "worlded-compile"
+version = "0.1.0"
+dependencies = [
+ "knoxlots",
+ "roxmltree",
+]
+
+[[package]]
 name = "worlded-core"
 version = "0.1.0"
 dependencies = [

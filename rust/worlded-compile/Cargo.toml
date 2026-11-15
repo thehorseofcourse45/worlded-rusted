@@ -1,0 +1,9 @@
+[package]
+name = "worlded-compile"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+
+[dependencies]
+knoxlots = { path = "../knoxlots" }
+roxmltree = "0.20"
