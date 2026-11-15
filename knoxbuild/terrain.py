@@ -94,7 +94,10 @@ def ground_layers(land: np.ndarray, veg: np.ndarray, rules: Ruleset, pal: Palett
     # (a window holds a handful of the 148).
     land_key, veg_key = colour_keys(land), colour_keys(veg)
     in_land, in_veg = set(np.unique(land_key).tolist()), set(np.unique(veg_key).tolist())
-    for n, rule in enumerate(rules.rules):
+    # WorldEd applies every landscape rule, then every vegetation rule: where both pictures give a
+    # tile on the same layer the vegetation one wins (measured against WorldEd, not file order).
+    # `n` stays the rule's place in the file: it salts the random picks.
+    for n, rule in sorted(enumerate(rules.rules), key=lambda p: p[1].bitmap != 0):
         key = _key(rule.color)
         if key not in (in_land if rule.bitmap == 0 else in_veg):
             continue

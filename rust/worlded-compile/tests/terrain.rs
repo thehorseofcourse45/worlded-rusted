@@ -94,3 +94,16 @@ fn ground_layers_match_python() {
     run_case(37, 41, 16490, -5, 7); // large and negative world coordinates, odd size
     run_case(25, 25, 300, 600, 3);
 }
+
+#[test]
+fn vegetation_rule_wins_over_landscape_rule_on_the_same_layer_whatever_the_file_order() {
+    // the vegetation rule is listed first in the file; WorldEd still applies landscape rules first
+    let text = "version = 1\n\nrule\n{\n    label = veg\n    bitmap = 1\n    color = 4 5 6\n    tiles = veg_tile_1\n    layer = 0_FloorOverlay6\n}\n\nrule\n{\n    label = land\n    bitmap = 0\n    color = 1 2 3\n    tiles = land_tile_1\n    layer = 0_FloorOverlay6\n}\n";
+    let path = std::env::temp_dir().join(format!("wc_rules_order_{}.txt", std::process::id()));
+    std::fs::write(&path, text).unwrap();
+    let rules = load_rules(&path).unwrap();
+    let mut pal = Palette::default();
+    let layers = ground_layers(&[1, 2, 3], &[4, 5, 6], 1, 1, &rules, &mut pal, 1, 0, 0);
+    let id = layers.get("0_FloorOverlay6").unwrap().get(0, 0);
+    assert_eq!(pal.names[id as usize], "veg_tile_1");
+}

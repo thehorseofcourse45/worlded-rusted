@@ -8,6 +8,7 @@ use crate::rules::load_rules;
 use crate::source::{cell_source, SIDE};
 use crate::tbx::{parse_tbx, tile_name, Building};
 use crate::terrain::{ground_layers, stack_order, Grid, Layers, Palette};
+use crate::tmxground::{Generator, TmxWorld};
 use crate::CompileError;
 use knoxlots::compile::{compile_cell, Manifest};
 use knoxlots::kcell::KCell;
@@ -77,6 +78,10 @@ fn merge_stack(ground: Vec<String>, building: &[String], has_room: bool) -> Vec<
 
 struct Shared<'a> {
     project: &'a Path,
+    /// Set in `.pzw` mode: the ground comes from the cells' `.tmx` maps, not the bitmaps.
+    tmx: Option<TmxWorld>,
+    /// Squares whose tile id no tileset covered (TMX mode).
+    skipped: AtomicUsize,
     name: String,
     opts: &'a Options,
     size: (i64, i64),
@@ -90,16 +95,38 @@ struct Shared<'a> {
 
 /// Compile the map in `project` into lot files in `out`. Returns the number of cells written.
 /// `progress(done_rows, rows)` is called after each row of cells.
-pub fn compile_map(project: &Path, out: &Path, opts: &Options, progress: &(dyn Fn(usize, usize) + Sync)) -> Result<usize, CompileError> {
-    let name = project.file_name().map(|n| n.to_string_lossy().to_string()).unwrap_or_default();
-    let land = project.join(format!("{name}.bmp"));
-    let info = bmp_info(&land)?;
-    let veg = project.join(format!("{name}_veg.bmp"));
-    let vi = bmp_info(&veg)?;
-    if vi.width < info.width || vi.height < info.height {
-        return Err(perr(&veg, "the vegetation picture is smaller than the landscape picture"));
-    }
-    let lots = read_lots(&project.join(format!("{name}.pzw")))?;
+pub fn compile_map(input: &Path, out: &Path, opts: &Options, progress: &(dyn Fn(usize, usize) + Sync)) -> Result<usize, CompileError> {
+    // A path ending in .pzw compiles from the cells' .tmx maps; a folder from the bitmaps.
+    let tmx_mode = input.extension().is_some_and(|e| e.eq_ignore_ascii_case("pzw"));
+    let (folder, name, pzw) = if tmx_mode {
+        let folder = input.parent().filter(|p| !p.as_os_str().is_empty()).unwrap_or(Path::new(".")).to_path_buf();
+        (folder, input.file_stem().map(|n| n.to_string_lossy().to_string()).unwrap_or_default(), input.to_path_buf())
+    } else {
+        let name = input.file_name().map(|n| n.to_string_lossy().to_string()).unwrap_or_default();
+        (input.to_path_buf(), name.clone(), input.join(format!("{name}.pzw")))
+    };
+    let project: &Path = &folder;
+    let (tmx, size) = if tmx_mode {
+        let t = TmxWorld::open(&pzw)?;
+        if !t.has_maps() {
+            return Err(perr(&pzw, "no cell has a .tmx file"));
+        }
+        for w in &t.warnings {
+            eprintln!("warning: {w}");
+        }
+        let size = t.size_tiles();
+        (Some(t), size)
+    } else {
+        let land = project.join(format!("{name}.bmp"));
+        let info = bmp_info(&land)?;
+        let veg = project.join(format!("{name}_veg.bmp"));
+        let vi = bmp_info(&veg)?;
+        if vi.width < info.width || vi.height < info.height {
+            return Err(perr(&veg, "the vegetation picture is smaller than the landscape picture"));
+        }
+        (None, (info.width as i64, info.height as i64))
+    };
+    let lots = read_lots(&pzw)?;
     let mut buildings = Vec::new();
     for l in &lots {
         let p = project.join("buildings").join(format!("{}.tbx", l.name));
@@ -129,7 +156,7 @@ pub fn compile_map(project: &Path, out: &Path, opts: &Options, progress: &(dyn F
         std::fs::write(dir.join("source.txt"), text).map_err(|e| CompileError::Io(dir.join("source.txt"), e))?;
     }
 
-    let shared = Shared { project, name, opts, size: (info.width as i64, info.height as i64), lots, buildings, placed, out, manifest, spawn };
+    let shared = Shared { project, tmx, skipped: AtomicUsize::new(0), name, opts, size, lots, buildings, placed, out, manifest, spawn };
     let rows = (shared.size.1 + SIDE as i64 - 1) / SIDE as i64;
     let workers = opts.workers.unwrap_or_else(|| std::thread::available_parallelism().map_or(1, |n| n.get())).clamp(1, rows.max(1) as usize);
     let (next, done_rows, written) = (AtomicUsize::new(0), AtomicUsize::new(0), AtomicUsize::new(0));
@@ -156,6 +183,10 @@ pub fn compile_map(project: &Path, out: &Path, opts: &Options, progress: &(dyn F
     });
     if let Some(e) = first_error.into_inner().unwrap() {
         return Err(e);
+    }
+    let skipped = shared.skipped.load(Ordering::SeqCst);
+    if skipped > 0 {
+        eprintln!("warning: {skipped} squares use a tile id that no tileset of their map covers; left empty");
     }
     Ok(written.load(Ordering::SeqCst))
 }
@@ -186,41 +217,52 @@ fn do_row(s: &Shared, cy: i64) -> Result<usize, CompileError> {
     let mut pal = Palette::default();
     let wy0 = cy * side;
     let (y_lo, y_hi) = ((wy0 - 1).max(0), (wy0 + side + 1).min(h));
-    let land_path = s.project.join(format!("{}.bmp", s.name));
-    let veg_path = s.project.join(format!("{}_veg.bmp", s.name));
-    let land_strip = read_rgb_rows(&land_path, y_lo, y_hi, Some(w as u32))?;
-    let veg_strip = read_rgb_rows(&veg_path, y_lo, y_hi, Some(w as u32))?;
+    let strips = if s.tmx.is_none() {
+        let land_path = s.project.join(format!("{}.bmp", s.name));
+        let veg_path = s.project.join(format!("{}_veg.bmp", s.name));
+        Some((read_rgb_rows(&land_path, y_lo, y_hi, Some(w as u32))?, read_rgb_rows(&veg_path, y_lo, y_hi, Some(w as u32))?))
+    } else {
+        None
+    };
+    let rows = s.tmx.as_ref().map(|t| t.load_rows(wy0 - 1, wy0 + side + 1, &Generator { rules: &rules, blends: &blends })).transpose()?;
     let win = SIDE + 2;
     let mut written = 0;
     for cx in ORIGIN_X / side..=(ORIGIN_X + w - 1) / side {
         let wx0 = cx * side - ORIGIN_X;
-        let (mut lw, mut vg) = (vec![0u8; win * win * 3], vec![0u8; win * win * 3]);
-        let mut inside = vec![false; win * win];
-        let (x_lo, x_hi) = ((wx0 - 1).max(0), (wx0 + side + 1).min(w));
-        if x_lo < x_hi && y_lo < y_hi {
-            let (sx, sy) = ((x_lo - (wx0 - 1)) as usize, (y_lo - (wy0 - 1)) as usize);
-            for r in 0..(y_hi - y_lo) as usize {
-                for c in 0..(x_hi - x_lo) as usize {
-                    let src = (r * land_strip.cols + x_lo as usize + c) * 3;
-                    let dst = ((sy + r) * win + sx + c) * 3;
-                    lw[dst..dst + 3].copy_from_slice(&land_strip.rgb[src..src + 3]);
-                    vg[dst..dst + 3].copy_from_slice(&veg_strip.rgb[src..src + 3]);
-                    inside[(sy + r) * win + sx + c] = true;
+        let (layers, inside) = if let Some(rows) = &rows {
+            // the editor already chose and blended every tile: take them as saved
+            rows.window(wx0 - 1, wy0 - 1, win, &mut pal)
+        } else {
+            let (land_strip, veg_strip) = strips.as_ref().expect("bitmap mode reads strips");
+            let (mut lw, mut vg) = (vec![0u8; win * win * 3], vec![0u8; win * win * 3]);
+            let mut inside = vec![false; win * win];
+            let (x_lo, x_hi) = ((wx0 - 1).max(0), (wx0 + side + 1).min(w));
+            if x_lo < x_hi && y_lo < y_hi {
+                let (sx, sy) = ((x_lo - (wx0 - 1)) as usize, (y_lo - (wy0 - 1)) as usize);
+                for r in 0..(y_hi - y_lo) as usize {
+                    for c in 0..(x_hi - x_lo) as usize {
+                        let src = (r * land_strip.cols + x_lo as usize + c) * 3;
+                        let dst = ((sy + r) * win + sx + c) * 3;
+                        lw[dst..dst + 3].copy_from_slice(&land_strip.rgb[src..src + 3]);
+                        vg[dst..dst + 3].copy_from_slice(&veg_strip.rgb[src..src + 3]);
+                        inside[(sy + r) * win + sx + c] = true;
+                    }
                 }
             }
-        }
-        let mut layers = ground_layers(&lw, &vg, win, win, &rules, &mut pal, s.opts.seed, wx0 - 1, wy0 - 1);
-        for (_, g) in layers.0.iter_mut() {
-            for (i, v) in g.data.iter_mut().enumerate() {
-                if !inside[i] {
-                    *v = 0;
+            let mut layers = ground_layers(&lw, &vg, win, win, &rules, &mut pal, s.opts.seed, wx0 - 1, wy0 - 1);
+            for (_, g) in layers.0.iter_mut() {
+                for (i, v) in g.data.iter_mut().enumerate() {
+                    if !inside[i] {
+                        *v = 0;
+                    }
                 }
             }
-        }
-        if let Some(floor) = layers.get("0_Floor").cloned() {
-            let b = blend_layers(&floor, &rules, &blends, &mut pal, s.opts.seed, wx0 - 1, wy0 - 1, if s.opts.seams { Some(300) } else { None }).map_err(|e| perr(s.project, e.to_string()))?;
-            layers.update(b);
-        }
+            if let Some(floor) = layers.get("0_Floor").cloned() {
+                let b = blend_layers(&floor, &rules, &blends, &mut pal, s.opts.seed, wx0 - 1, wy0 - 1, if s.opts.seams { Some(300) } else { None }).map_err(|e| perr(s.project, e.to_string()))?;
+                layers.update(b);
+            }
+            (layers, inside)
+        };
         let cropped: Layers = Layers(
             layers
                 .0
@@ -237,7 +279,8 @@ fn do_row(s: &Shared, cy: i64) -> Result<usize, CompileError> {
                 .collect(),
         );
         let names: Vec<String> = cropped.0.iter().map(|(k, _)| k.clone()).collect();
-        let order = stack_order(&names);
+        // TMX layers are already in saving order (level, then file order); bitmap layers use the fixed table
+        let order = if rows.is_some() { names.clone() } else { stack_order(&names) };
 
         // the stacks of the cell: level 0 is ground and buildings, above it buildings only
         let mut stacks: Vec<((usize, usize, usize), Vec<String>)> = Vec::new();
@@ -301,6 +344,9 @@ fn do_row(s: &Shared, cy: i64) -> Result<usize, CompileError> {
             std::fs::write(&p, data).map_err(|e| CompileError::Io(p, e))?;
         }
         written += 1;
+    }
+    if let Some(rows) = &rows {
+        s.skipped.fetch_add(rows.skipped(), Ordering::SeqCst);
     }
     Ok(written)
 }

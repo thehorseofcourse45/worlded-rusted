@@ -134,7 +134,13 @@ pub fn ground_layers(land: &[u8], veg: &[u8], w: usize, h: usize, rules: &Rulese
     let (land_key, veg_key) = (colour_keys(land), colour_keys(veg));
     let in_land: HashSet<i64> = land_key.iter().copied().collect();
     let in_veg: HashSet<i64> = veg_key.iter().copied().collect();
-    for (n, rule) in rules.rules.iter().enumerate() {
+    // WorldEd applies every landscape rule, then every vegetation rule: where both pictures give a
+    // tile on the same layer the vegetation one wins (measured against WorldEd, not file order).
+    // `n` stays the rule's place in the file: it salts the random picks.
+    let mut order: Vec<usize> = (0..rules.rules.len()).collect();
+    order.sort_by_key(|&i| rules.rules[i].bitmap != 0);
+    for n in order {
+        let rule = &rules.rules[n];
         let k = key(rule.color);
         if !(if rule.bitmap == 0 { &in_land } else { &in_veg }).contains(&k) {
             continue;
