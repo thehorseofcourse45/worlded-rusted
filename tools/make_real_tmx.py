@@ -1,6 +1,6 @@
 """Make real WorldEd .tmx files by running the WorldEd command line on a generated map.
 
-    python tools/make_real_tmx.py <out folder> [--exe PATH] [--size N]
+    python tools/make_real_tmx.py <out folder> [--exe PATH] [--size N] [--lots]
 
 Builds a test project with make_test_map.py, runs `PZWorldEd_cli --generate-map=<pzw>
 --cells=0,0,0,0` (the same call KnoxMap makes; it also converts the bitmap to tmx/*.tmx),
@@ -8,6 +8,7 @@ and reports the tmx files produced. Never pass --help to the exe: it opens the G
 """
 import glob
 import os
+import re
 import subprocess
 import sys
 
@@ -64,7 +65,11 @@ def main(argv):
     subprocess.run([sys.executable, os.path.join(HERE, "make_test_map.py"), project, "--size", size], check=True)
     pzw = os.path.join(project, "rt.pzw")
     n = (int(size) + 299) // 300
-    cells = "".join(f' <cell x="{x}" y="{y}" map="">\n </cell>\n' for y in range(n) for x in range(n))
+    lots = {}
+    if "--lots" in argv:  # keep the building placements make_test_map.py wrote (real1's lots)
+        for m in re.finditer(r'<cell x="(\d+)" y="(\d+)"[^>]*>(.*?)</cell>', open(pzw, encoding="utf-8").read(), re.S):
+            lots[(int(m.group(1)), int(m.group(2)))] = "".join(f"  {l}\n" for l in re.findall(r"<lot [^>]*/>", m.group(3)))
+    cells = "".join(f' <cell x="{x}" y="{y}" map="">\n{lots.get((x, y), "")} </cell>\n' for y in range(n) for x in range(n))
     text = PZW.format(n=n, d=project.replace("\\", "/"), cells=cells)
     open(pzw, "w", encoding="utf-8", newline="\n").write(text)
     for d in ("tmx", "lots"):

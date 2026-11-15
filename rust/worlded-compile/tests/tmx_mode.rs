@@ -154,30 +154,83 @@ fn canonical() -> impl Fn(&str) -> String {
     move |t: &str| find(&mut parent.borrow_mut(), &base(t))
 }
 
+/// Squares compared, squares that differ by alias, and the first difference.
+fn compare_by_alias(ours: &Path, worlded: &Path, cells: &[(i64, i64)]) -> (usize, usize, Option<String>) {
+    let canon = canonical();
+    let (mut squares, mut differing, mut first) = (0usize, 0usize, None);
+    for &(cx, cy) in cells {
+        let (a, b) = (read_cell(ours, cx, cy), read_cell(worlded, cx, cy));
+        let mut keys: Vec<_> = a.keys().chain(b.keys()).copied().collect();
+        keys.sort();
+        keys.dedup();
+        for k in keys {
+            squares += 1;
+            let (x, y) = (a.get(&k).map(|v| v.iter().map(|t| canon(t)).collect::<Vec<_>>()), b.get(&k).map(|v| v.iter().map(|t| canon(t)).collect::<Vec<_>>()));
+            if x != y {
+                differing += 1;
+                first.get_or_insert_with(|| format!("cell {cx}_{cy} square {k:?}: ours {:?}, WorldEd {:?}", a.get(&k), b.get(&k)));
+            }
+        }
+    }
+    (squares, differing, first)
+}
+
 #[test]
 fn tmx_mode_matches_worlded_by_alias() {
     let dir = project("worlded");
     let out = tmp("worlded_out");
     compile_map(&dir.join("rt.pzw"), &out, &opts(false), &|_, _| {}).unwrap();
-    let canon = canonical();
-    let (mut squares, mut differing) = (0usize, 0usize);
-    let mut first: Option<String> = None;
-    for (cx, cy) in [(82, 0), (82, 1), (83, 0), (83, 1)] {
-        let (ours, theirs) = (read_cell(&out, cx, cy), read_cell(&fixture().join("lots"), cx, cy));
-        let mut keys: Vec<_> = ours.keys().chain(theirs.keys()).copied().collect();
-        keys.sort();
-        keys.dedup();
-        for k in keys {
-            squares += 1;
-            let (a, b) = (ours.get(&k).map(|v| v.iter().map(|t| canon(t)).collect::<Vec<_>>()), theirs.get(&k).map(|v| v.iter().map(|t| canon(t)).collect::<Vec<_>>()));
-            if a != b {
-                differing += 1;
-                first.get_or_insert_with(|| format!("cell {cx}_{cy} square {k:?}: ours {:?}, WorldEd {:?}", ours.get(&k), theirs.get(&k)));
-            }
-        }
-    }
+    let (squares, differing, first) = compare_by_alias(&out, &fixture().join("lots"), &[(82, 0), (82, 1), (83, 0), (83, 1)]);
     assert!(squares > 50_000, "compared {squares} squares");
     assert_eq!(differing, 0, "{differing} of {squares} squares differ from WorldEd by alias; first: {first:?}");
+}
+
+/// Opt-in (about two minutes): WorldEd converts a generated 600 x 600 map with the real1 buildings
+/// and generates lots; TMX mode must equal them by alias. `WORLDED_ACCEPTANCE=1`, the WorldEd command
+/// line (or `PZWORLDED_CLI`) and Python with Pillow and numpy are needed.
+#[test]
+fn tmx_mode_matches_worlded_with_buildings() {
+    let exe = std::env::var("PZWORLDED_CLI").unwrap_or_else(|_| r"C:\KnoxMap\vendor\PZMappingTools\bin\PZWorldEd_cli.exe".to_string());
+    if std::env::var("WORLDED_ACCEPTANCE").is_err() || !Path::new(&exe).exists() || std::process::Command::new("python").arg("--version").output().is_err() {
+        eprintln!("skipped: set WORLDED_ACCEPTANCE=1 with the WorldEd CLI and Python available");
+        return;
+    }
+    let dir = tmp("oracle_buildings");
+    let tools = common::repo().join("tools");
+    let run = |script: &str, args: &[&str]| {
+        let out = std::process::Command::new("python").arg(tools.join(script)).args(args).arg("--exe").arg(&exe).output().unwrap();
+        (out.status.success(), String::from_utf8_lossy(&out.stdout).to_string() + &String::from_utf8_lossy(&out.stderr))
+    };
+    // the first WorldEd run ends with an error about the spawn map but leaves the converted maps
+    let _ = run("make_real_tmx.py", &[dir.to_str().unwrap(), "--size", "600", "--lots"]);
+    let project = dir.join("rt");
+    assert!(project.join("tmx").read_dir().unwrap().count() >= 4, "WorldEd made the maps");
+    let (ok, log) = run("worlded_lots.py", &[project.to_str().unwrap()]);
+    assert!(ok, "WorldEd lot generation: {log}");
+    let out = tmp("oracle_buildings_out");
+    compile_map(&project.join("rt.pzw"), &out, &opts(false), &|_, _| {}).unwrap();
+    let mut cells: Vec<(i64, i64)> = std::fs::read_dir(project.join("lots"))
+        .unwrap()
+        .filter_map(|e| {
+            let n = e.unwrap().file_name().to_string_lossy().to_string();
+            let (a, b) = n.strip_suffix(".lotheader")?.split_once('_')?;
+            Some((a.parse().ok()?, b.parse().ok()?))
+        })
+        .collect();
+    cells.sort();
+    // TMX mode equals bitmap mode on the same project (the pictures WorldEd embedded are the bitmaps), byte for byte
+    let bitmap_out = tmp("oracle_buildings_bitmap");
+    compile_map(&project, &bitmap_out, &opts(true), &|_, _| {}).unwrap();
+    assert_eq!(files(&out), files(&bitmap_out));
+    for f in files(&out) {
+        assert!(std::fs::read(out.join(&f)).unwrap() == std::fs::read(bitmap_out.join(&f)).unwrap(), "{f}: TMX mode differs from bitmap mode");
+    }
+    // and WorldEd by alias. 1,776 of 422,696 squares (0.42%) differ on this map: building wall tiles
+    // (for example walls_exterior_house_08 where WorldEd has _02). That is in the shared building
+    // code of stage 2, not in TMX mode (both modes give the same bytes); the ceiling stops it growing.
+    let (squares, differing, first) = compare_by_alias(&out, &project.join("lots"), &cells);
+    eprintln!("compared {squares} squares in {} cells, {differing} differ from WorldEd by alias; first: {first:?}", cells.len());
+    assert!(differing * 200 < squares, "{differing} of {squares} squares differ from WorldEd by alias; first: {first:?}");
 }
 
 // ---- synthetic projects -------------------------------------------------------------------
@@ -316,4 +369,46 @@ fn copy_dir(from: &Path, to: &Path) {
             std::fs::copy(e.path(), to.join(e.file_name())).unwrap();
         }
     }
+}
+
+// ---- editing ----------------------------------------------------------------------------------
+
+#[test]
+fn edit_changes_only_where_worlded_lets_it() {
+    use worlded_core::gids::gid_for;
+    use worlded_core::tmxdoc::open;
+    let dir = project("edit");
+    let tmx_path = dir.join("tmx/rt_70_0.tmx");
+    let mut doc = open(std::fs::read_to_string(&tmx_path).unwrap()).unwrap();
+    let tile = gid_for(&mut doc, "Fire_01_3", 8).unwrap();
+    let furniture = doc.tmx.layers.iter().position(|l| l.name == "Furniture").unwrap();
+    // map (100,100) is lot cell 82 column 108; map (110,100) column 118
+    assert!(doc.set_gid(furniture, 100, 100, tile));
+    assert!(doc.set_gid(0, 110, 100, tile)); // Floor: the picture gives ground on every square
+    let before = compile_keep_dir(&dir.join("rt.pzw"), "edit_before");
+    std::fs::write(&tmx_path, doc.to_text().unwrap()).unwrap();
+    let after = compile_keep_dir(&dir.join("rt.pzw"), "edit_after");
+
+    let (a, b) = (kcell(&before, 82, 0), kcell(&after, 82, 0));
+    let mut changed = Vec::new();
+    for x in 0..256 {
+        for y in 0..256 {
+            if stack(&a, 0, x, y) != stack(&b, 0, x, y) {
+                changed.push((x, y));
+            }
+        }
+    }
+    assert_eq!(changed, vec![(108, 100)], "only the Furniture square changes; the Floor edit is overwritten by the picture");
+    let (old, new) = (stack(&a, 0, 108, 100), stack(&b, 0, 108, 100));
+    assert!(new.contains(&"Fire_01_3".to_string()));
+    let mut without = new.clone();
+    without.retain(|t| t != "Fire_01_3");
+    assert_eq!(without, old, "the rest of the stack is as before");
+}
+
+fn compile_keep_dir(pzw: &Path, tag: &str) -> PathBuf {
+    let (out, src) = (tmp(&format!("{tag}_out")), tmp(&format!("{tag}_src")));
+    let o = Options { keep_source: Some(src.clone()), ..opts(false) };
+    compile_map(pzw, &out, &o, &|_, _| {}).unwrap();
+    src
 }

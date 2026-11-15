@@ -31,9 +31,13 @@ def main(argv):
     Image.new("RGB", (30 * n, 30 * n), (0, 0, 0)).save(spawn)
     text = re.sub(r'<ZombieSpawnMap path="[^"]*"/>', f'<ZombieSpawnMap path="{spawn}"/>', text)
     text = re.sub(r'<exportdir path="[^"]*"/>', f'<exportdir path="{project}/lots"/>', text)
-    tmxs = sorted(glob.glob(project + "/tmx/*.tmx"))
-    for i, t in enumerate(tmxs):
-        text = re.sub(rf'(<cell x="{i % n}" y="{i // n}" map=")[^"]*"', lambda m: m.group(1) + t.replace("\\", "/") + '"', text, 1)
+    for t in sorted(glob.glob(project + "/tmx/*.tmx")):
+        # WorldEd names a cell's map <name>_<origin x + x>_<origin y + y>.tmx; the origin is 70,0
+        found = re.search(r"_(\d+)_(\d+)\.tmx$", t)
+        if not found:
+            continue
+        x, y = int(found.group(1)) - 70, int(found.group(2))
+        text = re.sub(rf'(<cell x="{x}" y="{y}" map=")[^"]*"', lambda m: m.group(1) + t.replace("\\", "/") + '"', text, count=1)
     open(pzw, "w", encoding="utf-8", newline="\n").write(text)
     for old in glob.glob(project + "/lots/*"):
         os.remove(old)

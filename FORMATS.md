@@ -44,6 +44,26 @@ UTF-8, LF line endings, one space of indent per level, 2695 lines, 327 KB.
 - Only one real cell was made so far (a second one would be the same shape: every 300x300 cell
   has all 15 layers).
 
+### What a TMX from BMP to TMX really holds (measured against WorldEd, 2026-11-15)
+
+- **The tile layers are empty.** The ground is not in them. Each `<bmp-image index="0|1" seed="N">`
+  (0 landscape, 1 vegetation) holds `<color rgb="r g b"/>` lines and `<pixels>`: base64 of gzip of
+  300 x 300 little-endian `u32`, each a 1-based index into the colour list (0 = no colour). WorldEd
+  generates the ground from them with the rules and blends (`<bmp-settings>` embeds copies; the file
+  names `Rules.txt`/`Blends.txt`) each time it makes lot files. Read by `worlded_core::tmx::parse_bmp_images`.
+- **Merge with the layers**, per square, for the layers the pictures generate (`Floor`,
+  `FloorOverlay`, `FloorOverlay2` to `4`, `FloorOverlay6`, `Curbs`, `Vegetation`): the generated tile
+  if there is one, else the layer's own tile. The other layers (`FloorOverlay5`, `Walls`, `Walls2`,
+  `Furniture` to `Furniture4`) are the layers alone. A tile edit on `Floor` is therefore lost wherever
+  the picture gives ground (everywhere, normally). Tiles of a square come in layer (file) order.
+- **Rule order.** All landscape-picture rules are applied before all vegetation-picture rules, so
+  where both give a tile on the same layer the vegetation one wins (file order does not decide it).
+- **Not reproducible:** which entry a rule picks at random (WorldEd's random numbers), and WorldEd's
+  real `chunkdata`. Comparisons with WorldEd are by alias group, `chunkdata` ignored.
+- `worlded <project>.pzw` (stage 4a) compiles lots from such maps: ground from the pictures, merged
+  with the layers, plus buildings. Rules are read from `Rules.txt` (the embedded copies are ignored),
+  `obsolete = true` rules are not skipped (not checked against WorldEd), blends are per 300 x 300 cell.
+
 ## `.pack` (Project Zomboid texture pack, `media/texturepacks/*.pack`)
 
 All integers little-endian u32.

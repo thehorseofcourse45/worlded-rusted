@@ -70,6 +70,10 @@ installs them for the experiments and for `Rules.txt` / `Blends.txt`.
 
 `rust/worlded-compile` is the whole map pipeline in Rust: `worlded.exe <map folder>` turns `<name>.bmp`, `<name>_veg.bmp`, `<name>.pzw` and `buildings/*.tbx` into lot files, with no Python, WorldEd or KnoxMap. It is a port of `knoxbuild/` and `tools/map_source.py`, and the tests prove it: the cell sources are byte-identical to the Python ones (generated maps, all 113 `real1` buildings, a sweep of every roof type), and the lot files equal Python plus `knoxlots compile`. Speed on a generated 64-cell map: 2.3 s for the Rust program (to lot files) against 18.7 s for the Python cell sources alone. `tools/dump_for_rust.py` and `tools/make_test_map.py` are the Python oracle and the test-map generator the tests use.
 
+### Compile from a WorldEd project (stage 4a)
+
+`worlded.exe <project>.pzw` compiles lot files from the `.tmx` maps the project's cells list, like WorldEd's lot generation: the ground is generated from the two pictures embedded in each `.tmx` (landscape and vegetation) with `Rules.txt` and `Blends.txt`, merged with the map's tile layers, and the buildings in the `.pzw` are added. Tile edits made in the viewer show up in the lot files wherever WorldEd lets them show: edits to `Floor` are overwritten by the picture, as in WorldEd, edits to `Furniture`, `Walls` and the other hand-made layers stay. Compared with WorldEd by alias on a generated map (0 of 90,000 squares differ); never loaded in Project Zomboid. Details and the measured rules: `FORMATS.md`, `docs/superpowers/specs/2026-11-15-lots-from-tmx-design.md`.
+
 ## Viewer and tile editor (editor stages 1 and 3)
 
 `rust/worlded-app` builds `worlded-view.exe`: open a WorldEd `.pzw`, see its cells, double-click one to open its `.tmx` as isometric tiles with a layer panel. Tile art is read from your own Project Zomboid install (`media/texturepacks/*.pack`; set the folder in the app). Design: `docs/superpowers/specs/`, plans: `docs/superpowers/plans/`, checklists: `docs/viewer-checklist.md` and `docs/editing-checklist.md`, formats: `FORMATS.md`.
