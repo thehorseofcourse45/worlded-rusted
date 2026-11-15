@@ -1,0 +1,72 @@
+
+blend
+{
+    layer = 0_FloorOverlay
+    mainTile = grass
+    blendTile = ov_n
+    dir = n
+    exclude = 
+}
+
+blend
+{
+    layer = 0_FloorOverlay2
+    mainTile = grass
+    blendTile = ov_w
+    dir = w
+    exclude = 
+}
+
+blend
+{
+    layer = 0_FloorOverlay3
+    mainTile = grass
+    blendTile = ov_e
+    dir = e
+    exclude = 
+}
+
+blend
+{
+    layer = 0_FloorOverlay4
+    mainTile = grass
+    blendTile = ov_s
+    dir = s
+    exclude = 
+}
+
+blend
+{
+    layer = 0_FloorOverlay
+    mainTile = grass
+    blendTile = ov_nw
+    dir = nw
+    exclude = 
+}
+
+blend
+{
+    layer = 0_FloorOverlay2
+    mainTile = grass
+    blendTile = ov_ne
+    dir = ne
+    exclude = 
+}
+
+blend
+{
+    layer = 0_FloorOverlay3
+    mainTile = grass
+    blendTile = ov_sw
+    dir = sw
+    exclude = 
+}
+
+blend
+{
+    layer = 0_FloorOverlay4
+    mainTile = grass
+    blendTile = ov_se
+    dir = se
+    exclude = 
+}

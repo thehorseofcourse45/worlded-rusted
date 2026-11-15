@@ -1,0 +1,35 @@
+version = 1
+
+alias
+{
+    name = grass
+    tiles = [
+        g_0
+        g_1
+        g_2
+        g_3
+    ]
+}
+
+rule
+{
+label = Grass
+    bitmap = 0
+    color = 10 20 30
+    tiles = grass
+    layer = 0_Floor
+}
+
+rule
+{
+label = Trees
+    bitmap = 1
+    color = 255 0 0
+    tiles = [
+        tree_a
+        tree_b
+        grass
+    ]
+    layer = 0_Vegetation
+    condition = 10 20 30
+}

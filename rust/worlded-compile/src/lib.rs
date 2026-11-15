@@ -1,5 +1,7 @@
 //! Map compiler: map folder to lot files. A port of knoxbuild/ and tools/map_source.py.
+pub mod blends;
 pub mod bmp;
+pub mod rules;
 
 use std::path::PathBuf;
 

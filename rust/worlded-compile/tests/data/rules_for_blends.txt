@@ -1,0 +1,9 @@
+
+alias
+{
+    name = grass
+    tiles = [
+        g_0
+        g_1
+    ]
+}
