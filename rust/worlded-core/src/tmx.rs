@@ -30,6 +30,17 @@ pub fn parse_tmx(path: &Path) -> Result<Tmx, CoreError> {
 }
 
 pub fn parse_tmx_str(text: &str) -> Result<Tmx, CoreError> {
+    parse_inner(text, false).map(|(t, _)| t)
+}
+
+/// One layer's data as stored: flip flags kept, `readable` false when the encoding or
+/// compression is unknown (lenient mode; the layer then shows as all empty).
+pub(crate) struct RawLayer {
+    pub raw: Vec<u32>,
+    pub readable: bool,
+}
+
+pub(crate) fn parse_inner(text: &str, lenient: bool) -> Result<(Tmx, Vec<RawLayer>), CoreError> {
     let doc = roxmltree::Document::parse(text).map_err(|e| CoreError::Parse(e.to_string()))?;
     let root = doc.root_element();
     if root.tag_name().name() != "map" {
@@ -47,24 +58,30 @@ pub fn parse_tmx_str(text: &str) -> Result<Tmx, CoreError> {
         .map(|n| TilesetRef { first_gid: dim(n, "firstgid"), name: n.attribute("name").unwrap_or("").to_string() })
         .collect();
     let mut layers = Vec::new();
+    let mut raws = Vec::new();
     for n in root.children().filter(|n| n.has_tag_name("layer")) {
         let data = n.children().find(|c| c.has_tag_name("data")).ok_or_else(|| CoreError::Parse("layer without data".into()))?;
-        let mut gids = decode(data.text().unwrap_or(""), data.attribute("encoding"), data.attribute("compression"), width as usize * height as usize)?;
         let want = width as usize * height as usize;
-        if gids.len() != want {
-            return Err(CoreError::Parse(format!("layer has {} tiles, map needs {want}", gids.len())));
+        let (raw, readable) = match decode(data.text().unwrap_or(""), data.attribute("encoding"), data.attribute("compression"), want) {
+            Ok(v) => (v, true),
+            Err(CoreError::Parse(m)) if lenient && (m == "unknown compression" || m == "unsupported data encoding") => (vec![0; want], false),
+            Err(e) => return Err(e),
+        };
+        if raw.len() != want {
+            return Err(CoreError::Parse(format!("layer has {} tiles, map needs {want}", raw.len())));
         }
-        gids.iter_mut().for_each(|g| *g &= !FLAGS);
+        let gids = raw.iter().map(|g| g & !FLAGS).collect();
+        raws.push(RawLayer { raw, readable });
         layers.push(Layer {
             name: n.attribute("name").unwrap_or("").to_string(),
             visible: n.attribute("visible") != Some("0"),
             gids,
         });
     }
-    Ok(Tmx { width, height, tilesets, layers })
+    Ok((Tmx { width, height, tilesets, layers }, raws))
 }
 
-fn decode(text: &str, encoding: Option<&str>, compression: Option<&str>, want: usize) -> Result<Vec<u32>, CoreError> {
+pub(crate) fn decode(text: &str, encoding: Option<&str>, compression: Option<&str>, want: usize) -> Result<Vec<u32>, CoreError> {
     let bad = |s: &str| CoreError::Parse(s.to_string());
     match encoding {
         Some("csv") => text
@@ -104,4 +121,33 @@ pub fn tile_name(tmx: &Tmx, gid: u32) -> Option<String> {
     }
     let ts = tmx.tilesets.iter().filter(|t| t.first_gid <= gid).max_by_key(|t| t.first_gid)?;
     Some(format!("{}_{}", ts.name, gid - ts.first_gid))
+}
+
+/// Inverse of `decode`: gids to the text body of a `<data>` element for the given
+/// encoding (`csv` or `base64`) and compression (`zlib`, `gzip` or empty).
+pub fn encode_data(gids: &[u32], encoding: &str, compression: &str) -> Result<String, CoreError> {
+    use std::io::Write;
+    let bad = |s: &str| CoreError::Parse(s.to_string());
+    match encoding {
+        "csv" => Ok(gids.iter().map(u32::to_string).collect::<Vec<_>>().join(",")),
+        "base64" => {
+            let bytes: Vec<u8> = gids.iter().flat_map(|g| g.to_le_bytes()).collect();
+            let packed = match compression {
+                "zlib" => {
+                    let mut e = flate2::write::ZlibEncoder::new(Vec::new(), flate2::Compression::default());
+                    e.write_all(&bytes)?;
+                    e.finish()?
+                }
+                "gzip" => {
+                    let mut e = flate2::write::GzEncoder::new(Vec::new(), flate2::Compression::default());
+                    e.write_all(&bytes)?;
+                    e.finish()?
+                }
+                "" => bytes,
+                _ => return Err(bad("unknown compression")),
+            };
+            Ok(base64::engine::general_purpose::STANDARD.encode(packed))
+        }
+        _ => Err(bad("unsupported data encoding")),
+    }
 }
