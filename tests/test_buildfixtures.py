@@ -37,12 +37,14 @@ class WorldEdTests(unittest.TestCase):
                     actual = [t for t in actual if not t.startswith(TERRAIN)]
                     self.assertEqual(pred.get((x, y), []), actual, f"{name}: level {z}, ({x},{y})")
 
+    @unittest.skipUnless((FIXTURES / "bx").is_dir(), "bx fixtures are gitignored; set KNOXLOTS_FIXTURES")
     def test_all_handmade_cases(self):
         for folder in sorted((FIXTURES / "bx").iterdir()):
             if folder.is_dir():
                 with self.subTest(case=folder.name):
                     self.check_building(folder, folder.name, 40, 40)
 
+    @unittest.skipUnless((FIXTURES / "exp").is_dir(), "exp fixtures are gitignored; set KNOXLOTS_FIXTURES")
     def test_four_level_house(self):
         self.check_building(FIXTURES / "exp/house", "house_0000", 269, 592)
 

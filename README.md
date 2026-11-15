@@ -68,6 +68,9 @@ installs them for the experiments and for `Rules.txt` / `Blends.txt`.
 
 ## Build and test
 
+`knoxbuild/__init__.py` finds the rest of KnoxMap's `knoxbuild` (bitmaps) via `KNOXMAP_DIR`, `../knoxmap` or `C:/KnoxMap`, so no copying is needed.
+A map folder needs `<name>.bmp`, `<name>_veg.bmp`, `<name>.pzw` and `buildings/*.tbx` (the `.bmp` files are gitignored, so `real1` here has no pictures; make your own or export one from KnoxMap).
+
 ```
 cd rust/knoxlots && cargo test --release && cargo build --release
 python -m unittest discover -s tests -p "test_[bt]*.py"
