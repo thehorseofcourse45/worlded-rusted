@@ -179,3 +179,141 @@ fn tmx_mode_matches_worlded_by_alias() {
     assert!(squares > 50_000, "compared {squares} squares");
     assert_eq!(differing, 0, "{differing} of {squares} squares differ from WorldEd by alias; first: {first:?}");
 }
+
+// ---- synthetic projects -------------------------------------------------------------------
+
+/// A 300 x 300 map: tileset `t` (gid 1 is `t_0`) and csv layers `(name, level, tiles)`, no pictures.
+fn tmx_text(layers: &[(&str, i32, &[(usize, usize, u32)])]) -> String {
+    let mut s = String::from("<map width=\"300\" height=\"300\"><tileset firstgid=\"1\" name=\"t\"/>");
+    for (name, level, tiles) in layers {
+        let mut g = vec![0u32; 300 * 300];
+        for &(x, y, gid) in *tiles {
+            g[y * 300 + x] = gid;
+        }
+        let body: Vec<String> = g.iter().map(u32::to_string).collect();
+        s += &format!("<layer name=\"{name}\" level=\"{level}\"><data encoding=\"csv\">{}</data></layer>", body.join(","));
+    }
+    s + "</map>"
+}
+
+/// A project folder `p` with `<name>.pzw` (cells `cells_x` x `cells_y`, one `.tmx` per `(x, y, text)`, plus `lots_xml`).
+fn synth(tag: &str, cells_x: u32, cells_y: u32, maps: &[(u32, u32, String)], lots_xml: &str) -> PathBuf {
+    let dir = tmp(tag).join("p");
+    std::fs::create_dir_all(&dir).unwrap();
+    let mut pzw = format!("<?xml version=\"1.0\"?>\n<world version=\"1.0\" width=\"{cells_x}\" height=\"{cells_y}\">\n <GenerateLots><worldOrigin origin=\"70,0\"/></GenerateLots>\n");
+    for y in 0..cells_y {
+        for x in 0..cells_x {
+            let file = maps.iter().find(|m| m.0 == x && m.1 == y).map(|(_, _, t)| {
+                let f = format!("c_{x}_{y}.tmx");
+                std::fs::write(dir.join(&f), t).unwrap();
+                f
+            });
+            pzw += &format!(" <cell x=\"{x}\" y=\"{y}\" map=\"{}\">\n", file.unwrap_or_default());
+            if x == 0 && y == 0 {
+                pzw += lots_xml;
+            }
+            pzw += " </cell>\n";
+        }
+    }
+    pzw += "</world>\n";
+    std::fs::write(dir.join("p.pzw"), pzw).unwrap();
+    dir.join("p.pzw")
+}
+
+/// Compile in TMX mode keeping the cell sources; returns the output folder of the `.kcell` files.
+fn compile_keep(pzw: &Path) -> Result<PathBuf, String> {
+    let base = pzw.parent().unwrap().parent().unwrap(); // the project's own temp folder: tests run in parallel
+    let (out, src) = (base.join("out"), base.join("src"));
+    let o = Options { keep_source: Some(src.clone()), ..opts(false) };
+    compile_map(pzw, &out, &o, &|_, _| {}).map_err(|e| e.to_string())?;
+    Ok(src)
+}
+
+fn kcell(src: &Path, cx: i64, cy: i64) -> knoxlots::kcell::KCell {
+    knoxlots::kcell::KCell::parse(&std::fs::read(src.join(format!("cell_{cx}_{cy}.kcell"))).unwrap()).unwrap()
+}
+
+/// Tile names of one square, bottom first (empty when there is none).
+fn stack(k: &knoxlots::kcell::KCell, z: usize, x: usize, y: usize) -> Vec<String> {
+    if z >= k.squares.levels {
+        return Vec::new();
+    }
+    k.squares.get(z, x, y).map(|s| s.tiles.iter().map(|&t| k.squares.names[t as usize].clone()).collect()).unwrap_or_default()
+}
+
+#[test]
+fn tmx_layer_at_level_2_lands_on_level_2() {
+    let pzw = synth("lv2", 1, 1, &[(0, 0, tmx_text(&[("Floor", 0, &[]), ("Walls", 2, &[(5, 5, 2)])]))], "");
+    let k = kcell(&compile_keep(&pzw).unwrap(), 82, 0);
+    // map x 5 is world 21005: lot cell 82, column 13
+    assert_eq!(stack(&k, 2, 13, 5), vec!["t_1"]);
+    assert!(stack(&k, 1, 13, 5).is_empty() && stack(&k, 0, 13, 5).is_empty());
+}
+
+#[test]
+fn more_than_64_levels_is_still_an_error() {
+    let pzw = synth("lv70", 1, 1, &[(0, 0, tmx_text(&[("Walls", 70, &[(5, 5, 2)])]))], "");
+    let e = compile_keep(&pzw).unwrap_err();
+    assert!(e.contains("levels"), "{e}");
+}
+
+#[test]
+fn tiles_across_the_cell_seam_and_the_lot_cell_edge_land_in_the_right_places() {
+    // two 300-tile cells side by side: map x 247/248 straddle the lot cells 82/83, x 299/300 the cell seam
+    let a = tmx_text(&[("Floor", 0, &[(247, 7, 2), (248, 7, 3), (299, 8, 4)])]);
+    let b = tmx_text(&[("Floor", 0, &[(0, 8, 5)])]);
+    let pzw = synth("seam", 2, 1, &[(0, 0, a), (1, 0, b)], "");
+    let src = compile_keep(&pzw).unwrap();
+    let (k82, k83) = (kcell(&src, 82, 0), kcell(&src, 83, 0));
+    assert_eq!(stack(&k82, 0, 255, 7), vec!["t_1"]);
+    assert_eq!(stack(&k83, 0, 0, 7), vec!["t_2"]);
+    assert_eq!(stack(&k83, 0, 51, 8), vec!["t_3"]);
+    assert_eq!(stack(&k83, 0, 52, 8), vec!["t_4"]);
+}
+
+#[test]
+fn room_squares_keep_building_tiles_only_and_other_building_squares_keep_ground_too() {
+    // the real1 fixture's buildings in cell 0,0, with a map that has ground (t_0) on every square
+    let real1 = common::repo().join("rust/knoxlots/fixtures/real/real1");
+    let text = std::fs::read_to_string(real1.join("real1.pzw")).unwrap();
+    let lots: String = text.lines().filter(|l| l.trim_start().starts_with("<lot ")).take_while(|_| true).map(|l| format!("{l}\n")).collect();
+    let all: Vec<(usize, usize, u32)> = (0..300).flat_map(|y| (0..300).map(move |x| (x, y, 1u32))).collect();
+    let pzw = synth("rooms", 1, 1, &[(0, 0, tmx_text(&[("Floor", 0, &all)]))], &lots);
+    let dir = pzw.parent().unwrap().to_path_buf();
+    copy_dir(&real1.join("buildings"), &dir.join("buildings"));
+    let with = kcell(&compile_keep(&pzw).unwrap(), 82, 0);
+    // the same project with an empty map: what the buildings alone put on each square
+    let bare = synth("rooms_bare", 1, 1, &[(0, 0, tmx_text(&[("Floor", 0, &[])]))], &lots);
+    copy_dir(&real1.join("buildings"), &bare.parent().unwrap().join("buildings"));
+    let none = kcell(&compile_keep(&bare).unwrap(), 82, 0);
+    let (mut rooms, mut open) = (0, 0);
+    for x in 0..256usize {
+        for y in 0..256usize {
+            let (mx, my) = (x as i64 + 82 * 256 - 21000, y);
+            if !(0..300).contains(&mx) {
+                continue;
+            }
+            let (a, b) = (stack(&with, 0, x, y), stack(&none, 0, x, y));
+            if b.is_empty() {
+                assert_eq!(a, vec!["t_0"], "ground alone at ({mx},{my})");
+            } else if a == b {
+                rooms += 1; // building tiles only: the ground was dropped
+            } else {
+                assert_eq!(a[0], "t_0", "ground goes first at ({mx},{my})");
+                assert_eq!(a[1..], b[..], "then the building tiles");
+                open += 1;
+            }
+        }
+    }
+    assert!(rooms > 100 && open > 10, "rooms {rooms}, open building squares {open}");
+}
+
+fn copy_dir(from: &Path, to: &Path) {
+    std::fs::create_dir_all(to).unwrap();
+    for e in std::fs::read_dir(from).unwrap() {
+        let e = e.unwrap();
+        if e.file_type().unwrap().is_file() {
+            std::fs::copy(e.path(), to.join(e.file_name())).unwrap();
+        }
+    }
+}

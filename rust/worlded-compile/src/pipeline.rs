@@ -12,7 +12,7 @@ use crate::tmxground::{Generator, TmxWorld};
 use crate::CompileError;
 use knoxlots::compile::{compile_cell, Manifest};
 use knoxlots::kcell::KCell;
-use std::collections::{BTreeMap, HashSet};
+use std::collections::{BTreeMap, BTreeSet, HashSet};
 use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::Mutex;
@@ -282,31 +282,37 @@ fn do_row(s: &Shared, cy: i64) -> Result<usize, CompileError> {
         // TMX layers are already in saving order (level, then file order); bitmap layers use the fixed table
         let order = if rows.is_some() { names.clone() } else { stack_order(&names) };
 
-        // the stacks of the cell: level 0 is ground and buildings, above it buildings only
+        // the stacks of the cell: ground (layers of that level) and buildings on every level the ground
+        // layers use, level 0 always; levels only buildings reach hold buildings alone
+        let layer_level = |k: &str| k.split('_').next().and_then(|n| n.parse::<usize>().ok()).unwrap_or(0);
+        let mut ground_levels: BTreeSet<usize> = order.iter().map(|k| layer_level(k)).collect();
+        ground_levels.insert(0);
         let mut stacks: Vec<((usize, usize, usize), Vec<String>)> = Vec::new();
         for yy in 0..SIDE {
             for xx in 0..SIDE {
                 let (wx, wy) = (wx0 + xx as i64, wy0 + yy as i64);
-                let bt: &[String] = world.get(&(wx, wy, 0)).map(Vec::as_slice).unwrap_or(&[]);
-                let mut g: Vec<String> = Vec::new();
-                if inside[(yy + 1) * win + xx + 1] {
-                    // a fence clears the ground's furniture (a garden bed under it); walls do not
-                    let fenced = bt.iter().any(|t| t.starts_with("fencing_"));
-                    for k in &order {
-                        let v = cropped.get(k).unwrap().get(xx, yy);
-                        if v != 0 && !(fenced && k == "0_Furniture") {
-                            g.push(tile_name(&pal.names[v as usize]));
+                for &z in &ground_levels {
+                    let bt: &[String] = world.get(&(wx, wy, z as i64)).map(Vec::as_slice).unwrap_or(&[]);
+                    let mut g: Vec<String> = Vec::new();
+                    if inside[(yy + 1) * win + xx + 1] {
+                        // a fence clears the ground's furniture (a garden bed under it); walls do not
+                        let fenced = bt.iter().any(|t| t.starts_with("fencing_"));
+                        for k in order.iter().filter(|k| layer_level(k) == z) {
+                            let v = cropped.get(k).unwrap().get(xx, yy);
+                            if v != 0 && !(fenced && k == "0_Furniture") {
+                                g.push(tile_name(&pal.names[v as usize]));
+                            }
                         }
                     }
-                }
-                let st = merge_stack(g, bt, room_squares.contains(&(wx, wy, 0)));
-                if !st.is_empty() {
-                    stacks.push(((xx, yy, 0), st));
+                    let st = merge_stack(g, bt, room_squares.contains(&(wx, wy, z as i64)));
+                    if !st.is_empty() {
+                        stacks.push(((xx, yy, z), st));
+                    }
                 }
             }
         }
         for ((wx, wy, z), bt) in world.range((wx0, i64::MIN, i64::MIN)..(wx0 + side, i64::MIN, i64::MIN)) {
-            if *z > 0 && wy0 <= *wy && *wy < wy0 + side {
+            if *z > 0 && !ground_levels.contains(&(*z as usize)) && wy0 <= *wy && *wy < wy0 + side {
                 stacks.push((((wx - wx0) as usize, (wy - wy0) as usize, *z as usize), bt.clone()));
             }
         }
