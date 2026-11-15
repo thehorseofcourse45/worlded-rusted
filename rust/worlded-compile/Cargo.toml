@@ -8,3 +8,7 @@ license = "MIT"
 knoxlots = { path = "../knoxlots" }
 worlded-core = { path = "../worlded-core" }
 roxmltree = "0.20"
+
+[dev-dependencies]
+flate2 = "1"
+base64 = "0.22"

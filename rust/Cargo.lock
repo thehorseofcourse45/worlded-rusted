@@ -3907,6 +3907,8 @@ dependencies = [
 name = "worlded-compile"
 version = "0.1.0"
 dependencies = [
+ "base64",
+ "flate2",
  "knoxlots",
  "roxmltree",
  "worlded-core",
