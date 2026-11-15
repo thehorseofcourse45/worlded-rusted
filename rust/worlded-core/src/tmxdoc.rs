@@ -85,6 +85,11 @@ impl TmxDoc {
         }
     }
 
+    /// The document text as it stands (before dirty layers are re-encoded).
+    pub fn text(&self) -> &str {
+        &self.text
+    }
+
     pub fn dirty_layers(&self) -> Vec<usize> {
         (0..self.dirty.len()).filter(|&i| self.dirty[i]).collect()
     }
@@ -106,5 +111,33 @@ impl TmxDoc {
             out.replace_range(span.range.clone(), &format!("{lead}{body}{trail}"));
         }
         Ok(out)
+    }
+
+    /// Insert `element` (a complete, newline-ended `<tileset>` block) after the last existing
+    /// tileset, or before the first layer when there is none, and register it in the model.
+    /// Spans of later layers move with the text. Refused when the document is read-only.
+    pub fn insert_tileset(&mut self, name: &str, first_gid: u32, element: &str) -> Result<(), CoreError> {
+        if let Some(why) = &self.read_only {
+            return Err(CoreError::Parse(format!("cannot edit: {why}")));
+        }
+        let at = match self.text.rfind("</tileset>") {
+            Some(i) => {
+                let end = i + "</tileset>".len();
+                let rest = &self.text[end..];
+                end + if rest.starts_with("\r\n") { 2 } else if rest.starts_with('\n') { 1 } else { 0 }
+            }
+            None => {
+                let l = self.text.find("<layer").ok_or_else(|| CoreError::Parse("no layer to insert before".into()))?;
+                self.text[..l].rfind('\n').map_or(l, |n| n + 1)
+            }
+        };
+        self.text.insert_str(at, element);
+        for sp in self.spans.iter_mut().flatten() {
+            if sp.range.start >= at {
+                sp.range = sp.range.start + element.len()..sp.range.end + element.len();
+            }
+        }
+        self.tmx.tilesets.push(tmx::TilesetRef { first_gid, name: name.to_string() });
+        Ok(())
     }
 }
