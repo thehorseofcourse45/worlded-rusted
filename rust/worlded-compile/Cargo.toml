@@ -6,4 +6,5 @@ license = "MIT"
 
 [dependencies]
 knoxlots = { path = "../knoxlots" }
+worlded-core = { path = "../worlded-core" }
 roxmltree = "0.20"

@@ -3909,6 +3909,7 @@ version = "0.1.0"
 dependencies = [
  "knoxlots",
  "roxmltree",
+ "worlded-core",
 ]
 
 [[package]]

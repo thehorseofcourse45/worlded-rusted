@@ -10,6 +10,7 @@ pub mod rules;
 pub mod source;
 pub mod tbx;
 pub mod terrain;
+pub mod tmxground;
 
 use std::path::PathBuf;
 
