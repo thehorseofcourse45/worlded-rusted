@@ -9,24 +9,25 @@ Full editor in five stages (roadmap in `docs/superpowers/specs/2026-11-15-viewer
 - Stage 0, `rust/knoxlots`: lot file reader/writer and `compile` (pre-existing, unchanged).
 - Stage 1 viewer, `rust/worlded-core` (pzw, tmx, pack) + `rust/worlded-app` (egui, binary `worlded-view`). Release v0.3.0. Screenshot-checked on a generated demo cell only.
 - Stage 2 compiler, `rust/worlded-compile` (binary `worlded`). Cell sources byte-identical to the Python pipeline (`knoxbuild/`, `tools/map_source.py`) on generated maps, 113 real buildings and a roof sweep; 64 cells in 2.3 s vs 18.7 s Python. Release v0.4.0 (zip tested from a clean folder).
-- Both reviewed by a fresh subagent; Important findings fixed.
+- Stage 3 tile editing, release v0.5.0: core `tmxdoc` (lossless TMX), `edit` (history), `tools`, `gids`, `save`; app `document`, `tools`, `palette`, editing in `cell_view`. Real WorldEd .tmx fixture (`tests/data/real_cell_a.tmx`, from `tools/make_real_tmx.py`); FORMATS.md TMX section is from it. Acceptance test `saved_edit_loads_in_worlded` (opt-in `WORLDED_ACCEPTANCE=1`, 39 s) passes: WorldEd generated lots from an edited, saved map. Layer level now read from the `level` attribute (viewer drew upper floors at level 0 before).
+- Stages 1 and 2 reviewed by a fresh subagent; Important findings fixed. Stage 3 was NOT reviewed by a fresh reviewer.
 - Test helpers: `tools/dump_for_rust.py` (Python oracle), `tools/make_test_map.py`, `tools/make_demo_tmx.py`.
 
 ## Not done
-- Stage 3 (tile editing): spec and plan written, no code. Blocker: no real WorldEd `.tmx` exists on this machine; the TMX reader follows public Tiled format and is unverified.
+- Editing UI never clicked through by hand (mouse, shortcuts, palette, close dialog): `docs/editing-checklist.md`.
+- Edited maps not tried in the game. A new tileset added by `gid_for` gets firstgid = highest + 1024 (a guess; WorldEd accepted only tilesets already in the file in the acceptance test, a brand-new one is untested). Palette passes 8 columns for new tilesets.
 - Never tested in the game: lot files from either compiler.
 - Viewer UI not hand-checked: pan, zoom, layer toggles, hover readout, double-click open (`docs/viewer-checklist.md`).
 - Deferred minors: output folder keeps stale cells after a failed run; `worlded .` gives a bad name; list-valued `condition` in Rules.txt ignored; stray `./config` can override the exe's config; empty alias accepted silently; worker panic lets other threads continue; viewer decodes tile pages on the UI thread.
 
 ## Git (as of last check)
-- Working tree clean except this new `HANDOFF.md` (uncommitted). `main` = `origin/main` at `7ed7d90`. No open PRs. Pre-releases v0.2.0, v0.3.0, v0.4.0.
+- `main` = `origin/main` at the v0.5.0 commit. No open PRs. Pre-releases v0.2.0 to v0.5.0.
 
 ## Next steps
-1. Start stage 3 with execution method chosen by user (needs user: Native recommended, or subagent-driven). Plan: `docs/superpowers/plans/2026-11-15-editing.md`; first task = real TMX fixtures: find how KnoxMap calls `PZWorldEd_cli.exe` (`C:\KnoxMap\vendor\PZMappingTools\bin`) and write `tools/make_real_tmx.py`.
-2. If WorldEd cannot be run headless, decide the fallback: plain Tiled TMX only (needs user).
-3. Hand-check the viewer and fill `docs/viewer-checklist.md` (needs user, needs a GUI).
-4. Try a compiled map in Project Zomboid (needs user).
-5. Stage 4 needs a TMX to cell-source step in `worlded-compile` before an edited TMX can become lot files.
+1. Hand-check the editor and viewer (needs user, needs a GUI): `docs/editing-checklist.md`, `docs/viewer-checklist.md`.
+2. Fresh code review of stage 3.
+3. Try a compiled and an edited map in Project Zomboid (needs user).
+4. Stage 4 needs a TMX to cell-source step in `worlded-compile` before an edited TMX can become lot files.
 
 ## To resume
 - `cd C:\worlded-rusted\rust && cargo test --release`; viewer: `python tools/make_demo_tmx.py C:\wr_demo\viewer_demo`, then `cargo run --release -p worlded-app -- C:\wr_demo\viewer_demo\demo.pzw 0` (needs the PZ folder set in the app).
