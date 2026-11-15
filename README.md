@@ -70,10 +70,13 @@ installs them for the experiments and for `Rules.txt` / `Blends.txt`.
 
 `rust/worlded-compile` is the whole map pipeline in Rust: `worlded.exe <map folder>` turns `<name>.bmp`, `<name>_veg.bmp`, `<name>.pzw` and `buildings/*.tbx` into lot files, with no Python, WorldEd or KnoxMap. It is a port of `knoxbuild/` and `tools/map_source.py`, and the tests prove it: the cell sources are byte-identical to the Python ones (generated maps, all 113 `real1` buildings, a sweep of every roof type), and the lot files equal Python plus `knoxlots compile`. Speed on a generated 64-cell map: 2.3 s for the Rust program (to lot files) against 18.7 s for the Python cell sources alone. `tools/dump_for_rust.py` and `tools/make_test_map.py` are the Python oracle and the test-map generator the tests use.
 
-## Viewer (editor stage 1)
+## Viewer and tile editor (editor stages 1 and 3)
 
-`rust/worlded-app` builds `worlded-view.exe`, a read-only viewer: open a WorldEd `.pzw`, see its cells, double-click one to see its `.tmx` as isometric tiles with a layer panel. Tile art is read from your own Project Zomboid install (`media/texturepacks/*.pack`; set the folder in the app). Design: `docs/superpowers/specs/`, plan: `docs/superpowers/plans/`, checklist: `docs/viewer-checklist.md`, formats: `FORMATS.md`.
-The `.tmx` reader follows the public Tiled format and is not yet checked against a real WorldEd file.
+`rust/worlded-app` builds `worlded-view.exe`: open a WorldEd `.pzw`, see its cells, double-click one to open its `.tmx` as isometric tiles with a layer panel. Tile art is read from your own Project Zomboid install (`media/texturepacks/*.pack`; set the folder in the app). Design: `docs/superpowers/specs/`, plans: `docs/superpowers/plans/`, checklists: `docs/viewer-checklist.md` and `docs/editing-checklist.md`, formats: `FORMATS.md`.
+
+Since v0.5.0 it also edits the tile layers of a cell: a palette (search by tileset), paint with square brushes, erase, rectangle, fill, eyedropper, per-layer lock and hide, undo and redo (a drag is one step), Save (Ctrl+S, first save keeps a `.bak`) and Save As. Saving rewrites only the `<data>` of layers you changed; everything else in the `.tmx` is kept byte for byte. A map the editor cannot save safely opens read-only with a banner. Middle button or space + drag pans.
+
+The `.tmx` layout in `FORMATS.md` is taken from a real WorldEd file made by `tools/make_real_tmx.py`. `rust/worlded-core/tests/acceptance.rs` can check that WorldEd's lot generation accepts an edited, saved map (opt-in: `WORLDED_ACCEPTANCE=1`, needs the WorldEd command line and Python; about three minutes). The editing UI itself has only been tested through its logic, not clicked through by hand (see the checklist).
 
 ## Build and test
 
