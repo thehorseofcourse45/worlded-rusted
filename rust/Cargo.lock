@@ -3900,6 +3900,7 @@ dependencies = [
  "eframe",
  "image",
  "rfd",
+ "worlded-compile",
  "worlded-core",
 ]
 

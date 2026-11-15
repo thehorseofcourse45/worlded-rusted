@@ -10,6 +10,7 @@ path = "src/main.rs"
 
 [dependencies]
 worlded-core = { path = "../worlded-core" }
+worlded-compile = { path = "../worlded-compile" }
 eframe = "0.29"
 rfd = "0.15"
 

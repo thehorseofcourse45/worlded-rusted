@@ -20,11 +20,13 @@ pub struct History {
     /// Undo-stack length at the last save; `None` once that state can no longer be reached.
     saved: Option<usize>,
     group: Option<Edit>,
+    /// Bumped on every change to the document (apply, undo, redo): lets caches key off it.
+    pub revision: u64,
 }
 
 impl Default for History {
     fn default() -> History {
-        History { undo: vec![], redo: vec![], saved: Some(0), group: None }
+        History { undo: vec![], redo: vec![], saved: Some(0), group: None, revision: 0 }
     }
 }
 
@@ -58,6 +60,7 @@ impl History {
             self.saved = None;
         }
         self.undo.push(edit);
+        self.revision += 1;
     }
 
     /// Edits applied until `end_group` form one undo step (a drag).
@@ -80,6 +83,7 @@ impl History {
             doc.set_gid(c.layer, c.x, c.y, c.old);
         }
         self.redo.push(edit);
+        self.revision += 1;
         true
     }
 
@@ -89,6 +93,7 @@ impl History {
             doc.set_gid(c.layer, c.x, c.y, c.new);
         }
         self.undo.push(edit);
+        self.revision += 1;
         true
     }
 

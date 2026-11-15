@@ -49,6 +49,27 @@ fn perr(p: &Path, m: impl Into<String>) -> CompileError {
     CompileError::Parse(p.to_path_buf(), m.into())
 }
 
+/// Rules.txt: $KNOXLOTS_CONFIG, `config` next to the program, `config` in the current folder, or
+/// (a build inside the repo) the repo's `config`. Blends.txt must sit beside the result.
+pub fn find_rules() -> Result<PathBuf, String> {
+    let exe_dir = std::env::current_exe().ok().and_then(|p| p.parent().map(Path::to_path_buf)).unwrap_or_default();
+    let mut dirs: Vec<PathBuf> = Vec::new();
+    if let Some(d) = std::env::var_os("KNOXLOTS_CONFIG") {
+        dirs.push(d.into());
+    }
+    dirs.push(exe_dir.join("config"));
+    dirs.push(PathBuf::from("config"));
+    for up in exe_dir.ancestors().take(5) {
+        dirs.push(up.join("config"));
+    }
+    for d in &dirs {
+        if d.join("Rules.txt").exists() && d.join("Blends.txt").exists() {
+            return Ok(d.join("Rules.txt"));
+        }
+    }
+    Err("Rules.txt and Blends.txt not found: put them in a config folder next to the program (or set KNOXLOTS_CONFIG)".into())
+}
+
 /// `[(name, tx, ty, base level)]` in project order, with world tile positions.
 pub fn read_lots(pzw: &Path) -> Result<Vec<Lot>, CompileError> {
     let text = std::fs::read_to_string(pzw).map_err(|e| CompileError::Io(pzw.to_path_buf(), e))?;

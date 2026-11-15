@@ -1,4 +1,5 @@
 //! Tile names (`<tileset>_<index>`) to gids, adding a tileset entry when the file lacks one.
+use crate::tmx::Tmx;
 use crate::tmxdoc::TmxDoc;
 use crate::CoreError;
 
@@ -39,10 +40,10 @@ fn parse_name(tile: &str) -> Result<(&str, u32), CoreError> {
 /// The gid of `tile` when the file already lists its tileset (`None` when it does not), without
 /// changing the document. The index must lie inside the tileset: below the next tileset's
 /// `firstgid`, or below `GID_GAP` for the last one.
-pub fn lookup_gid(doc: &TmxDoc, tile: &str) -> Result<Option<u32>, CoreError> {
+pub fn lookup_gid(tmx: &Tmx, tile: &str) -> Result<Option<u32>, CoreError> {
     let (set, idx) = parse_name(tile)?;
-    let Some(ts) = doc.tmx.tilesets.iter().find(|t| t.name == set) else { return Ok(None) };
-    let room = doc.tmx.tilesets.iter().map(|t| t.first_gid).filter(|&g| g > ts.first_gid).min().map_or(GID_GAP, |n| n - ts.first_gid);
+    let Some(ts) = tmx.tilesets.iter().find(|t| t.name == set) else { return Ok(None) };
+    let room = tmx.tilesets.iter().map(|t| t.first_gid).filter(|&g| g > ts.first_gid).min().map_or(GID_GAP, |n| n - ts.first_gid);
     if idx >= room {
         return Err(bad(format!("{tile}: tileset {set} holds only {room} tiles")));
     }
@@ -52,7 +53,7 @@ pub fn lookup_gid(doc: &TmxDoc, tile: &str) -> Result<Option<u32>, CoreError> {
 /// The gid of `tile`. A tileset the file does not list is appended in the form WorldEd writes,
 /// its image beside the others, `columns` tiles wide and as many rows as the index needs.
 pub fn gid_for(doc: &mut TmxDoc, tile: &str, columns: u32) -> Result<u32, CoreError> {
-    if let Some(g) = lookup_gid(doc, tile)? {
+    if let Some(g) = lookup_gid(&doc.tmx, tile)? {
         return Ok(g);
     }
     let (set, idx) = parse_name(tile)?;

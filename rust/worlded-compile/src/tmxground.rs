@@ -99,6 +99,8 @@ struct Effective {
     pal: Palette,
     /// `(key, level, grid)` in level order, file order within a level.
     layers: Vec<(String, i32, Grid)>,
+    /// Whether the map embedded a landscape picture (the ground comes from the pictures then).
+    pictures: bool,
 }
 
 fn level_of(key: &str) -> i32 {
@@ -122,14 +124,21 @@ fn rgb(img: Option<&BmpImage>) -> Vec<u8> {
 /// merges. The second value is the number of squares whose tile id no tileset covered.
 fn build_cell(path: &Path, i: u32, j: u32, gen: &Generator) -> Result<(Effective, usize), CompileError> {
     let text = std::fs::read_to_string(path).map_err(|e| CompileError::Io(path.to_path_buf(), e))?;
-    let tmx: Tmx = parse_tmx_str(&text).map_err(|e| perr(path, e.to_string()))?;
+    build(&text, path, i, j, gen)
+}
+
+/// The effective (generated + merged) layers of one cell's map text. Same as `build_cell` but on
+/// text already in memory, so an editor can show what its unsaved edits would compile to.
+fn build(text: &str, path: &Path, i: u32, j: u32, gen: &Generator) -> Result<(Effective, usize), CompileError> {
+    let tmx: Tmx = parse_tmx_str(text).map_err(|e| perr(path, e.to_string()))?;
     if tmx.width as i64 != CELL || tmx.height as i64 != CELL {
         return Err(perr(path, format!("map is {} x {} tiles, a cell must be 300 x 300", tmx.width, tmx.height)));
     }
     if let Some(l) = tmx.layers.iter().find(|l| l.level < 0) {
         return Err(perr(path, format!("layer {} has level {}; levels below 0 are not supported", l.name, l.level)));
     }
-    let images = parse_bmp_images(&text).map_err(|e| perr(path, e.to_string()))?;
+    let images = parse_bmp_images(text).map_err(|e| perr(path, e.to_string()))?;
+    let pictures = images.iter().any(|m| m.index == 0);
 
     let mut pal = Palette::default();
     let mut skipped = 0;
@@ -174,7 +183,41 @@ fn build_cell(path: &Path, i: u32, j: u32, gen: &Generator) -> Result<(Effective
             }
         }
     }
-    Ok((Effective { pal, layers }, skipped))
+    Ok((Effective { pal, layers, pictures }, skipped))
+}
+
+/// One cell's exported layers as gids of the map's own tilesets, so a viewer can draw exactly what
+/// the compiler would write. `text` is the map's current text (unsaved edits included).
+pub struct EffectiveCell {
+    /// `(key "<level>_<name>", level, gids)`, same order as the compiled layers.
+    pub layers: Vec<(String, i32, Vec<u32>)>,
+    /// Squares whose tile no tileset of the map covered (left empty).
+    pub skipped: usize,
+    /// Whether the map embedded a landscape picture (ground was generated from it).
+    pub pictures: bool,
+}
+
+pub fn effective_layers(text: &str, path: &Path, i: u32, j: u32, gen: &Generator) -> Result<EffectiveCell, CompileError> {
+    let (eff, mut skipped) = build(text, path, i, j, gen)?;
+    let tmx = parse_tmx_str(text).map_err(|e| perr(path, e.to_string()))?;
+    let layers = eff
+        .layers
+        .iter()
+        .map(|(key, level, grid)| {
+            let mut gids = vec![0u32; grid.data.len()];
+            for (k, &v) in grid.data.iter().enumerate() {
+                if v == 0 {
+                    continue;
+                }
+                match worlded_core::gids::lookup_gid(&tmx, &eff.pal.names[v as usize]) {
+                    Ok(Some(g)) => gids[k] = g,
+                    _ => skipped += 1,
+                }
+            }
+            (key.clone(), *level, gids)
+        })
+        .collect();
+    Ok(EffectiveCell { layers, skipped, pictures: eff.pictures })
 }
 
 /// The `.tmx` cells one row of lot windows reads, built on demand and kept only while needed.
@@ -511,6 +554,37 @@ mod tests {
         let p = project("sizeneg", "70,0", 1, 1, &[]);
         std::fs::write(&p, std::fs::read_to_string(&p).unwrap().replace("width=\"1\"", "width=\"-1\"")).unwrap();
         assert!(TmxWorld::open(&p).is_err());
+    }
+
+    #[test]
+    fn effective_layers_match_the_compiled_window_and_follow_in_memory_edits() {
+        // the test map lists only tileset `t`; add the blends tileset so generated names resolve to gids
+        let with_blends = |text: String| text.replacen("<tileset firstgid=\"1\" name=\"t\"/>", "<tileset firstgid=\"1\" name=\"t\"/><tileset firstgid=\"1000\" name=\"blends_natural_01\"/>", 1);
+        let text = with_blends(tmx(300, &[("Floor", 0, &[(5, 5, 6)]), ("Furniture", 0, &[(6, 6, 2)])], &pictures()));
+        let p = project("eff", "70,0", 1, 1, &[(0, 0, text.clone())]);
+        let w = TmxWorld::open(&p).unwrap();
+        let r = rows(&w, 0, 20);
+        let mut pal = Palette::default();
+        let (layers, _) = r.window(0, 0, 20, &mut pal).unwrap();
+        let (rules, blends) = env();
+        let gen = Generator { rules: &rules, blends: &blends };
+        let eff = effective_layers(&text, &p, 0, 0, &gen).unwrap();
+        assert!(eff.pictures);
+        let map = parse_tmx_str(&text).unwrap();
+        for (key, _, gids) in &eff.layers {
+            for y in 0..20usize {
+                for x in 0..20usize {
+                    let got = if gids[y * 300 + x] == 0 { String::new() } else { tile_name(&map, gids[y * 300 + x]).unwrap() };
+                    assert_eq!(got, name_at(&pal, &layers, key, x, y, 20), "{key} at {x},{y}");
+                }
+            }
+        }
+        // an in-memory edit shows up (Furniture is not a generated layer, the edit stays)
+        let edited = with_blends(tmx(300, &[("Floor", 0, &[]), ("Furniture", 0, &[(6, 6, 3)])], &pictures()));
+        let eff2 = effective_layers(&edited, &p, 0, 0, &gen).unwrap();
+        let map2 = parse_tmx_str(&edited).unwrap();
+        let (_, _, g) = eff2.layers.iter().find(|(k, _, _)| k == "0_Furniture").unwrap();
+        assert_eq!(tile_name(&map2, g[6 * 300 + 6]).as_deref(), Some("t_2"));
     }
 }
 

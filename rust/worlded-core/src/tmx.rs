@@ -11,6 +11,7 @@ pub struct Tmx {
     pub layers: Vec<Layer>,
 }
 
+#[derive(Clone)]
 pub struct TilesetRef {
     pub first_gid: u32,
     pub name: String,

@@ -79,7 +79,7 @@ fn lookup_does_not_add_and_a_crlf_file_gets_crlf_elements() {
     use worlded_core::gids::lookup_gid;
     let crlf = MAP.replace('\n', "\r\n");
     let mut d = open(crlf).unwrap();
-    assert_eq!(lookup_gid(&d, "c_03_5").unwrap(), None);
+    assert_eq!(lookup_gid(&d.tmx, "c_03_5").unwrap(), None);
     gid_for(&mut d, "c_03_5", 8).unwrap();
     let text = d.to_text().unwrap();
     assert_eq!(text.matches('\n').count(), text.matches("\r\n").count(), "no bare LF");

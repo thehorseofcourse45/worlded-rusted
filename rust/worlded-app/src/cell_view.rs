@@ -5,9 +5,10 @@ use crate::iso::{self, Rect};
 use crate::tools::{line, Tool};
 use eframe::egui::{self, epaint, Color32, Mesh, Pos2, Sense, Shape};
 use std::collections::HashMap;
+use worlded_compile::tmxground::{self, Generator};
 use worlded_core::gids::{gid_for, lookup_gid};
 use worlded_core::pack::PackSet;
-use worlded_core::tmx::{tile_name, Tmx};
+use worlded_core::tmx::{tile_name, Layer, Tmx};
 use worlded_core::tools as core_tools;
 
 /// Below this zoom only the first visible layer is drawn (a 300x300 cell with several
@@ -31,12 +32,44 @@ pub struct CellState {
     /// Tile name (`<tileset>_<index>`) the paint and rectangle tools lay down.
     pub selected_tile: String,
     pub status: String,
+    /// The cell's world coordinates, for ground generation (blends are per cell).
+    pub cell_xy: (u32, u32),
+    /// Draw the exported ground (generated from the pictures, merged over the layers) instead of
+    /// the raw layers.
+    pub show_ground: bool,
+    /// Cached exported layers, keyed by the document revision.
+    ground: Option<GroundCache>,
     /// Indexed by gid: `None` = not looked up yet, `Some(None)` = no art (placeholder).
     sprites: HashMap<u32, Option<Sprite>>,
     zoom: f32,
     pan: egui::Vec2,
     pub hover: Option<(i32, i32)>,
     stroke: Option<Stroke>,
+}
+
+struct GroundCache {
+    rev: u64,
+    layers: Vec<(String, i32, Vec<u32>)>,
+    skipped: usize,
+    error: Option<String>,
+}
+
+/// The cell as the compiler would write it: the document's layers with the generated ground merged
+/// in, as gids of the document's own tilesets (so the atlas lookup is unchanged).
+fn synth_tmx(tmx: &Tmx, eff: &[(String, i32, Vec<u32>)]) -> Tmx {
+    let key_of = |l: &Layer| if l.name.starts_with(&format!("{}_", l.level)) { l.name.clone() } else { format!("{}_{}", l.level, l.name) };
+    let mut layers: Vec<Layer> = Vec::new();
+    for l in &tmx.layers {
+        let key = key_of(l);
+        let gids = eff.iter().find(|(k, _, _)| *k == key).map(|(_, _, g)| g.clone()).unwrap_or_else(|| vec![0; l.gids.len()]);
+        layers.push(Layer { name: l.name.clone(), visible: l.visible, level: l.level, gids });
+    }
+    for (k, level, g) in eff {
+        if !layers.iter().any(|l| key_of(l) == *k) {
+            layers.push(Layer { name: k.clone(), visible: true, level: *level, gids: g.clone() });
+        }
+    }
+    Tmx { width: tmx.width, height: tmx.height, tilesets: tmx.tilesets.clone(), layers }
 }
 
 struct Stroke {
@@ -63,6 +96,9 @@ impl CellState {
             brush: 1,
             selected_tile: String::new(),
             status: String::new(),
+            cell_xy: (0, 0),
+            show_ground: true,
+            ground: None,
             sprites: HashMap::new(),
             zoom: 0.0,
             pan: egui::Vec2::ZERO,
@@ -82,6 +118,14 @@ impl CellState {
 
     pub fn layers_panel(&mut self, ui: &mut egui::Ui) {
         let editable = self.doc.read_only.is_none();
+        ui.checkbox(&mut self.show_ground, "show exported ground");
+        if let Some(g) = &self.ground {
+            if let Some(e) = &g.error {
+                ui.colored_label(Color32::LIGHT_RED, format!("ground: {e}"));
+            } else if g.skipped > 0 {
+                ui.label(format!("{} squares: tile not in any tileset", g.skipped));
+            }
+        }
         for i in 0..self.doc.doc.tmx.layers.len() {
             ui.horizontal(|ui| {
                 if editable {
@@ -157,7 +201,7 @@ impl CellState {
         if name.is_empty() {
             return Err("no tile selected: type a name or use the eyedropper".into());
         }
-        match lookup_gid(&self.doc.doc, name).map_err(|e| e.to_string())? {
+        match lookup_gid(&self.doc.doc.tmx, name).map_err(|e| e.to_string())? {
             Some(g) => Ok((g, true)),
             None => Ok((STAND_IN_GID, false)),
         }
@@ -260,7 +304,25 @@ impl CellState {
         }
     }
 
-    pub fn show(&mut self, ui: &mut egui::Ui, atlas: &mut Atlas, packs: Option<&PackSet>) {
+    pub fn show(&mut self, ui: &mut egui::Ui, atlas: &mut Atlas, packs: Option<&PackSet>, gen: Option<&Generator>) {
+        // What the compiler would write from this document right now (cached per document revision).
+        let rev = self.doc.history.revision;
+        if self.show_ground && self.ground.as_ref().is_none_or(|g| g.rev != rev) {
+            let cache = match gen {
+                Some(gen) => match tmxground::effective_layers(self.doc.doc.text(), &self.doc.path, self.cell_xy.0, self.cell_xy.1, gen) {
+                    Ok(eff) => GroundCache { rev, layers: eff.layers, skipped: eff.skipped, error: None },
+                    Err(e) => GroundCache { rev, layers: Vec::new(), skipped: 0, error: Some(e.to_string()) },
+                },
+                None => GroundCache { rev, layers: Vec::new(), skipped: 0, error: Some("no Rules.txt/Blends.txt found (config folder next to the program)".into()) },
+            };
+            self.ground = Some(cache);
+        }
+        let drawn = if self.show_ground {
+            self.ground.as_ref().and_then(|g| g.error.is_none().then(|| synth_tmx(&self.doc.doc.tmx, &g.layers)))
+        } else {
+            None
+        };
+
         let (resp, painter) = ui.allocate_painter(ui.available_size(), Sense::click_and_drag());
         let rect = resp.rect;
         if self.zoom == 0.0 {
@@ -312,10 +374,12 @@ impl CellState {
         let clip = Rect { x0, y0, x1, y1 };
 
         let tmx = &self.doc.doc.tmx;
+        let draw = drawn.as_ref().unwrap_or(tmx);
         let sprites = &mut self.sprites;
         let ctx = ui.ctx().clone();
         let first_visible = self.visible.iter().position(|v| *v);
         let mut visible = self.visible.clone();
+        visible.resize(draw.layers.len(), true);
         if zoom < LOD_ZOOM {
             for (i, v) in visible.iter_mut().enumerate() {
                 *v = Some(i) == first_visible;
@@ -324,7 +388,7 @@ impl CellState {
         let mut meshes: HashMap<egui::TextureId, Mesh> = HashMap::new();
         let mut flat = Mesh::default();
         let to_screen = |x: f32, y: f32| Pos2::new(origin.x + x * zoom, origin.y + y * zoom);
-        iso::visible_tiles(tmx, &visible, clip, |_, gid, _, _, fx, fy| {
+        iso::visible_tiles(draw, &visible, clip, |_, gid, _, _, fx, fy| {
             let s = *sprites.entry(gid).or_insert_with(|| tile_name(tmx, gid).and_then(|n| atlas.sprite(&ctx, packs, &n)));
             match s {
                 Some(s) => {
@@ -471,5 +535,33 @@ mod tests {
         c.release();
         assert_eq!(c.doc.doc.text(), text);
         assert!(!c.status.is_empty());
+    }
+
+    #[test]
+    fn synth_tmx_maps_effective_gids_onto_the_document_layers() {
+        let text = "<map width=\"2\" height=\"2\"><tileset firstgid=\"1\" name=\"t\"/><layer name=\"A\" level=\"0\" width=\"2\" height=\"2\"><data encoding=\"csv\">0,0,0,0</data></layer><layer name=\"B\" level=\"1\" width=\"2\" height=\"2\"><data encoding=\"csv\">0,0,0,0</data></layer></map>";
+        let tmx = worlded_core::tmx::parse_tmx_str(text).unwrap();
+        let eff = vec![("0_A".to_string(), 0, vec![0, 5, 0, 0]), ("2_C".to_string(), 2, vec![7, 0, 0, 0])];
+        let s = synth_tmx(&tmx, &eff);
+        assert_eq!(s.layers.len(), 3);
+        assert_eq!((s.layers[0].name.as_str(), s.layers[0].gids.clone()), ("A", vec![0, 5, 0, 0]));
+        assert_eq!(s.layers[1].gids, vec![0; 4], "no effective layer for B: stays empty");
+        assert_eq!((s.layers[2].name.as_str(), s.layers[2].level, s.layers[2].gids.clone()), ("2_C", 2, vec![7, 0, 0, 0]));
+    }
+
+    #[test]
+    fn history_revision_changes_on_edit_undo_and_redo() {
+        let mut c = cell();
+        let r0 = c.doc.history.revision;
+        c.selected_tile = "t_1".into();
+        c.press((0, 0));
+        c.release();
+        assert!(c.doc.history.revision > r0);
+        let r1 = c.doc.history.revision;
+        c.undo();
+        assert!(c.doc.history.revision > r1);
+        let r2 = c.doc.history.revision;
+        c.redo();
+        assert!(c.doc.history.revision > r2);
     }
 }
