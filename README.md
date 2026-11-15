@@ -68,7 +68,7 @@ installs them for the experiments and for `Rules.txt` / `Blends.txt`.
 
 ## Build and test
 
-`knoxbuild/__init__.py` finds the rest of KnoxMap's `knoxbuild` (bitmaps) via `KNOXMAP_DIR`, `../knoxmap` or `C:/KnoxMap`, so no copying is needed.
+Standalone: `python tools/worlded.py <map folder> <out folder>` (or `worlded.exe` from the release) builds and compiles a map with no WorldEd or KnoxMap. Rules.txt and Blends.txt are in `config/` (GPL data files, see `config/README.txt`).
 A map folder needs `<name>.bmp`, `<name>_veg.bmp`, `<name>.pzw` and `buildings/*.tbx` (the `.bmp` files are gitignored, so `real1` here has no pictures; make your own or export one from KnoxMap).
 
 ```

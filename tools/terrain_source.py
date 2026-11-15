@@ -23,7 +23,6 @@ import numpy as np
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-import knoxpaths  # noqa: E402
 from knoxbuild import bitmaps  # noqa: E402
 from knoxbuild.blends import blend_layers, load_blends  # noqa: E402
 from knoxbuild.kcell import SIDE, cell_source  # noqa: E402
@@ -34,12 +33,15 @@ ORIGIN_X = 70 * 300       # the world's west edge in lot-file tiles (worldOrigin
 
 
 def rules_path() -> str:
-    tools = knoxpaths.tools_dir() if hasattr(knoxpaths, "tools_dir") else None
-    for base in (tools, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-                                     "vendor", "PZMappingTools")):
-        if base and os.path.exists(os.path.join(base, "config", "Rules.txt")):
-            return os.path.join(base, "config", "Rules.txt")
-    raise FileNotFoundError("Rules.txt not found")
+    """Rules.txt (Blends.txt sits beside it): $KNOXLOTS_CONFIG, config/ next to the program,
+    config/ in the repo, then a KnoxMap checkout's vendor folder."""
+    here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    exe = os.path.dirname(sys.executable) if getattr(sys, "frozen", False) else here
+    for d in (os.environ.get("KNOXLOTS_CONFIG"), os.path.join(exe, "config"), os.path.join(here, "config"),
+              os.path.join(os.environ.get("KNOXMAP_DIR", "C:/KnoxMap"), "vendor", "PZMappingTools", "config")):
+        if d and os.path.exists(os.path.join(d, "Rules.txt")):
+            return os.path.join(d, "Rules.txt")
+    raise FileNotFoundError("Rules.txt not found: put Rules.txt and Blends.txt in a config folder next to the program")
 
 
 _LOADED: dict = {}

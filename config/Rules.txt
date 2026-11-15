@@ -1,0 +1,7795 @@
+version = 1
+
+alias
+{
+    name = Ash
+    tiles = [
+        floors_burnt_01_1
+        floors_burnt_01_2
+    ]
+}
+
+alias
+{
+    name = scorchedEarth
+    tiles = floors_burnt_01_0
+}
+
+alias
+{
+    name = CharredEarth
+    tiles = [
+        floors_burnt_01_8
+		floors_burnt_01_8
+		floors_burnt_01_14
+		floors_burnt_01_15	
+    ]
+}
+
+alias
+{
+    name = CharredEarth_n
+    tiles = [
+        floors_burnt_01_16
+        floors_burnt_01_20
+    ]
+}
+
+alias
+{
+    name = CharredEarth_e
+    tiles = [
+        floors_burnt_01_18
+        floors_burnt_01_22
+    ]
+}
+
+alias
+{
+    name = CharredEarth_s
+    tiles = [
+        floors_burnt_01_19
+        floors_burnt_01_23
+    ]
+}
+
+alias
+{
+    name = CharredEarth_w
+    tiles = [
+        floors_burnt_01_17
+        floors_burnt_01_21
+    ]
+}
+
+alias
+{
+    name = CharredEarthblends
+    tiles = [
+        floors_burnt_01_9
+        floors_burnt_01_10
+        floors_burnt_01_11
+        floors_burnt_01_12
+        floors_burnt_01_16
+        floors_burnt_01_20
+        floors_burnt_01_17
+        floors_burnt_01_21
+        floors_burnt_01_19
+        floors_burnt_01_23
+        floors_burnt_01_18
+        floors_burnt_01_22
+    ]
+}
+
+alias
+{
+    name = rockssmall
+    tiles = floors_exterior_natural_01_8
+}
+
+alias
+{
+    name = rocksmedium
+    tiles = floors_exterior_natural_01_9
+}
+
+alias
+{
+    name = rockslarge
+    tiles = floors_exterior_natural_01_10
+}
+
+alias
+{
+    name = dirtvertical
+    tiles = floors_exterior_natural_01_16
+}
+
+alias
+{
+    name = dirthorizontal
+    tiles = floors_exterior_natural_01_17
+}
+
+alias
+{
+    name = lightgrass_n
+    tiles = [
+        blends_natural_01_56
+		blends_natural_01_60			
+    ]
+}
+
+alias
+{
+    name = lightgrass_w
+    tiles = [
+        blends_natural_01_57
+		blends_natural_01_61
+    ]
+}
+
+alias
+{
+    name = lightgrass_e
+    tiles = [
+        blends_natural_01_58
+		blends_natural_01_62
+    ]
+}
+
+alias
+{
+    name = lightgrass_s
+    tiles = [
+        blends_natural_01_59
+		blends_natural_01_63
+    ]
+}
+
+alias
+{
+    name = medgrass_n
+    tiles = [
+        blends_natural_01_40
+		blends_natural_01_44			
+    ]
+}
+
+alias
+{
+    name = medgrass_w
+    tiles = [
+        blends_natural_01_41
+		blends_natural_01_45			
+    ]
+}
+
+alias
+{
+    name = medgrass_e
+    tiles = [
+        blends_natural_01_42
+		blends_natural_01_46
+    ]
+}
+
+alias
+{
+    name = medgrass_s
+    tiles = [
+        blends_natural_01_43
+		blends_natural_01_47
+    ]
+}
+
+alias
+{
+    name = darkgrass_n
+    tiles = [
+        blends_natural_01_24
+		blends_natural_01_28			
+    ]
+}
+
+alias
+{
+    name = darkgrass_w
+    tiles = [
+        blends_natural_01_25
+		blends_natural_01_29			
+    ]
+}
+
+alias
+{
+    name = darkgrass_e
+    tiles = [
+        blends_natural_01_26
+		blends_natural_01_30
+    ]
+}
+
+alias
+{
+    name = darkgrass_s
+    tiles = [
+        blends_natural_01_27
+		blends_natural_01_31
+    ]
+}
+
+alias
+{
+    name = sand_n
+    tiles = [
+        blends_natural_01_8
+		blends_natural_01_12			
+    ]
+}
+
+alias
+{
+    name = sand_w
+    tiles = [
+        blends_natural_01_9
+		blends_natural_01_13			
+    ]
+}
+
+alias
+{
+    name = sand_e
+    tiles = [
+        blends_natural_01_10
+		blends_natural_01_14			
+    ]
+}
+
+alias
+{
+    name = sand_s
+    tiles = [
+        blends_natural_01_11
+		blends_natural_01_15			
+    ]
+}
+
+alias
+{
+    name = clay_n
+    tiles = [
+        blends_natural_01_104
+		blends_natural_01_108
+		blends_natural_01_112
+		blends_natural_01_116
+		blends_natural_01_120
+		blends_natural_01_124
+    ]
+}
+
+alias
+{
+    name = clay_w
+    tiles = [
+        blends_natural_01_105
+		blends_natural_01_109
+		blends_natural_01_113
+		blends_natural_01_117
+		blends_natural_01_121
+		blends_natural_01_125
+    ]
+}
+
+alias
+{
+    name = clay_e
+    tiles = [
+        blends_natural_01_106
+		blends_natural_01_110
+		blends_natural_01_114
+		blends_natural_01_118
+		blends_natural_01_122
+		blends_natural_01_126
+    ]
+}
+
+alias
+{
+    name = clay_s
+    tiles = [
+        blends_natural_01_107
+		blends_natural_01_111
+		blends_natural_01_115
+		blends_natural_01_119
+		blends_natural_01_123
+		blends_natural_01_127
+    ]
+}
+
+alias
+{
+    name = medlonggrass
+    tiles = [
+        blends_grassoverlays_01_24
+		blends_grassoverlays_01_25
+		blends_grassoverlays_01_26
+		blends_grassoverlays_01_27
+		blends_grassoverlays_01_28
+		blends_grassoverlays_01_29
+		
+		
+    ]
+}
+
+alias
+{
+    name = medmedgrass
+    tiles = [
+        blends_grassoverlays_01_32
+		blends_grassoverlays_01_33
+		blends_grassoverlays_01_34
+		blends_grassoverlays_01_35
+		blends_grassoverlays_01_36
+		blends_grassoverlays_01_37
+		
+		
+    ]
+}
+
+alias
+{
+    name = medshortgrass
+    tiles = [
+        blends_grassoverlays_01_40
+		blends_grassoverlays_01_41
+		blends_grassoverlays_01_42
+		blends_grassoverlays_01_43
+		blends_grassoverlays_01_44
+		blends_grassoverlays_01_45
+		
+		
+    ]
+}
+
+alias
+{
+    name = lightlonggrass
+    tiles = [
+        blends_grassoverlays_01_48
+		blends_grassoverlays_01_49
+		blends_grassoverlays_01_50
+		blends_grassoverlays_01_51
+		blends_grassoverlays_01_52
+		blends_grassoverlays_01_53
+		
+		
+    ]
+}
+
+alias
+{
+    name = lightmedgrass
+    tiles = [
+        blends_grassoverlays_01_56
+		blends_grassoverlays_01_57
+		blends_grassoverlays_01_58
+		blends_grassoverlays_01_59
+		blends_grassoverlays_01_60
+		blends_grassoverlays_01_61
+		
+		
+    ]
+}
+
+alias
+{
+    name = lightshortgrass
+    tiles = [
+        blends_grassoverlays_01_64
+		blends_grassoverlays_01_65
+		blends_grassoverlays_01_66
+		blends_grassoverlays_01_67
+		blends_grassoverlays_01_68
+		blends_grassoverlays_01_69
+		
+		
+    ]
+}
+
+alias
+{
+    name = darklonggrass
+    tiles = [
+        blends_grassoverlays_01_0
+		blends_grassoverlays_01_1
+		blends_grassoverlays_01_2
+		blends_grassoverlays_01_3
+		blends_grassoverlays_01_4
+		blends_grassoverlays_01_5
+		
+		
+    ]
+}
+
+alias
+{
+    name = darkmedgrass
+    tiles = [
+        blends_grassoverlays_01_8
+		blends_grassoverlays_01_9
+		blends_grassoverlays_01_10
+		blends_grassoverlays_01_11
+		blends_grassoverlays_01_12
+		blends_grassoverlays_01_13
+		
+		
+    ]
+}
+
+alias
+{
+    name = darkshortgrass
+    tiles = [
+        blends_grassoverlays_01_16
+		blends_grassoverlays_01_17
+		blends_grassoverlays_01_18
+		blends_grassoverlays_01_19
+		blends_grassoverlays_01_20
+		blends_grassoverlays_01_21
+		
+		
+    ]
+}
+
+alias
+{
+    name = street
+    tiles = [
+        blends_street_01_96
+		blends_street_01_101
+		blends_street_01_102
+		blends_street_01_103
+		
+		
+    ]
+}
+
+alias
+{
+    name = street2
+    tiles = [
+        blends_street_01_80
+		blends_street_01_85
+		blends_street_01_86
+		blends_street_01_87
+		
+		
+    ]
+}
+
+alias
+{
+    name = street2blends
+    tiles = [
+        blends_street_01_88
+		blends_street_01_89
+		blends_street_01_90
+		blends_street_01_91
+		blends_street_01_81
+		blends_street_01_84
+		blends_street_01_83
+		blends_street_01_82
+    ]
+}
+
+alias
+{
+    name = street3
+    tiles = [
+        blends_street_01_64
+		blends_street_01_69
+		blends_street_01_70
+		blends_street_01_71
+		
+		
+    ]
+}
+
+alias
+{
+    name = street3blends
+    tiles = [
+        blends_street_01_72
+		blends_street_01_73
+		blends_street_01_74
+		blends_street_01_75
+		blends_street_01_65
+		blends_street_01_68
+		blends_street_01_67
+		blends_street_01_66
+    ]
+}
+
+alias
+{
+    name = street4
+    tiles = [
+        blends_street_01_32
+		blends_street_01_37
+		blends_street_01_38
+		blends_street_01_39
+		
+		
+    ]
+}
+
+alias
+{
+    name = street4blends
+    tiles = [
+        blends_street_01_40
+		blends_street_01_41
+		blends_street_01_42
+		blends_street_01_43
+		blends_street_01_33
+		blends_street_01_36
+		blends_street_01_35
+		blends_street_01_34
+    ]
+}
+
+alias
+{
+    name = lightgravel
+    tiles = [
+        blends_street_01_48
+		blends_street_01_53
+		blends_street_01_54
+		blends_street_01_55
+		
+		
+    ]
+}
+
+alias
+{
+    name = lightgravelblends
+    tiles = [
+        blends_street_01_56
+		blends_street_01_57
+		blends_street_01_58
+		blends_street_01_59
+		blends_street_01_49
+		blends_street_01_52
+		blends_street_01_51
+		blends_street_01_50
+    ]
+}
+
+alias
+{
+    name = lightpothole
+    tiles = [
+        blends_street_01_16
+		blends_street_01_21
+		
+		
+    ]
+}
+
+alias
+{
+    name = darkpothole
+    tiles = [
+        blends_street_01_0
+		blends_street_01_5
+		
+		
+    ]
+}
+
+alias
+{
+    name = dirt
+    tiles = [
+		blends_natural_01_64
+        blends_natural_01_69
+        blends_natural_01_70        
+		blends_natural_01_71        
+		
+    ]
+}
+
+alias
+{
+    name = dirtgrass
+    tiles = [
+        blends_natural_01_80
+        blends_natural_01_85
+        blends_natural_01_86        
+        blends_natural_01_87        
+        
+    ]
+}
+
+alias
+{
+    name = clay
+    tiles = [
+        blends_natural_01_96
+        blends_natural_01_101
+        blends_natural_01_102        
+        blends_natural_01_103        
+        
+    ]
+}
+
+alias
+{
+    name = clayblends
+    tiles = [
+        blends_natural_01_104
+		blends_natural_01_105
+		blends_natural_01_106
+		blends_natural_01_107
+		blends_natural_01_97
+		blends_natural_01_100
+		blends_natural_01_99
+		blends_natural_01_98
+    ]
+}
+
+alias
+{
+    name = sand
+    tiles = [
+        blends_natural_01_0
+		blends_natural_01_5
+		blends_natural_01_6
+		blends_natural_01_7
+    ]
+}
+
+alias
+{
+    name = sandblends
+    tiles = [
+        blends_natural_01_8
+		blends_natural_01_9
+		blends_natural_01_10
+		blends_natural_01_11
+		blends_natural_01_1
+		blends_natural_01_4
+		blends_natural_01_3
+		blends_natural_01_2
+    ]
+}
+
+alias
+{
+    name = darkgrassblends
+    tiles = [
+        blends_natural_01_24
+		blends_natural_01_25
+		blends_natural_01_26
+		blends_natural_01_27
+		blends_natural_01_17
+		blends_natural_01_20
+		blends_natural_01_19
+		blends_natural_01_18
+    ]
+}
+
+alias
+{
+    name = medgrassblends
+    tiles = [
+        blends_natural_01_40
+		blends_natural_01_41
+		blends_natural_01_42
+		blends_natural_01_43
+		blends_natural_01_33
+		blends_natural_01_36
+		blends_natural_01_35
+		blends_natural_01_34
+    ]
+}
+
+alias
+{
+    name = lightgrassblends
+    tiles = [
+        blends_natural_01_56
+		blends_natural_01_57
+		blends_natural_01_58
+		blends_natural_01_59
+		blends_natural_01_49
+		blends_natural_01_52
+		blends_natural_01_51
+		blends_natural_01_59
+    ]
+}
+
+alias
+{
+    name = darkgrass
+    tiles = [
+        blends_natural_01_16
+        blends_natural_01_21
+        blends_natural_01_22
+		blends_natural_01_23
+    ]
+}
+
+alias
+{
+    name = medgrass
+    tiles = [
+        blends_natural_01_32
+        blends_natural_01_37
+        blends_natural_01_38
+		blends_natural_01_39
+    ]
+}
+
+alias
+{
+    name = lightgrass
+    tiles = [
+        blends_natural_01_48
+        blends_natural_01_53
+        blends_natural_01_54
+		blends_natural_01_55
+    ]
+}
+
+alias
+{
+    name = water
+    tiles = [
+	blends_natural_02_0
+        blends_natural_02_5
+        blends_natural_02_6        
+	blends_natural_02_7
+    ]
+}
+
+alias
+{
+    name = plantslow
+    tiles = [
+	d_plants_1_0
+	d_plants_1_1
+	d_plants_1_2
+	d_plants_1_3
+	d_plants_1_4
+	d_plants_1_5
+	d_plants_1_6
+	d_plants_1_7
+    ]
+}
+
+alias
+{
+    name = plantsmedium
+    tiles = [
+	d_plants_1_16
+	d_plants_1_17
+	d_plants_1_18
+	d_plants_1_19
+	d_plants_1_20
+	d_plants_1_21
+	d_plants_1_22
+	d_plants_1_23
+	d_plants_1_32
+	d_plants_1_33
+	d_plants_1_34
+	d_plants_1_35
+	d_plants_1_36
+	d_plants_1_37
+	d_plants_1_38
+	d_plants_1_39
+	d_plants_1_48
+	d_plants_1_49
+	d_plants_1_50
+	d_plants_1_51
+	d_plants_1_52
+	d_plants_1_53
+	d_plants_1_54
+	d_plants_1_55
+    ]
+}
+
+alias
+{
+    name = boulders1
+    tiles = [
+	boulders_0
+	boulders_1
+	boulders_2
+	boulders_3
+	boulders_4
+	boulders_5
+	boulders_6
+	boulders_7
+	boulders_8
+	boulders_9
+	boulders_10
+	boulders_11
+	boulders_12
+	boulders_13
+	boulders_14
+	boulders_15
+	boulders_40
+	boulders_41
+	boulders_42
+	boulders_43
+	boulders_44
+	boulders_45
+	boulders_46
+	boulders_47
+	boulders_48
+	boulders_49
+	boulders_50
+	boulders_51
+	boulders_52
+	boulders_53
+	boulders_54
+	boulders_55
+	boulders_56
+	boulders_57
+	boulders_58
+	boulders_59
+	boulders_60
+	boulders_61
+	boulders_62
+	boulders_63
+    ]
+}
+
+alias
+{
+    name = boulders2
+    tiles = [
+	boulders_40
+	boulders_41
+	boulders_42
+	boulders_43
+	boulders_44
+	boulders_45
+	boulders_46
+	boulders_47
+	boulders_56
+	boulders_57
+	boulders_58
+	boulders_59
+	boulders_60
+	boulders_61
+	boulders_62
+	boulders_63
+    ]
+}
+
+alias
+{
+    name = boulders3
+    tiles = [
+	boulders_56
+	boulders_57
+	boulders_58
+	boulders_59
+	boulders_60
+	boulders_61
+	boulders_62
+	boulders_63
+    ]
+}
+
+alias
+{
+    name = boulderssmall
+    tiles = [
+	boulders_8
+	boulders_9
+	boulders_10
+	boulders_11
+	boulders_12
+	boulders_13
+	boulders_14
+	boulders_15
+	boulders_48
+	boulders_49
+	boulders_50
+	boulders_51
+	boulders_52
+	boulders_53
+	boulders_54
+	boulders_55
+    ]
+}
+
+alias
+{
+    name = genericwood
+    tiles = [
+	d_generic_1_8
+	d_generic_1_11
+	d_generic_1_12
+	d_generic_1_13
+	d_generic_1_14
+	d_generic_1_15
+	d_generic_1_31
+	d_generic_1_44
+	d_generic_1_45
+    ]
+}
+
+alias
+{
+    name = genericstone
+    tiles = [
+	d_generic_1_22
+	d_generic_1_23
+	d_generic_1_24
+	d_generic_1_25
+	d_generic_1_40
+	d_generic_1_41
+	d_generic_1_42
+	d_generic_1_43
+    ]
+}
+
+alias
+{
+    name = genericfern
+    tiles = [
+	d_generic_1_48
+	d_generic_1_49
+	d_generic_1_50
+	d_generic_1_51
+	d_generic_1_52
+	d_generic_1_53
+	d_generic_1_54
+	d_generic_1_55
+	d_generic_1_80
+	d_generic_1_81
+	d_generic_1_82
+	d_generic_1_83
+	d_generic_1_84
+	d_generic_1_85
+	d_generic_1_86
+	d_generic_1_87
+    ]
+}
+
+alias
+{
+    name = flowers
+    tiles = [
+	f_flowerbed_1_0
+	f_flowerbed_1_1
+	f_flowerbed_1_2
+	f_flowerbed_1_3
+	f_flowerbed_1_4
+	f_flowerbed_1_5
+    ]
+}
+
+alias
+{
+    name = bushes
+    tiles = [
+        vegetation_foliage_01_8
+        vegetation_foliage_01_9
+        vegetation_foliage_01_10
+        vegetation_foliage_01_11
+        vegetation_foliage_01_12
+        vegetation_foliage_01_13
+        vegetation_foliage_01_14
+    ]
+}
+
+alias
+{
+    name = trash
+    tiles = [
+        trash_01_0
+	trash_01_1
+	trash_01_2
+	trash_01_3
+	trash_01_4
+	trash_01_5
+	trash_01_6
+	trash_01_7
+	trash_01_8
+	trash_01_9
+	trash_01_10
+	trash_01_11
+	trash_01_12
+	trash_01_16
+	trash_01_17
+	trash_01_18
+	trash_01_19
+	trash_01_20
+	trash_01_21
+	trash_01_22
+	trash_01_23
+	trash_01_24
+	trash_01_25
+	trash_01_26
+	trash_01_27
+	trash_01_28
+	trash_01_29
+	trash_01_30
+	trash_01_31
+	trash_01_32
+	trash_01_33
+	trash_01_34
+	trash_01_35
+	trash_01_36
+	trash_01_37
+	trash_01_38
+	trash_01_39
+	trash_01_40
+	trash_01_41
+	trash_01_42
+	trash_01_43
+	trash_01_44
+	trash_01_45
+	trash_01_46
+	trash_01_47
+	trash_01_48
+	trash_01_49
+	trash_01_50
+	trash_01_51
+	trash_01_52
+	trash_01_53
+    ]
+}
+
+alias
+{
+    name = streetcracks
+    tiles = [
+        d_streetcracks_1_0
+        d_streetcracks_1_1
+        d_streetcracks_1_2
+        d_streetcracks_1_3
+        d_streetcracks_1_4
+        d_streetcracks_1_5
+        d_streetcracks_1_6
+        d_streetcracks_1_7
+        d_streetcracks_1_8
+        d_streetcracks_1_9
+        d_streetcracks_1_10
+        d_streetcracks_1_11
+        d_streetcracks_1_12
+        d_streetcracks_1_13
+        d_streetcracks_1_14
+        d_streetcracks_1_15
+        d_streetcracks_1_16
+        d_streetcracks_1_17
+        d_streetcracks_1_18
+        d_streetcracks_1_19
+        d_streetcracks_1_20
+        d_streetcracks_1_21
+        d_streetcracks_1_22
+	d_streetcracks_1_23
+    ]
+}
+
+alias
+{
+    name = pavingstone
+    tiles = [
+        floors_exterior_tilesandstone_01_0
+        floors_exterior_tilesandstone_01_1
+        floors_exterior_tilesandstone_01_2
+        floors_exterior_tilesandstone_01_3
+        floors_exterior_tilesandstone_01_4
+        floors_exterior_tilesandstone_01_5
+        floors_exterior_tilesandstone_01_6
+        floors_exterior_tilesandstone_01_7
+    ]
+}
+
+
+
+
+
+
+
+
+
+
+rule
+{
+label = Dark Grass   
+ bitmap = 0
+    color = 90 100 35
+    tiles = darkgrass
+    layer = 0_Floor
+}
+
+rule
+{
+label = Medium Grass 
+    bitmap = 0
+    color = 117 117 47
+    tiles = medgrass
+    layer = 0_Floor
+}
+
+rule
+{
+label = Light Grass 
+    bitmap = 0
+    color = 145 135 60
+    tiles = lightgrass
+    layer = 0_Floor
+}
+
+rule
+{
+    label = Dirt Grass
+    bitmap = 0
+    color = 80 55 20
+    tiles = dirtgrass
+    layer = 0_Floor
+}
+
+rule
+{
+    label = Dirt
+    bitmap = 0
+    color = 120 70 20
+    tiles = dirt
+    layer = 0_Floor
+}
+
+rule
+{
+    label = Clay
+    bitmap = 0
+    color = 110 80 60
+    tiles = clay
+    layer = 0_Floor
+}
+
+rule
+{
+label = Sand
+    bitmap = 0
+    color = 210 200 160
+    tiles = sand
+    layer = 0_Floor
+}
+
+rule
+{
+    label = Water
+    bitmap = 0
+    color = 0 138 255
+    tiles = water
+    layer = 0_Floor
+}
+
+
+
+
+
+rule
+{
+    label = Dark Asphalt (main roads)
+    bitmap = 0
+    color = 100 100 100
+    tiles = street2
+    layer = 0_Floor
+}
+
+rule
+{
+    label = Medium Asphalt 
+    bitmap = 0
+    color = 120 120 120
+    tiles = street
+    layer = 0_Floor
+}
+
+rule
+{
+label = Light Asphalt
+    bitmap = 0
+    color = 165 160 140
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = Smooth Asphalt
+    bitmap = 0
+    color = 150 150 150
+    tiles = street3
+    layer = 0_Floor
+}
+
+rule
+{
+    label = Gravel Asphalt
+    bitmap = 0
+    color = 80 80 80
+    tiles = street4
+    layer = 0_Floor
+}
+
+rule
+{
+    label = Dark Pothole
+    bitmap = 0
+    color = 110 100 100
+    tiles = darkpothole
+    layer = 0_Floor
+
+}
+
+rule
+{
+    label = Light Pothole
+    bitmap = 0
+    color = 130 120 120
+    tiles = lightpothole
+    layer = 0_Floor
+}
+
+
+
+
+
+rule
+{
+    label = Paving Stone 1
+    bitmap = 0
+    color = 170 160 130
+    tiles = floors_exterior_tilesandstone_01_0
+    layer = 0_Floor
+}
+
+rule
+{
+    label = Paving Stone 2
+    bitmap = 0
+    color = 120 80 80
+    tiles = floors_exterior_tilesandstone_01_1
+    layer = 0_Floor
+}
+rule
+{
+    label = Paving Stone 3
+    bitmap = 0
+    color = 120 70 60
+    tiles = floors_exterior_tilesandstone_01_2
+    layer = 0_Floor
+}
+rule
+{
+    label = Paving Stone 4
+    bitmap = 0
+    color = 190 180 180
+    tiles = floors_exterior_tilesandstone_01_3
+    layer = 0_Floor
+}
+rule
+{
+    label = Paving Stone 5
+    bitmap = 0
+    color = 160 150 150
+    tiles = floors_exterior_tilesandstone_01_4
+    layer = 0_Floor
+}
+rule
+{
+    label = Paving Stone 6
+    bitmap = 0
+    color = 130 120 100
+    tiles = floors_exterior_tilesandstone_01_5
+    layer = 0_Floor
+}
+rule
+{
+    label = Paving Stone 7
+    bitmap = 0
+    color = 110 70 70
+    tiles = floors_exterior_tilesandstone_01_6
+    layer = 0_Floor
+}
+rule
+{
+    label = Paving Stone 8
+    bitmap = 0
+    color = 120 110 110
+    tiles = floors_exterior_tilesandstone_01_7
+    layer = 0_Floor
+}
+
+
+
+
+
+rule
+{
+label = Trees
+    bitmap = 1
+    color = 255 0 0
+    tiles = [
+        e_redmaple_1_3
+        e_virginiapine_1_3
+        e_americanlinden_1_3
+        e_yellowwood_1_3
+        e_canadianhemlock_1_3
+        e_riverbirch_1_3
+        e_dogwood_1_3
+        e_americanholly_1_3
+        e_easternredbud_1_3
+        e_cockspurhawthorn_1_3
+        e_carolinasilverbell_1_3
+    ]
+    layer = 0_Vegetation
+}
+
+rule
+{
+label = Dense Trees + Grass
+    bitmap = 1
+    color = 200 0 0
+    tiles = [
+        e_redmaple_1_3
+        e_virginiapine_1_3
+        e_americanlinden_1_3
+        e_yellowwood_1_3
+        e_canadianhemlock_1_3
+        e_riverbirch_1_3
+        e_dogwood_1_3
+        e_americanholly_1_3
+        e_easternredbud_1_3
+        e_cockspurhawthorn_1_3
+        e_carolinasilverbell_1_3
+        e_redmaple_1_2
+        e_virginiapine_1_2
+        e_americanlinden_1_2
+        e_yellowwood_1_2
+        e_canadianhemlock_1_2
+        e_riverbirch_1_2
+        e_dogwood_1_2
+        e_americanholly_1_2
+        e_easternredbud_1_2
+        e_cockspurhawthorn_1_2
+        e_carolinasilverbell_1_2
+        e_redmaple_1_3
+        e_virginiapine_1_3
+        e_americanlinden_1_3
+        e_yellowwood_1_3
+        e_canadianhemlock_1_3
+        e_riverbirch_1_3
+        e_dogwood_1_3
+        e_americanholly_1_3
+        e_easternredbud_1_3
+        e_cockspurhawthorn_1_3
+        e_carolinasilverbell_1_3
+        e_redmaple_1_3
+        e_virginiapine_1_3
+        e_americanlinden_1_3
+        e_yellowwood_1_3
+        e_canadianhemlock_1_3
+        e_riverbirch_1_3
+        e_dogwood_1_3
+        e_americanholly_1_3
+        e_easternredbud_1_3
+        e_cockspurhawthorn_1_3
+        e_carolinasilverbell_1_3
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+    ]
+    layer = 0_Vegetation
+    condition = 90 100 35
+}
+
+rule
+{
+label = Moderate Trees + Grass
+    bitmap = 1
+    color = 127 0 0
+    tiles = [
+        e_redmaple_1_3
+        e_virginiapine_1_3
+        e_americanlinden_1_3
+        e_yellowwood_1_3
+        e_canadianhemlock_1_3
+        e_riverbirch_1_3
+        e_dogwood_1_3
+        e_americanholly_1_3
+        e_easternredbud_1_3
+        e_cockspurhawthorn_1_3
+        e_carolinasilverbell_1_3
+        e_redmaple_1_2
+        e_virginiapine_1_2
+        e_americanlinden_1_2
+        e_yellowwood_1_2
+        e_canadianhemlock_1_2
+        e_riverbirch_1_2
+        e_dogwood_1_2
+        e_americanholly_1_2
+        e_easternredbud_1_2
+        e_cockspurhawthorn_1_2
+        e_carolinasilverbell_1_2
+        e_redmaple_1_3
+        e_virginiapine_1_3
+        e_americanlinden_1_3
+        e_yellowwood_1_3
+        e_canadianhemlock_1_3
+        e_riverbirch_1_3
+        e_dogwood_1_3
+        e_americanholly_1_3
+        e_easternredbud_1_3
+        e_cockspurhawthorn_1_3
+        e_carolinasilverbell_1_3
+        e_redmaple_1_1
+        e_virginiapine_1_1
+        e_americanlinden_1_1
+        e_yellowwood_1_1
+        e_canadianhemlock_1_1
+        e_riverbirch_1_1
+        e_dogwood_1_1
+        e_americanholly_1_1
+        e_easternredbud_1_1
+        e_cockspurhawthorn_1_1
+        e_carolinasilverbell_1_1
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+    ]
+    layer = 0_Vegetation
+    condition = 90 100 35
+}
+
+rule
+{
+label = Sparse Trees + Grass
+    bitmap = 1
+    color = 64 0 0
+    tiles = [
+        e_redmaple_1_2
+        e_virginiapine_1_2
+        e_americanlinden_1_2
+        e_yellowwood_1_2
+        e_canadianhemlock_1_2
+        e_riverbirch_1_2
+        e_dogwood_1_2
+        e_americanholly_1_2
+        e_easternredbud_1_2
+        e_cockspurhawthorn_1_2
+        e_carolinasilverbell_1_2
+        e_redmaple_1_1
+        e_virginiapine_1_1
+        e_americanlinden_1_1
+        e_yellowwood_1_1
+        e_canadianhemlock_1_1
+        e_riverbirch_1_1
+        e_dogwood_1_1
+        e_americanholly_1_1
+        e_easternredbud_1_1
+        e_cockspurhawthorn_1_1
+        e_carolinasilverbell_1_1
+        e_redmaple_1_3
+        e_virginiapine_1_3
+        e_americanlinden_1_3
+        e_yellowwood_1_3
+        e_canadianhemlock_1_3
+        e_riverbirch_1_3
+        e_dogwood_1_3
+        e_americanholly_1_3
+        e_easternredbud_1_3
+        e_cockspurhawthorn_1_3
+        e_carolinasilverbell_1_3
+        e_redmaple_1_0
+        e_virginiapine_1_0
+        e_americanlinden_1_0
+        e_yellowwood_1_0
+        e_canadianhemlock_1_0
+        e_riverbirch_1_0
+        e_dogwood_1_0
+        e_americanholly_1_0
+        e_easternredbud_1_0
+        e_cockspurhawthorn_1_0
+        e_carolinasilverbell_1_0
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+        f_flowerbed_1_0
+        f_flowerbed_1_0
+        f_flowerbed_1_0
+        f_flowerbed_1_0
+        f_flowerbed_1_0
+        f_flowerbed_1_0
+        f_flowerbed_1_0
+        f_flowerbed_1_0
+        f_flowerbed_1_0
+        f_flowerbed_1_0
+        f_flowerbed_1_0
+        f_flowerbed_1_1
+        f_flowerbed_1_1
+        f_flowerbed_1_1
+        f_flowerbed_1_1
+        f_flowerbed_1_1
+        f_flowerbed_1_1
+        f_flowerbed_1_1
+        f_flowerbed_1_1
+        f_flowerbed_1_1
+        f_flowerbed_1_1
+        f_flowerbed_1_1
+        f_flowerbed_1_2
+        f_flowerbed_1_2
+        f_flowerbed_1_2
+        f_flowerbed_1_2
+        f_flowerbed_1_2
+        f_flowerbed_1_2
+        f_flowerbed_1_2
+        f_flowerbed_1_2
+        f_flowerbed_1_2
+        f_flowerbed_1_2
+        f_flowerbed_1_2
+        f_flowerbed_1_3
+        f_flowerbed_1_3
+        f_flowerbed_1_3
+        f_flowerbed_1_3
+        f_flowerbed_1_3
+        f_flowerbed_1_3
+        f_flowerbed_1_3
+        f_flowerbed_1_3
+        f_flowerbed_1_3
+        f_flowerbed_1_3
+        f_flowerbed_1_3
+        f_flowerbed_1_4
+        f_flowerbed_1_4
+        f_flowerbed_1_4
+        f_flowerbed_1_4
+        f_flowerbed_1_4
+        f_flowerbed_1_4
+        f_flowerbed_1_4
+        f_flowerbed_1_4
+        f_flowerbed_1_4
+        f_flowerbed_1_4
+        f_flowerbed_1_4
+    ]
+    layer = 0_Vegetation
+    condition = 90 100 35
+}
+
+rule
+{
+    label = Grass
+    bitmap = 1
+    color = 0 255 0
+    tiles = [
+        darklonggrass
+        darkmedgrass
+        darkshortgrass
+        darklonggrass
+        darkmedgrass
+        darkshortgrass
+        darklonggrass
+        darkmedgrass
+        darkshortgrass
+        f_flowerbed_1_5
+        f_flowerbed_1_0
+        f_flowerbed_1_1
+        f_flowerbed_1_2
+        f_flowerbed_1_3
+    ]
+    layer = 0_Vegetation
+    condition = 90 100 35
+}
+
+rule
+{
+    label = Bushes
+    bitmap = 1
+    color = 250 0 160
+    tiles = [
+        bushes
+    ]
+    layer = 0_Vegetation
+}
+
+rule
+{
+    label = Bushes + Trees
+    bitmap = 1
+    color = 250 0 200
+    tiles = [
+        e_redmaple_1_3
+        e_virginiapine_1_3
+        e_americanlinden_1_3
+        e_yellowwood_1_3
+        e_canadianhemlock_1_3
+        e_riverbirch_1_3
+        e_dogwood_1_3
+        e_americanholly_1_3
+        e_easternredbud_1_3
+        e_cockspurhawthorn_1_3
+        e_carolinasilverbell_1_3
+        e_redmaple_1_2
+        e_virginiapine_1_2
+        e_americanlinden_1_2
+        e_yellowwood_1_2
+        e_canadianhemlock_1_2
+        e_riverbirch_1_2
+        e_dogwood_1_2
+        e_americanholly_1_2
+        e_easternredbud_1_2
+        e_cockspurhawthorn_1_2
+        e_carolinasilverbell_1_2
+        e_redmaple_1_3
+        e_virginiapine_1_3
+        e_americanlinden_1_3
+        e_yellowwood_1_3
+        e_canadianhemlock_1_3
+        e_riverbirch_1_3
+        e_dogwood_1_3
+        e_americanholly_1_3
+        e_easternredbud_1_3
+        e_cockspurhawthorn_1_3
+        e_carolinasilverbell_1_3
+        e_redmaple_1_1
+        e_virginiapine_1_1
+        e_americanlinden_1_1
+        e_yellowwood_1_1
+        e_canadianhemlock_1_1
+        e_riverbirch_1_1
+        e_dogwood_1_1
+        e_americanholly_1_1
+        e_easternredbud_1_1
+        e_cockspurhawthorn_1_1
+        e_carolinasilverbell_1_1
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+    ]
+    layer = 0_Vegetation
+}
+
+rule
+{
+    label = Bushes + Trees + Grass
+    bitmap = 1
+    color = 255 0 255
+    tiles = [
+        e_redmaple_1_3
+        e_virginiapine_1_3
+        e_americanlinden_1_3
+        e_yellowwood_1_3
+        e_canadianhemlock_1_3
+        e_riverbirch_1_3
+        e_dogwood_1_3
+        e_americanholly_1_3
+        e_easternredbud_1_3
+        e_cockspurhawthorn_1_3
+        e_carolinasilverbell_1_3
+        e_redmaple_1_2
+        e_virginiapine_1_2
+        e_americanlinden_1_2
+        e_yellowwood_1_2
+        e_canadianhemlock_1_2
+        e_riverbirch_1_2
+        e_dogwood_1_2
+        e_americanholly_1_2
+        e_easternredbud_1_2
+        e_cockspurhawthorn_1_2
+        e_carolinasilverbell_1_2
+        e_redmaple_1_3
+        e_virginiapine_1_3
+        e_americanlinden_1_3
+        e_yellowwood_1_3
+        e_canadianhemlock_1_3
+        e_riverbirch_1_3
+        e_dogwood_1_3
+        e_americanholly_1_3
+        e_easternredbud_1_3
+        e_cockspurhawthorn_1_3
+        e_carolinasilverbell_1_3
+        e_redmaple_1_1
+        e_virginiapine_1_1
+        e_americanlinden_1_1
+        e_yellowwood_1_1
+        e_canadianhemlock_1_1
+        e_riverbirch_1_1
+        e_dogwood_1_1
+        e_americanholly_1_1
+        e_easternredbud_1_1
+        e_cockspurhawthorn_1_1
+        e_carolinasilverbell_1_1
+        vegetation_foliage_01_8
+        vegetation_foliage_01_8
+        vegetation_foliage_01_8
+        vegetation_foliage_01_8
+        vegetation_foliage_01_8
+        vegetation_foliage_01_8
+        vegetation_foliage_01_8
+        vegetation_foliage_01_8
+        vegetation_foliage_01_8
+        vegetation_foliage_01_8
+        vegetation_foliage_01_8
+        vegetation_foliage_01_9
+        vegetation_foliage_01_9
+        vegetation_foliage_01_9
+        vegetation_foliage_01_9
+        vegetation_foliage_01_9
+        vegetation_foliage_01_9
+        vegetation_foliage_01_9
+        vegetation_foliage_01_9
+        vegetation_foliage_01_9
+        vegetation_foliage_01_9
+        vegetation_foliage_01_9
+        vegetation_foliage_01_10
+        vegetation_foliage_01_10
+        vegetation_foliage_01_10
+        vegetation_foliage_01_10
+        vegetation_foliage_01_10
+        vegetation_foliage_01_10
+        vegetation_foliage_01_10
+        vegetation_foliage_01_10
+        vegetation_foliage_01_10
+        vegetation_foliage_01_10
+        vegetation_foliage_01_10
+        vegetation_foliage_01_11
+        vegetation_foliage_01_11
+        vegetation_foliage_01_11
+        vegetation_foliage_01_11
+        vegetation_foliage_01_11
+        vegetation_foliage_01_11
+        vegetation_foliage_01_11
+        vegetation_foliage_01_11
+        vegetation_foliage_01_11
+        vegetation_foliage_01_11
+        vegetation_foliage_01_11
+        vegetation_foliage_01_12
+        vegetation_foliage_01_12
+        vegetation_foliage_01_12
+        vegetation_foliage_01_12
+        vegetation_foliage_01_12
+        vegetation_foliage_01_12
+        vegetation_foliage_01_12
+        vegetation_foliage_01_12
+        vegetation_foliage_01_12
+        vegetation_foliage_01_12
+        vegetation_foliage_01_12
+        vegetation_foliage_01_13
+        vegetation_foliage_01_13
+        vegetation_foliage_01_13
+        vegetation_foliage_01_13
+        vegetation_foliage_01_13
+        vegetation_foliage_01_13
+        vegetation_foliage_01_13
+        vegetation_foliage_01_13
+        vegetation_foliage_01_13
+        vegetation_foliage_01_13
+        vegetation_foliage_01_13
+        vegetation_foliage_01_14
+        vegetation_foliage_01_14
+        vegetation_foliage_01_14
+        vegetation_foliage_01_14
+        vegetation_foliage_01_14
+        vegetation_foliage_01_14
+        vegetation_foliage_01_14
+        vegetation_foliage_01_14
+        vegetation_foliage_01_14
+        vegetation_foliage_01_14
+        vegetation_foliage_01_14
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+    ]
+    layer = 0_Vegetation
+    condition = 90 100 35
+}
+
+rule
+{
+    label = Dense Bushes + Grass
+    bitmap = 1
+    color = 200 0 200
+    tiles = [
+        bushes
+        bushes
+        bushes
+        bushes
+        darklonggrass
+        darkmedgrass
+        darkshortgrass
+    ]
+    layer = 0_Vegetation
+    condition = 90 100 35
+}
+
+rule
+{
+    label = Sparse Bushes + Grass
+    bitmap = 1
+    color = 100 0 200
+    tiles = [
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        bushes
+        darklonggrass
+        darklonggrass
+        darkmedgrass
+        darkshortgrass
+	darklonggrass
+        darklonggrass
+        darkmedgrass
+        darkshortgrass
+	darklonggrass
+        darklonggrass
+        darkmedgrass
+        darkshortgrass
+    ]
+    layer = 0_Vegetation
+    condition = 90 100 35
+}
+
+rule
+{
+    label = Ferns
+    bitmap = 1
+    color = 70 0 200
+    tiles = [
+        genericfern
+    ]
+    layer = 0_Vegetation
+}
+
+rule
+{
+    label = Flowers
+    bitmap = 1
+    color = 200 100 200
+    tiles = [
+        flowers
+    ]
+    layer = 0_Vegetation
+}
+
+rule
+{
+    label = Flowers + Grass
+    bitmap = 1
+    color = 160 80 160
+    tiles = [
+	flowers
+	flowers
+	flowers
+	flowers
+	flowers
+	flowers
+	flowers
+	flowers
+	flowers
+        darklonggrass
+        darkmedgrass
+        darkshortgrass
+	darklonggrass
+        darklonggrass
+    ]
+    layer = 0_Vegetation
+    condition = 90 100 35
+}
+
+rule
+{
+    label = Dense Shoreline
+    bitmap = 1
+    color = 0 150 120
+    tiles = [
+	plantsmedium
+	plantsmedium
+	plantsmedium
+	plantsmedium
+	plantsmedium
+	vegetation_foliage_01_8
+	vegetation_foliage_01_9
+	vegetation_foliage_01_10
+	vegetation_foliage_01_11
+	vegetation_foliage_01_12
+	vegetation_foliage_01_8
+	vegetation_foliage_01_9
+	vegetation_foliage_01_10
+	vegetation_foliage_01_11
+	vegetation_foliage_01_12
+	vegetation_foliage_01_8
+	vegetation_foliage_01_9
+	vegetation_foliage_01_10
+	vegetation_foliage_01_11
+	vegetation_foliage_01_12
+    ]
+    layer = 0_Vegetation
+}
+
+rule
+{
+    label = Moderate Shoreline
+    bitmap = 1
+    color = 0 180 160
+    tiles = [
+	plantsmedium
+	plantsmedium
+	plantslow
+	plantslow
+	plantslow
+	plantslow
+	plantslow
+	plantslow
+	plantslow
+	plantslow
+	plantslow
+	plantslow
+	boulderssmall
+	genericwood
+	genericwood
+	genericwood
+    ]
+    layer = 0_Vegetation
+}
+
+rule
+{
+    label = Sparse Shoreline
+    bitmap = 1
+    color = 0 250 230
+    tiles = [
+	plantsmedium
+	plantslow
+	plantslow
+	plantslow
+	plantslow
+	plantslow
+	plantslow
+	plantslow
+	plantslow
+	plantslow
+	plantslow
+	plantslow
+	plantslow
+	plantslow
+	plantslow
+	plantslow
+	plantslow
+	plantslow
+	plantslow
+	plantslow
+	plantslow
+	plantslow
+	plantslow
+	plantslow
+	plantslow
+	plantslow
+	plantslow
+	boulderssmall
+    ]
+    layer = 0_Vegetation
+}
+
+rule
+{
+    label = Boulders
+    bitmap = 1
+    color = 140 160 140
+    tiles = [
+	boulders1
+    ]
+    layer = 0_Vegetation
+}
+
+rule
+{
+    label = Boulders (walkable)
+    bitmap = 1
+    color = 100 120 100
+    tiles = [
+	boulders2
+    ]
+    layer = 0_Vegetation
+}
+
+rule
+{
+    label = Boulders (driveable)
+    bitmap = 1
+    color = 90 100 90
+    tiles = [
+	boulders3
+    ]
+    layer = 0_Vegetation
+}
+
+rule
+{
+    label = Vertical Dirt
+    bitmap = 0
+    color = 120 100 75
+    tiles = dirtvertical
+    layer = 0_Floor
+}
+
+rule
+{
+    label = Horizontal Dirt
+    bitmap = 0
+    color = 120 110 95
+    tiles = dirthorizontal
+    layer = 0_Floor
+}
+
+rule
+{
+    label = Farm Corn 1 (dead)
+    bitmap = 1
+    color = 255 128 0
+    tiles = [
+        vegetation_farm_01_32
+        vegetation_farm_01_33
+        vegetation_farm_01_34
+        vegetation_farm_01_35
+        vegetation_farm_01_36
+        vegetation_farm_01_37
+        vegetation_farm_01_38
+        vegetation_farm_01_39
+    ]
+    layer = 0_Vegetation
+}
+
+rule
+{
+    label = Farm Corn 2 (dead)
+    bitmap = 1
+    color = 220 100 0
+    tiles = [
+        vegetation_farm_01_40
+        vegetation_farm_01_41
+        vegetation_farm_01_42
+        vegetation_farm_01_43
+        vegetation_farm_01_44
+        vegetation_farm_01_45
+        vegetation_farm_01_46
+        vegetation_farm_01_47
+    ]
+    layer = 0_Vegetation
+}
+
+rule
+{
+    label = Scorched Earth
+    bitmap = 0
+    color = 10 0 0
+    tiles = scorchedEarth
+    layer = 0_Floor
+}
+
+rule
+{
+    label = Charred Earth
+    bitmap = 0
+    color = 80 20 0
+    tiles = CharredEarth
+    layer = 0_Floor
+}
+
+rule
+{
+    label = Burned Trees
+    bitmap = 1
+    color = 50 10 0
+    tiles = [
+        fencing_burnt_01_16
+        fencing_burnt_01_17
+        fencing_burnt_01_18
+        fencing_burnt_01_19
+    ]
+    layer = 0_Vegetation
+}
+
+rule
+{
+    label = Trash
+    bitmap = 1
+    color = 40 40 40
+    tiles = [
+        trash
+    ]
+    layer = 0_Vegetation
+}
+
+rule
+{
+    label = Road Crack
+    bitmap = 1
+    color = 50 50 40
+    tiles = [
+        streetcracks
+    ]
+    layer = 0_Vegetation
+}
+
+
+
+
+
+
+
+
+
+
+rule
+{
+    label = Gravel Dirt
+    bitmap = 0
+    color = 140 70 15
+    tiles = floors_exterior_natural_01_12
+    layer = 0_Floor
+    obsolete = true
+}
+
+rule
+{
+label = Dense Trees + Dark grass
+    bitmap = 1
+    color = 200 0 0
+    tiles = [
+        e_redmaple_1_3
+        e_virginiapine_1_3
+        e_americanlinden_1_3
+        e_yellowwood_1_3
+        e_canadianhemlock_1_3
+        e_riverbirch_1_3
+        e_dogwood_1_3
+        e_americanholly_1_3
+        e_easternredbud_1_3
+        e_cockspurhawthorn_1_3
+        e_carolinasilverbell_1_3
+        e_redmaple_1_2
+        e_virginiapine_1_2
+        e_americanlinden_1_2
+        e_yellowwood_1_2
+        e_canadianhemlock_1_2
+        e_riverbirch_1_2
+        e_dogwood_1_2
+        e_americanholly_1_2
+        e_easternredbud_1_2
+        e_cockspurhawthorn_1_2
+        e_carolinasilverbell_1_2
+        e_redmaple_1_3
+        e_virginiapine_1_3
+        e_americanlinden_1_3
+        e_yellowwood_1_3
+        e_canadianhemlock_1_3
+        e_riverbirch_1_3
+        e_dogwood_1_3
+        e_americanholly_1_3
+        e_easternredbud_1_3
+        e_cockspurhawthorn_1_3
+        e_carolinasilverbell_1_3
+        e_redmaple_1_3
+        e_virginiapine_1_3
+        e_americanlinden_1_3
+        e_yellowwood_1_3
+        e_canadianhemlock_1_3
+        e_riverbirch_1_3
+        e_dogwood_1_3
+        e_americanholly_1_3
+        e_easternredbud_1_3
+        e_cockspurhawthorn_1_3
+        e_carolinasilverbell_1_3
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+    ]
+    layer = 0_Vegetation
+    condition = 90 100 35
+    obsolete = true
+}
+
+rule
+{
+    label = Dense Trees + Medium grass
+    bitmap = 1
+    color = 200 0 0
+    tiles = [
+        e_redmaple_1_3
+        e_virginiapine_1_3
+        e_americanlinden_1_3
+        e_yellowwood_1_3
+        e_canadianhemlock_1_3
+        e_riverbirch_1_3
+        e_dogwood_1_3
+        e_americanholly_1_3
+        e_easternredbud_1_3
+        e_cockspurhawthorn_1_3
+        e_carolinasilverbell_1_3
+        e_redmaple_1_2
+        e_virginiapine_1_2
+        e_americanlinden_1_2
+        e_yellowwood_1_2
+        e_canadianhemlock_1_2
+        e_riverbirch_1_2
+        e_dogwood_1_2
+        e_americanholly_1_2
+        e_easternredbud_1_2
+        e_cockspurhawthorn_1_2
+        e_carolinasilverbell_1_2
+        e_redmaple_1_3
+        e_virginiapine_1_3
+        e_americanlinden_1_3
+        e_yellowwood_1_3
+        e_canadianhemlock_1_3
+        e_riverbirch_1_3
+        e_dogwood_1_3
+        e_americanholly_1_3
+        e_easternredbud_1_3
+        e_cockspurhawthorn_1_3
+        e_carolinasilverbell_1_3
+        e_redmaple_1_3
+        e_virginiapine_1_3
+        e_americanlinden_1_3
+        e_yellowwood_1_3
+        e_canadianhemlock_1_3
+        e_riverbirch_1_3
+        e_dogwood_1_3
+        e_americanholly_1_3
+        e_easternredbud_1_3
+        e_cockspurhawthorn_1_3
+        e_carolinasilverbell_1_3
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+    ]
+    layer = 0_Vegetation
+    condition = 117 117 47
+    obsolete = true
+}
+
+rule
+{
+    label = Dense Trees + Light grass
+    bitmap = 1
+    color = 200 0 0
+    tiles = [
+        e_redmaple_1_3
+        e_virginiapine_1_3
+        e_americanlinden_1_3
+        e_yellowwood_1_3
+        e_canadianhemlock_1_3
+        e_riverbirch_1_3
+        e_dogwood_1_3
+        e_americanholly_1_3
+        e_easternredbud_1_3
+        e_cockspurhawthorn_1_3
+        e_carolinasilverbell_1_3
+        e_redmaple_1_2
+        e_virginiapine_1_2
+        e_americanlinden_1_2
+        e_yellowwood_1_2
+        e_canadianhemlock_1_2
+        e_riverbirch_1_2
+        e_dogwood_1_2
+        e_americanholly_1_2
+        e_easternredbud_1_2
+        e_cockspurhawthorn_1_2
+        e_carolinasilverbell_1_2
+        e_redmaple_1_3
+        e_virginiapine_1_3
+        e_americanlinden_1_3
+        e_yellowwood_1_3
+        e_canadianhemlock_1_3
+        e_riverbirch_1_3
+        e_dogwood_1_3
+        e_americanholly_1_3
+        e_easternredbud_1_3
+        e_cockspurhawthorn_1_3
+        e_carolinasilverbell_1_3
+        e_redmaple_1_3
+        e_virginiapine_1_3
+        e_americanlinden_1_3
+        e_yellowwood_1_3
+        e_canadianhemlock_1_3
+        e_riverbirch_1_3
+        e_dogwood_1_3
+        e_americanholly_1_3
+        e_easternredbud_1_3
+        e_cockspurhawthorn_1_3
+        e_carolinasilverbell_1_3
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+    ]
+    layer = 0_Vegetation
+    condition = 145 135 60
+    obsolete = true
+}
+
+rule
+{
+label = Trees + Dark grass
+    bitmap = 1
+    color = 127 0 0
+    tiles = [
+        e_redmaple_1_3
+        e_virginiapine_1_3
+        e_americanlinden_1_3
+        e_yellowwood_1_3
+        e_canadianhemlock_1_3
+        e_riverbirch_1_3
+        e_dogwood_1_3
+        e_americanholly_1_3
+        e_easternredbud_1_3
+        e_cockspurhawthorn_1_3
+        e_carolinasilverbell_1_3
+        e_redmaple_1_2
+        e_virginiapine_1_2
+        e_americanlinden_1_2
+        e_yellowwood_1_2
+        e_canadianhemlock_1_2
+        e_riverbirch_1_2
+        e_dogwood_1_2
+        e_americanholly_1_2
+        e_easternredbud_1_2
+        e_cockspurhawthorn_1_2
+        e_carolinasilverbell_1_2
+        e_redmaple_1_3
+        e_virginiapine_1_3
+        e_americanlinden_1_3
+        e_yellowwood_1_3
+        e_canadianhemlock_1_3
+        e_riverbirch_1_3
+        e_dogwood_1_3
+        e_americanholly_1_3
+        e_easternredbud_1_3
+        e_cockspurhawthorn_1_3
+        e_carolinasilverbell_1_3
+        e_redmaple_1_1
+        e_virginiapine_1_1
+        e_americanlinden_1_1
+        e_yellowwood_1_1
+        e_canadianhemlock_1_1
+        e_riverbirch_1_1
+        e_dogwood_1_1
+        e_americanholly_1_1
+        e_easternredbud_1_1
+        e_cockspurhawthorn_1_1
+        e_carolinasilverbell_1_1
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+    ]
+    layer = 0_Vegetation
+    condition = 90 100 35
+    obsolete = true
+}
+
+rule
+{
+    label = Trees + Medium grass
+    bitmap = 1
+    color = 127 0 0
+    tiles = [
+        e_redmaple_1_3
+        e_virginiapine_1_3
+        e_americanlinden_1_3
+        e_yellowwood_1_3
+        e_canadianhemlock_1_3
+        e_riverbirch_1_3
+        e_dogwood_1_3
+        e_americanholly_1_3
+        e_easternredbud_1_3
+        e_cockspurhawthorn_1_3
+        e_carolinasilverbell_1_3
+        e_redmaple_1_2
+        e_virginiapine_1_2
+        e_americanlinden_1_2
+        e_yellowwood_1_2
+        e_canadianhemlock_1_2
+        e_riverbirch_1_2
+        e_dogwood_1_2
+        e_americanholly_1_2
+        e_easternredbud_1_2
+        e_cockspurhawthorn_1_2
+        e_carolinasilverbell_1_2
+        e_redmaple_1_3
+        e_virginiapine_1_3
+        e_americanlinden_1_3
+        e_yellowwood_1_3
+        e_canadianhemlock_1_3
+        e_riverbirch_1_3
+        e_dogwood_1_3
+        e_americanholly_1_3
+        e_easternredbud_1_3
+        e_cockspurhawthorn_1_3
+        e_carolinasilverbell_1_3
+        e_redmaple_1_1
+        e_virginiapine_1_1
+        e_americanlinden_1_1
+        e_yellowwood_1_1
+        e_canadianhemlock_1_1
+        e_riverbirch_1_1
+        e_dogwood_1_1
+        e_americanholly_1_1
+        e_easternredbud_1_1
+        e_cockspurhawthorn_1_1
+        e_carolinasilverbell_1_1
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medshortgrass
+        medshortgrass
+        medshortgrass
+        medshortgrass
+        medshortgrass
+        medshortgrass
+        medshortgrass
+        medshortgrass
+        medshortgrass
+        medshortgrass
+        medshortgrass
+    ]
+    layer = 0_Vegetation
+    condition = 117 117 47
+    obsolete = true
+}
+
+rule
+{
+    label = Trees + Light grass
+    bitmap = 1
+    color = 127 0 0
+    tiles = [
+        e_redmaple_1_3
+        e_virginiapine_1_3
+        e_americanlinden_1_3
+        e_yellowwood_1_3
+        e_canadianhemlock_1_3
+        e_riverbirch_1_3
+        e_dogwood_1_3
+        e_americanholly_1_3
+        e_easternredbud_1_3
+        e_cockspurhawthorn_1_3
+        e_carolinasilverbell_1_3
+        e_redmaple_1_2
+        e_virginiapine_1_2
+        e_americanlinden_1_2
+        e_yellowwood_1_2
+        e_canadianhemlock_1_2
+        e_riverbirch_1_2
+        e_dogwood_1_2
+        e_americanholly_1_2
+        e_easternredbud_1_2
+        e_cockspurhawthorn_1_2
+        e_carolinasilverbell_1_2
+        e_redmaple_1_3
+        e_virginiapine_1_3
+        e_americanlinden_1_3
+        e_yellowwood_1_3
+        e_canadianhemlock_1_3
+        e_riverbirch_1_3
+        e_dogwood_1_3
+        e_americanholly_1_3
+        e_easternredbud_1_3
+        e_cockspurhawthorn_1_3
+        e_carolinasilverbell_1_3
+        e_redmaple_1_1
+        e_virginiapine_1_1
+        e_americanlinden_1_1
+        e_yellowwood_1_1
+        e_canadianhemlock_1_1
+        e_riverbirch_1_1
+        e_dogwood_1_1
+        e_americanholly_1_1
+        e_easternredbud_1_1
+        e_cockspurhawthorn_1_1
+        e_carolinasilverbell_1_1
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightshortgrass
+        lightshortgrass
+        lightshortgrass
+        lightshortgrass
+        lightshortgrass
+        lightshortgrass
+        lightshortgrass
+        lightshortgrass
+        lightshortgrass
+        lightshortgrass
+        lightshortgrass
+    ]
+    layer = 0_Vegetation
+    condition = 145 135 60
+    obsolete = true
+}
+
+rule
+{
+    label = Fir Trees + Dark grass
+    bitmap = 1
+    color = 64 0 0
+    tiles = [
+        e_virginiapine_1_3
+        e_canadianhemlock_1_3
+        e_americanholly_1_3
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+    ]
+    layer = 0_Vegetation
+    condition = 90 100 35
+    obsolete = true
+}
+
+rule
+{
+    label = Fir Trees + Medium grass
+    bitmap = 1
+    color = 64 0 0
+    tiles = [
+        e_virginiapine_1_3
+        e_canadianhemlock_1_3
+        e_americanholly_1_3
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medshortgrass
+        medshortgrass
+        medshortgrass
+    ]
+    layer = 0_Vegetation
+    condition = 117 117 47
+    obsolete = true
+}
+
+rule
+{
+    label = Fir Trees + Light grass
+    bitmap = 1
+    color = 64 0 0
+    tiles = [
+        e_virginiapine_1_3
+        e_canadianhemlock_1_3
+        e_americanholly_1_3
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightshortgrass
+        lightshortgrass
+        lightshortgrass
+    ]
+    layer = 0_Vegetation
+    condition = 145 135 60
+    obsolete = true
+}
+
+rule
+{
+    label = Dark short grass
+    bitmap = 1
+    color = 0 250 0
+    tiles = [
+        darkshortgrass
+    ]
+    layer = 0_Vegetation
+    condition = 90 100 35
+    obsolete = true
+}
+
+rule
+{
+    label = Medium short grass
+    bitmap = 1
+    color = 0 250 0
+    tiles = [
+        medshortgrass
+    ]
+    layer = 0_Vegetation
+    condition = 117 117 47
+    obsolete = true
+}
+
+rule
+{
+    label = Light short grass
+    bitmap = 1
+    color = 0 250 0
+    tiles = [
+        lightshortgrass
+    ]
+    layer = 0_Vegetation
+    condition = 145 135 60
+    obsolete = true
+}
+
+rule
+{
+    label = Dark long grass
+    bitmap = 1
+    color = 0 255 0
+    tiles = [
+        darklonggrass
+        darkmedgrass
+        darkshortgrass
+        darklonggrass
+        darkmedgrass
+        darkshortgrass
+        darklonggrass
+        darkmedgrass
+        darkshortgrass
+	f_flowerbed_1_4
+	f_flowerbed_1_5
+	f_flowerbed_1_0
+	f_flowerbed_1_1
+	f_flowerbed_1_2
+    ]
+    layer = 0_Vegetation
+    condition = 90 100 35
+    obsolete = true
+}
+
+rule
+{
+    label = Medium long grass
+    bitmap = 1
+    color = 0 255 0
+    tiles = [
+        medshortgrass
+        medmedgrass
+        medlonggrass
+	medshortgrass
+        medmedgrass
+        medlonggrass
+	medshortgrass
+        medmedgrass
+        medlonggrass
+	f_flowerbed_1_3
+	f_flowerbed_1_4
+	f_flowerbed_1_5
+	f_flowerbed_1_0
+	f_flowerbed_1_1
+    ]
+    layer = 0_Vegetation
+    condition = 117 117 47
+    obsolete = true
+}
+
+rule
+{
+    label = Light long grass
+    bitmap = 1
+    color = 0 255 0
+    tiles = [
+        lightshortgrass
+        lightmedgrass
+        lightlonggrass
+        lightshortgrass
+        lightmedgrass
+        lightlonggrass
+	lightshortgrass
+        lightmedgrass
+        lightlonggrass
+	f_flowerbed_1_2
+	f_flowerbed_1_3
+	f_flowerbed_1_4
+	f_flowerbed_1_5
+	f_flowerbed_1_0
+    ]
+    layer = 0_Vegetation
+    condition = 145 135 60
+    obsolete = true
+}
+
+rule
+{
+	label = Grass + Few Trees (dark)
+    bitmap = 1
+    color = 0 128 0
+    tiles = [
+        e_redmaple_1_2
+        e_virginiapine_1_2
+        e_americanlinden_1_2
+        e_yellowwood_1_2
+        e_canadianhemlock_1_2
+        e_riverbirch_1_2
+        e_dogwood_1_2
+        e_americanholly_1_2
+        e_easternredbud_1_2
+        e_cockspurhawthorn_1_2
+        e_carolinasilverbell_1_2
+        e_redmaple_1_1
+        e_virginiapine_1_1
+        e_americanlinden_1_1
+        e_yellowwood_1_1
+        e_canadianhemlock_1_1
+        e_riverbirch_1_1
+        e_dogwood_1_1
+        e_americanholly_1_1
+        e_easternredbud_1_1
+        e_cockspurhawthorn_1_1
+        e_carolinasilverbell_1_1
+        e_redmaple_1_3
+        e_virginiapine_1_3
+        e_americanlinden_1_3
+        e_yellowwood_1_3
+        e_canadianhemlock_1_3
+        e_riverbirch_1_3
+        e_dogwood_1_3
+        e_americanholly_1_3
+        e_easternredbud_1_3
+        e_cockspurhawthorn_1_3
+        e_carolinasilverbell_1_3
+        e_redmaple_1_0
+        e_virginiapine_1_0
+        e_americanlinden_1_0
+        e_yellowwood_1_0
+        e_canadianhemlock_1_0
+        e_riverbirch_1_0
+        e_dogwood_1_0
+        e_americanholly_1_0
+        e_easternredbud_1_0
+        e_cockspurhawthorn_1_0
+        e_carolinasilverbell_1_0
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+        f_flowerbed_1_1
+        f_flowerbed_1_1
+        f_flowerbed_1_1
+        f_flowerbed_1_1
+        f_flowerbed_1_1
+        f_flowerbed_1_1
+        f_flowerbed_1_1
+        f_flowerbed_1_1
+        f_flowerbed_1_1
+        f_flowerbed_1_1
+        f_flowerbed_1_1
+        f_flowerbed_1_2
+        f_flowerbed_1_2
+        f_flowerbed_1_2
+        f_flowerbed_1_2
+        f_flowerbed_1_2
+        f_flowerbed_1_2
+        f_flowerbed_1_2
+        f_flowerbed_1_2
+        f_flowerbed_1_2
+        f_flowerbed_1_2
+        f_flowerbed_1_2
+        f_flowerbed_1_3
+        f_flowerbed_1_3
+        f_flowerbed_1_3
+        f_flowerbed_1_3
+        f_flowerbed_1_3
+        f_flowerbed_1_3
+        f_flowerbed_1_3
+        f_flowerbed_1_3
+        f_flowerbed_1_3
+        f_flowerbed_1_3
+        f_flowerbed_1_3
+        f_flowerbed_1_4
+        f_flowerbed_1_4
+        f_flowerbed_1_4
+        f_flowerbed_1_4
+        f_flowerbed_1_4
+        f_flowerbed_1_4
+        f_flowerbed_1_4
+        f_flowerbed_1_4
+        f_flowerbed_1_4
+        f_flowerbed_1_4
+        f_flowerbed_1_4
+        f_flowerbed_1_5
+        f_flowerbed_1_5
+        f_flowerbed_1_5
+        f_flowerbed_1_5
+        f_flowerbed_1_5
+        f_flowerbed_1_5
+        f_flowerbed_1_5
+        f_flowerbed_1_5
+        f_flowerbed_1_5
+        f_flowerbed_1_5
+        f_flowerbed_1_5
+    ]
+    layer = 0_Vegetation
+    condition = 90 100 35
+    obsolete = true
+}
+
+rule
+{
+    label = Grass + Few Trees (medium)
+    bitmap = 1
+    color = 0 128 0
+    tiles = [
+        e_redmaple_1_2
+        e_virginiapine_1_2
+        e_americanlinden_1_2
+        e_yellowwood_1_2
+        e_canadianhemlock_1_2
+        e_riverbirch_1_2
+        e_dogwood_1_2
+        e_americanholly_1_2
+        e_easternredbud_1_2
+        e_cockspurhawthorn_1_2
+        e_carolinasilverbell_1_2
+        e_redmaple_1_1
+        e_virginiapine_1_1
+        e_americanlinden_1_1
+        e_yellowwood_1_1
+        e_canadianhemlock_1_1
+        e_riverbirch_1_1
+        e_dogwood_1_1
+        e_americanholly_1_1
+        e_easternredbud_1_1
+        e_cockspurhawthorn_1_1
+        e_carolinasilverbell_1_1
+        e_redmaple_1_3
+        e_virginiapine_1_3
+        e_americanlinden_1_3
+        e_yellowwood_1_3
+        e_canadianhemlock_1_3
+        e_riverbirch_1_3
+        e_dogwood_1_3
+        e_americanholly_1_3
+        e_easternredbud_1_3
+        e_cockspurhawthorn_1_3
+        e_carolinasilverbell_1_3
+        e_redmaple_1_0
+        e_virginiapine_1_0
+        e_americanlinden_1_0
+        e_yellowwood_1_0
+        e_canadianhemlock_1_0
+        e_riverbirch_1_0
+        e_dogwood_1_0
+        e_americanholly_1_0
+        e_easternredbud_1_0
+        e_cockspurhawthorn_1_0
+        e_carolinasilverbell_1_0
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medshortgrass
+        medshortgrass
+        medshortgrass
+        medshortgrass
+        medshortgrass
+        medshortgrass
+        medshortgrass
+        medshortgrass
+        medshortgrass
+        medshortgrass
+        medshortgrass
+        f_flowerbed_1_0
+        f_flowerbed_1_0
+        f_flowerbed_1_0
+        f_flowerbed_1_0
+        f_flowerbed_1_0
+        f_flowerbed_1_0
+        f_flowerbed_1_0
+        f_flowerbed_1_0
+        f_flowerbed_1_0
+        f_flowerbed_1_0
+        f_flowerbed_1_0
+        f_flowerbed_1_1
+        f_flowerbed_1_1
+        f_flowerbed_1_1
+        f_flowerbed_1_1
+        f_flowerbed_1_1
+        f_flowerbed_1_1
+        f_flowerbed_1_1
+        f_flowerbed_1_1
+        f_flowerbed_1_1
+        f_flowerbed_1_1
+        f_flowerbed_1_1
+        f_flowerbed_1_2
+        f_flowerbed_1_2
+        f_flowerbed_1_2
+        f_flowerbed_1_2
+        f_flowerbed_1_2
+        f_flowerbed_1_2
+        f_flowerbed_1_2
+        f_flowerbed_1_2
+        f_flowerbed_1_2
+        f_flowerbed_1_2
+        f_flowerbed_1_2
+        f_flowerbed_1_3
+        f_flowerbed_1_3
+        f_flowerbed_1_3
+        f_flowerbed_1_3
+        f_flowerbed_1_3
+        f_flowerbed_1_3
+        f_flowerbed_1_3
+        f_flowerbed_1_3
+        f_flowerbed_1_3
+        f_flowerbed_1_3
+        f_flowerbed_1_3
+        f_flowerbed_1_4
+        f_flowerbed_1_4
+        f_flowerbed_1_4
+        f_flowerbed_1_4
+        f_flowerbed_1_4
+        f_flowerbed_1_4
+        f_flowerbed_1_4
+        f_flowerbed_1_4
+        f_flowerbed_1_4
+        f_flowerbed_1_4
+        f_flowerbed_1_4
+    ]
+    layer = 0_Vegetation
+    condition = 117 117 47
+    obsolete = true
+}
+
+rule
+{
+    label = Grass + Few Trees (light)
+    bitmap = 1
+    color = 0 128 0
+    tiles = [
+        e_redmaple_1_2
+        e_virginiapine_1_2
+        e_americanlinden_1_2
+        e_yellowwood_1_2
+        e_canadianhemlock_1_2
+        e_riverbirch_1_2
+        e_dogwood_1_2
+        e_americanholly_1_2
+        e_easternredbud_1_2
+        e_cockspurhawthorn_1_2
+        e_carolinasilverbell_1_2
+        e_redmaple_1_1
+        e_virginiapine_1_1
+        e_americanlinden_1_1
+        e_yellowwood_1_1
+        e_canadianhemlock_1_1
+        e_riverbirch_1_1
+        e_dogwood_1_1
+        e_americanholly_1_1
+        e_easternredbud_1_1
+        e_cockspurhawthorn_1_1
+        e_carolinasilverbell_1_1
+        e_redmaple_1_3
+        e_virginiapine_1_3
+        e_americanlinden_1_3
+        e_yellowwood_1_3
+        e_canadianhemlock_1_3
+        e_riverbirch_1_3
+        e_dogwood_1_3
+        e_americanholly_1_3
+        e_easternredbud_1_3
+        e_cockspurhawthorn_1_3
+        e_carolinasilverbell_1_3
+        e_redmaple_1_0
+        e_virginiapine_1_0
+        e_americanlinden_1_0
+        e_yellowwood_1_0
+        e_canadianhemlock_1_0
+        e_riverbirch_1_0
+        e_dogwood_1_0
+        e_americanholly_1_0
+        e_easternredbud_1_0
+        e_cockspurhawthorn_1_0
+        e_carolinasilverbell_1_0
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightshortgrass
+        lightshortgrass
+        lightshortgrass
+        lightshortgrass
+        lightshortgrass
+        lightshortgrass
+        lightshortgrass
+        lightshortgrass
+        lightshortgrass
+        lightshortgrass
+        lightshortgrass
+        f_flowerbed_1_5
+        f_flowerbed_1_5
+        f_flowerbed_1_5
+        f_flowerbed_1_5
+        f_flowerbed_1_5
+        f_flowerbed_1_5
+        f_flowerbed_1_5
+        f_flowerbed_1_5
+        f_flowerbed_1_5
+        f_flowerbed_1_5
+        f_flowerbed_1_5
+        f_flowerbed_1_0
+        f_flowerbed_1_0
+        f_flowerbed_1_0
+        f_flowerbed_1_0
+        f_flowerbed_1_0
+        f_flowerbed_1_0
+        f_flowerbed_1_0
+        f_flowerbed_1_0
+        f_flowerbed_1_0
+        f_flowerbed_1_0
+        f_flowerbed_1_0
+        f_flowerbed_1_1
+        f_flowerbed_1_1
+        f_flowerbed_1_1
+        f_flowerbed_1_1
+        f_flowerbed_1_1
+        f_flowerbed_1_1
+        f_flowerbed_1_1
+        f_flowerbed_1_1
+        f_flowerbed_1_1
+        f_flowerbed_1_1
+        f_flowerbed_1_1
+        f_flowerbed_1_2
+        f_flowerbed_1_2
+        f_flowerbed_1_2
+        f_flowerbed_1_2
+        f_flowerbed_1_2
+        f_flowerbed_1_2
+        f_flowerbed_1_2
+        f_flowerbed_1_2
+        f_flowerbed_1_2
+        f_flowerbed_1_2
+        f_flowerbed_1_2
+        f_flowerbed_1_3
+        f_flowerbed_1_3
+        f_flowerbed_1_3
+        f_flowerbed_1_3
+        f_flowerbed_1_3
+        f_flowerbed_1_3
+        f_flowerbed_1_3
+        f_flowerbed_1_3
+        f_flowerbed_1_3
+        f_flowerbed_1_3
+        f_flowerbed_1_3
+    ]
+    layer = 0_Vegetation
+    condition = 145 135 60
+    obsolete = true
+}
+
+rule
+{
+    label = Bushes, Grass, Few Trees (dark)
+    bitmap = 1
+    color = 255 0 255
+    tiles = [
+        e_redmaple_1_2
+        e_virginiapine_1_2
+        e_americanlinden_1_2
+        e_yellowwood_1_2
+        e_canadianhemlock_1_2
+        e_riverbirch_1_2
+        e_dogwood_1_2
+        e_americanholly_1_2
+        e_easternredbud_1_2
+        e_cockspurhawthorn_1_2
+        e_carolinasilverbell_1_2
+        e_redmaple_1_1
+        e_virginiapine_1_1
+        e_americanlinden_1_1
+        e_yellowwood_1_1
+        e_canadianhemlock_1_1
+        e_riverbirch_1_1
+        e_dogwood_1_1
+        e_americanholly_1_1
+        e_easternredbud_1_1
+        e_cockspurhawthorn_1_1
+        e_carolinasilverbell_1_1
+        e_redmaple_1_3
+        e_virginiapine_1_3
+        e_americanlinden_1_3
+        e_yellowwood_1_3
+        e_canadianhemlock_1_3
+        e_riverbirch_1_3
+        e_dogwood_1_3
+        e_americanholly_1_3
+        e_easternredbud_1_3
+        e_cockspurhawthorn_1_3
+        e_carolinasilverbell_1_3
+        e_redmaple_1_0
+        e_virginiapine_1_0
+        e_americanlinden_1_0
+        e_yellowwood_1_0
+        e_canadianhemlock_1_0
+        e_riverbirch_1_0
+        e_dogwood_1_0
+        e_americanholly_1_0
+        e_easternredbud_1_0
+        e_cockspurhawthorn_1_0
+        e_carolinasilverbell_1_0
+        vegetation_foliage_01_8
+        vegetation_foliage_01_8
+        vegetation_foliage_01_8
+        vegetation_foliage_01_8
+        vegetation_foliage_01_8
+        vegetation_foliage_01_8
+        vegetation_foliage_01_8
+        vegetation_foliage_01_8
+        vegetation_foliage_01_8
+        vegetation_foliage_01_8
+        vegetation_foliage_01_8
+        vegetation_foliage_01_9
+        vegetation_foliage_01_9
+        vegetation_foliage_01_9
+        vegetation_foliage_01_9
+        vegetation_foliage_01_9
+        vegetation_foliage_01_9
+        vegetation_foliage_01_9
+        vegetation_foliage_01_9
+        vegetation_foliage_01_9
+        vegetation_foliage_01_9
+        vegetation_foliage_01_9
+        vegetation_foliage_01_10
+        vegetation_foliage_01_10
+        vegetation_foliage_01_10
+        vegetation_foliage_01_10
+        vegetation_foliage_01_10
+        vegetation_foliage_01_10
+        vegetation_foliage_01_10
+        vegetation_foliage_01_10
+        vegetation_foliage_01_10
+        vegetation_foliage_01_10
+        vegetation_foliage_01_10
+        vegetation_foliage_01_11
+        vegetation_foliage_01_11
+        vegetation_foliage_01_11
+        vegetation_foliage_01_11
+        vegetation_foliage_01_11
+        vegetation_foliage_01_11
+        vegetation_foliage_01_11
+        vegetation_foliage_01_11
+        vegetation_foliage_01_11
+        vegetation_foliage_01_11
+        vegetation_foliage_01_11
+        vegetation_foliage_01_12
+        vegetation_foliage_01_12
+        vegetation_foliage_01_12
+        vegetation_foliage_01_12
+        vegetation_foliage_01_12
+        vegetation_foliage_01_12
+        vegetation_foliage_01_12
+        vegetation_foliage_01_12
+        vegetation_foliage_01_12
+        vegetation_foliage_01_12
+        vegetation_foliage_01_12
+        vegetation_foliage_01_13
+        vegetation_foliage_01_13
+        vegetation_foliage_01_13
+        vegetation_foliage_01_13
+        vegetation_foliage_01_13
+        vegetation_foliage_01_13
+        vegetation_foliage_01_13
+        vegetation_foliage_01_13
+        vegetation_foliage_01_13
+        vegetation_foliage_01_13
+        vegetation_foliage_01_13
+        vegetation_foliage_01_14
+        vegetation_foliage_01_14
+        vegetation_foliage_01_14
+        vegetation_foliage_01_14
+        vegetation_foliage_01_14
+        vegetation_foliage_01_14
+        vegetation_foliage_01_14
+        vegetation_foliage_01_14
+        vegetation_foliage_01_14
+        vegetation_foliage_01_14
+        vegetation_foliage_01_14
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darklonggrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkmedgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+        darkshortgrass
+    ]
+    layer = 0_Vegetation
+    condition = 90 100 35
+    obsolete = true
+}
+
+rule
+{
+    label = Bushes, Grass, Few Trees (medium)
+    bitmap = 1
+    color = 255 0 255
+    tiles = [
+        e_redmaple_1_2
+        e_virginiapine_1_2
+        e_americanlinden_1_2
+        e_yellowwood_1_2
+        e_canadianhemlock_1_2
+        e_riverbirch_1_2
+        e_dogwood_1_2
+        e_americanholly_1_2
+        e_easternredbud_1_2
+        e_cockspurhawthorn_1_2
+        e_carolinasilverbell_1_2
+        e_redmaple_1_1
+        e_virginiapine_1_1
+        e_americanlinden_1_1
+        e_yellowwood_1_1
+        e_canadianhemlock_1_1
+        e_riverbirch_1_1
+        e_dogwood_1_1
+        e_americanholly_1_1
+        e_easternredbud_1_1
+        e_cockspurhawthorn_1_1
+        e_carolinasilverbell_1_1
+        e_redmaple_1_3
+        e_virginiapine_1_3
+        e_americanlinden_1_3
+        e_yellowwood_1_3
+        e_canadianhemlock_1_3
+        e_riverbirch_1_3
+        e_dogwood_1_3
+        e_americanholly_1_3
+        e_easternredbud_1_3
+        e_cockspurhawthorn_1_3
+        e_carolinasilverbell_1_3
+        e_redmaple_1_0
+        e_virginiapine_1_0
+        e_americanlinden_1_0
+        e_yellowwood_1_0
+        e_canadianhemlock_1_0
+        e_riverbirch_1_0
+        e_dogwood_1_0
+        e_americanholly_1_0
+        e_easternredbud_1_0
+        e_cockspurhawthorn_1_0
+        e_carolinasilverbell_1_0
+        vegetation_foliage_01_8
+        vegetation_foliage_01_8
+        vegetation_foliage_01_8
+        vegetation_foliage_01_8
+        vegetation_foliage_01_8
+        vegetation_foliage_01_8
+        vegetation_foliage_01_8
+        vegetation_foliage_01_8
+        vegetation_foliage_01_8
+        vegetation_foliage_01_8
+        vegetation_foliage_01_8
+        vegetation_foliage_01_9
+        vegetation_foliage_01_9
+        vegetation_foliage_01_9
+        vegetation_foliage_01_9
+        vegetation_foliage_01_9
+        vegetation_foliage_01_9
+        vegetation_foliage_01_9
+        vegetation_foliage_01_9
+        vegetation_foliage_01_9
+        vegetation_foliage_01_9
+        vegetation_foliage_01_9
+        vegetation_foliage_01_10
+        vegetation_foliage_01_10
+        vegetation_foliage_01_10
+        vegetation_foliage_01_10
+        vegetation_foliage_01_10
+        vegetation_foliage_01_10
+        vegetation_foliage_01_10
+        vegetation_foliage_01_10
+        vegetation_foliage_01_10
+        vegetation_foliage_01_10
+        vegetation_foliage_01_10
+        vegetation_foliage_01_11
+        vegetation_foliage_01_11
+        vegetation_foliage_01_11
+        vegetation_foliage_01_11
+        vegetation_foliage_01_11
+        vegetation_foliage_01_11
+        vegetation_foliage_01_11
+        vegetation_foliage_01_11
+        vegetation_foliage_01_11
+        vegetation_foliage_01_11
+        vegetation_foliage_01_11
+        vegetation_foliage_01_12
+        vegetation_foliage_01_12
+        vegetation_foliage_01_12
+        vegetation_foliage_01_12
+        vegetation_foliage_01_12
+        vegetation_foliage_01_12
+        vegetation_foliage_01_12
+        vegetation_foliage_01_12
+        vegetation_foliage_01_12
+        vegetation_foliage_01_12
+        vegetation_foliage_01_12
+        vegetation_foliage_01_13
+        vegetation_foliage_01_13
+        vegetation_foliage_01_13
+        vegetation_foliage_01_13
+        vegetation_foliage_01_13
+        vegetation_foliage_01_13
+        vegetation_foliage_01_13
+        vegetation_foliage_01_13
+        vegetation_foliage_01_13
+        vegetation_foliage_01_13
+        vegetation_foliage_01_13
+        vegetation_foliage_01_14
+        vegetation_foliage_01_14
+        vegetation_foliage_01_14
+        vegetation_foliage_01_14
+        vegetation_foliage_01_14
+        vegetation_foliage_01_14
+        vegetation_foliage_01_14
+        vegetation_foliage_01_14
+        vegetation_foliage_01_14
+        vegetation_foliage_01_14
+        vegetation_foliage_01_14
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medlonggrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medmedgrass
+        medshortgrass
+        medshortgrass
+        medshortgrass
+        medshortgrass
+        medshortgrass
+        medshortgrass
+        medshortgrass
+        medshortgrass
+        medshortgrass
+        medshortgrass
+        medshortgrass
+    ]
+    layer = 0_Vegetation
+    condition = 117 117 47
+    obsolete = true
+}
+
+rule
+{
+    label = Bushes, Grass, Few Trees (light)
+    bitmap = 1
+    color = 255 0 255
+    tiles = [
+        e_redmaple_1_2
+        e_virginiapine_1_2
+        e_americanlinden_1_2
+        e_yellowwood_1_2
+        e_canadianhemlock_1_2
+        e_riverbirch_1_2
+        e_dogwood_1_2
+        e_americanholly_1_2
+        e_easternredbud_1_2
+        e_cockspurhawthorn_1_2
+        e_carolinasilverbell_1_2
+        e_redmaple_1_1
+        e_virginiapine_1_1
+        e_americanlinden_1_1
+        e_yellowwood_1_1
+        e_canadianhemlock_1_1
+        e_riverbirch_1_1
+        e_dogwood_1_1
+        e_americanholly_1_1
+        e_easternredbud_1_1
+        e_cockspurhawthorn_1_1
+        e_carolinasilverbell_1_1
+        e_redmaple_1_3
+        e_virginiapine_1_3
+        e_americanlinden_1_3
+        e_yellowwood_1_3
+        e_canadianhemlock_1_3
+        e_riverbirch_1_3
+        e_dogwood_1_3
+        e_americanholly_1_3
+        e_easternredbud_1_3
+        e_cockspurhawthorn_1_3
+        e_carolinasilverbell_1_3
+        e_redmaple_1_0
+        e_virginiapine_1_0
+        e_americanlinden_1_0
+        e_yellowwood_1_0
+        e_canadianhemlock_1_0
+        e_riverbirch_1_0
+        e_dogwood_1_0
+        e_americanholly_1_0
+        e_easternredbud_1_0
+        e_cockspurhawthorn_1_0
+        e_carolinasilverbell_1_0
+        vegetation_foliage_01_8
+        vegetation_foliage_01_8
+        vegetation_foliage_01_8
+        vegetation_foliage_01_8
+        vegetation_foliage_01_8
+        vegetation_foliage_01_8
+        vegetation_foliage_01_8
+        vegetation_foliage_01_8
+        vegetation_foliage_01_8
+        vegetation_foliage_01_8
+        vegetation_foliage_01_8
+        vegetation_foliage_01_9
+        vegetation_foliage_01_9
+        vegetation_foliage_01_9
+        vegetation_foliage_01_9
+        vegetation_foliage_01_9
+        vegetation_foliage_01_9
+        vegetation_foliage_01_9
+        vegetation_foliage_01_9
+        vegetation_foliage_01_9
+        vegetation_foliage_01_9
+        vegetation_foliage_01_9
+        vegetation_foliage_01_10
+        vegetation_foliage_01_10
+        vegetation_foliage_01_10
+        vegetation_foliage_01_10
+        vegetation_foliage_01_10
+        vegetation_foliage_01_10
+        vegetation_foliage_01_10
+        vegetation_foliage_01_10
+        vegetation_foliage_01_10
+        vegetation_foliage_01_10
+        vegetation_foliage_01_10
+        vegetation_foliage_01_11
+        vegetation_foliage_01_11
+        vegetation_foliage_01_11
+        vegetation_foliage_01_11
+        vegetation_foliage_01_11
+        vegetation_foliage_01_11
+        vegetation_foliage_01_11
+        vegetation_foliage_01_11
+        vegetation_foliage_01_11
+        vegetation_foliage_01_11
+        vegetation_foliage_01_11
+        vegetation_foliage_01_12
+        vegetation_foliage_01_12
+        vegetation_foliage_01_12
+        vegetation_foliage_01_12
+        vegetation_foliage_01_12
+        vegetation_foliage_01_12
+        vegetation_foliage_01_12
+        vegetation_foliage_01_12
+        vegetation_foliage_01_12
+        vegetation_foliage_01_12
+        vegetation_foliage_01_12
+        vegetation_foliage_01_13
+        vegetation_foliage_01_13
+        vegetation_foliage_01_13
+        vegetation_foliage_01_13
+        vegetation_foliage_01_13
+        vegetation_foliage_01_13
+        vegetation_foliage_01_13
+        vegetation_foliage_01_13
+        vegetation_foliage_01_13
+        vegetation_foliage_01_13
+        vegetation_foliage_01_13
+        vegetation_foliage_01_14
+        vegetation_foliage_01_14
+        vegetation_foliage_01_14
+        vegetation_foliage_01_14
+        vegetation_foliage_01_14
+        vegetation_foliage_01_14
+        vegetation_foliage_01_14
+        vegetation_foliage_01_14
+        vegetation_foliage_01_14
+        vegetation_foliage_01_14
+        vegetation_foliage_01_14
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightlonggrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightmedgrass
+        lightshortgrass
+        lightshortgrass
+        lightshortgrass
+        lightshortgrass
+        lightshortgrass
+        lightshortgrass
+        lightshortgrass
+        lightshortgrass
+        lightshortgrass
+        lightshortgrass
+        lightshortgrass
+    ]
+    layer = 0_Vegetation
+    condition = 145 135 60
+    obsolete = true
+}
+
+rule
+{
+    label = Dense Bushes & Grass (dark)
+    bitmap = 1
+    color = 200 0 200
+    tiles = [
+        vegetation_foliage_01_8
+        vegetation_foliage_01_9
+        vegetation_foliage_01_10
+        vegetation_foliage_01_11
+        vegetation_foliage_01_12
+        vegetation_foliage_01_13
+        vegetation_foliage_01_14
+        darklonggrass
+    ]
+    layer = 0_Vegetation
+    condition = 90 100 35
+    obsolete = true
+}
+
+rule
+{
+    label = Dense Bushes & Grass (medium)
+    bitmap = 1
+    color = 200 0 200
+    tiles = [
+        vegetation_foliage_01_8
+        vegetation_foliage_01_9
+        vegetation_foliage_01_10
+        vegetation_foliage_01_11
+        vegetation_foliage_01_12
+        vegetation_foliage_01_13
+        vegetation_foliage_01_14
+        medlonggrass
+    ]
+    layer = 0_Vegetation
+    condition = 117 117 47
+    obsolete = true
+}
+
+rule
+{
+    label = Dense Bushes & Grass (light)
+    bitmap = 1
+    color = 200 0 200
+    tiles = [
+        vegetation_foliage_01_8
+        vegetation_foliage_01_9
+        vegetation_foliage_01_10
+        vegetation_foliage_01_11
+        vegetation_foliage_01_12
+        vegetation_foliage_01_13
+        vegetation_foliage_01_14
+        lightlonggrass
+    ]
+    layer = 0_Vegetation
+    condition = 145 135 60
+    obsolete = true
+}
+
+rule
+{
+    label = Bushes & Grass (dark)
+    bitmap = 1
+    color = 150 0 200
+    tiles = [
+        vegetation_foliage_01_8
+        vegetation_foliage_01_9
+        vegetation_foliage_01_10
+        vegetation_foliage_01_11
+        vegetation_foliage_01_12
+        vegetation_foliage_01_13
+        vegetation_foliage_01_14
+        darklonggrass
+        darkmedgrass
+        darkshortgrass
+	darklonggrass
+        darklonggrass
+    ]
+    layer = 0_Vegetation
+    condition = 90 100 35
+    obsolete = true
+}
+
+rule
+{
+    label = Bushes & Grass (medium)
+    bitmap = 1
+    color = 150 0 200
+    tiles = [
+        vegetation_foliage_01_8
+        vegetation_foliage_01_9
+        vegetation_foliage_01_10
+        vegetation_foliage_01_11
+        vegetation_foliage_01_12
+        vegetation_foliage_01_13
+        vegetation_foliage_01_14
+        medlonggrass
+        medlonggrass
+        medmedgrass
+        medshortgrass
+	medlonggrass
+        medlonggrass
+    ]
+    layer = 0_Vegetation
+    condition = 117 117 47
+    obsolete = true
+}
+
+rule
+{
+    label = Bushes & Grass (light)
+    bitmap = 1
+    color = 150 0 200
+    tiles = [
+        vegetation_foliage_01_8
+        vegetation_foliage_01_9
+        vegetation_foliage_01_10
+        vegetation_foliage_01_11
+        vegetation_foliage_01_12
+        vegetation_foliage_01_13
+        vegetation_foliage_01_14
+        lightlonggrass
+        lightlonggrass
+        lightmedgrass
+        lightshortgrass
+        lightlonggrass
+        lightlonggrass
+    ]
+    layer = 0_Vegetation
+    condition = 145 135 60
+    obsolete = true
+}
+
+rule
+{
+    label = Sparse Bushes & Grass (dark)
+    bitmap = 1
+    color = 100 0 200
+    tiles = [
+        vegetation_foliage_01_8
+        vegetation_foliage_01_9
+        vegetation_foliage_01_10
+        vegetation_foliage_01_11
+        vegetation_foliage_01_12
+        vegetation_foliage_01_13
+        vegetation_foliage_01_14
+        darklonggrass
+        darklonggrass
+        darkmedgrass
+        darkshortgrass
+	darklonggrass
+        darklonggrass
+        darkmedgrass
+        darkshortgrass
+	darklonggrass
+        darklonggrass
+        darkmedgrass
+        darkshortgrass
+    ]
+    layer = 0_Vegetation
+    condition = 90 100 35
+    obsolete = true
+}
+
+rule
+{
+    label = Sparse Bushes & Grass (medium)
+    bitmap = 1
+    color = 100 0 200
+    tiles = [
+        vegetation_foliage_01_8
+        vegetation_foliage_01_9
+        vegetation_foliage_01_10
+        vegetation_foliage_01_11
+        vegetation_foliage_01_12
+        vegetation_foliage_01_13
+        vegetation_foliage_01_14
+	medlonggrass
+        medlonggrass
+        medmedgrass
+        medshortgrass
+	medlonggrass
+        medlonggrass
+        medmedgrass
+        medshortgrass
+	medlonggrass
+        medlonggrass
+        medmedgrass
+        medshortgrass
+    ]
+    layer = 0_Vegetation
+    condition = 117 117 47
+    obsolete = true
+}
+
+rule
+{
+    label = Sparse Bushes & Grass (light)
+    bitmap = 1
+    color = 100 0 200
+    tiles = [
+        vegetation_foliage_01_8
+        vegetation_foliage_01_9
+        vegetation_foliage_01_10
+        vegetation_foliage_01_11
+        vegetation_foliage_01_12
+        vegetation_foliage_01_13
+        vegetation_foliage_01_14
+        lightlonggrass
+        lightlonggrass
+        lightmedgrass
+        lightshortgrass
+        lightlonggrass
+        lightlonggrass
+        lightmedgrass
+        lightshortgrass
+        lightlonggrass
+        lightlonggrass
+        lightmedgrass
+        lightshortgrass
+    ]
+    layer = 0_Vegetation
+    condition = 145 135 60
+    obsolete = true
+}
+
+rule
+{
+    label = BurnedTrees + Dark grass
+    bitmap = 1
+    color = 80 20 0
+    tiles = [
+        fencing_burnt_01_16
+        fencing_burnt_01_17
+        fencing_burnt_01_18
+        fencing_burnt_01_19
+	darklonggrass
+        darklonggrass
+        darkmedgrass
+        darkshortgrass
+    ]
+    layer = 0_Vegetation
+    condition = 90 100 35
+    obsolete = true
+}
+
+rule
+{
+    label = BurnedTrees + Medium grass
+    bitmap = 1
+    color = 80 20 0
+    tiles = [
+        fencing_burnt_01_16
+        fencing_burnt_01_17
+        fencing_burnt_01_18
+        fencing_burnt_01_19
+	medlonggrass
+        medlonggrass
+        medmedgrass
+        medshortgrass
+    ]
+    layer = 0_Vegetation
+    condition = 117 117 47
+    obsolete = true
+}
+
+rule
+{
+    label = BurnedTrees + Light grass
+    bitmap = 1
+    color = 80 20 0
+    tiles = [
+        fencing_burnt_01_16
+        fencing_burnt_01_17
+        fencing_burnt_01_18
+        fencing_burnt_01_19
+	lightlonggrass
+        lightlonggrass
+        lightmedgrass
+        lightshortgrass
+    ]
+    layer = 0_Vegetation
+    condition = 145 135 60
+    obsolete = true
+}
+
+rule
+{
+    label = Rockssmall
+    bitmap = 0
+    color = 110 100 60
+    tiles = rockssmall
+    layer = 0_Floor
+    obsolete = true
+}
+
+rule
+{
+    label = Rocksmedium
+    bitmap = 0
+    color = 130 120 80
+    tiles = rocksmedium
+    layer = 0_Floor
+    obsolete = true
+}
+
+rule
+{
+    label = Rockslarge
+    bitmap = 0
+    color = 150 135 90
+    tiles = rockslarge
+    layer = 0_Floor
+    obsolete = true
+}
+
+rule
+{
+    label = Flowers + Grass (dark)
+    bitmap = 1
+    color = 160 80 160
+    tiles = [
+	flowers
+	flowers
+	flowers
+	flowers
+	flowers
+	flowers
+	flowers
+	flowers
+	flowers
+        darklonggrass
+        darkmedgrass
+        darkshortgrass
+	darklonggrass
+        darklonggrass
+    ]
+    layer = 0_Vegetation
+    condition = 90 100 35
+    obsolete = true
+}
+
+rule
+{
+    label = Flowers + Grass (medium)
+    bitmap = 1
+    color = 160 80 160
+    tiles = [
+	flowers
+	flowers
+	flowers
+	flowers
+	flowers
+	flowers
+	flowers
+	flowers
+	flowers
+        medlonggrass
+        medmedgrass
+        medshortgrass
+	medlonggrass
+        medlonggrass
+    ]
+    layer = 0_Vegetation
+    condition = 117 117 47
+    obsolete = true
+}
+
+rule
+{
+    label = Flowers + Grass (light)
+    bitmap = 1
+    color = 160 80 160
+    tiles = [
+	flowers
+	flowers
+	flowers
+	flowers
+	flowers
+	flowers
+	flowers
+	flowers
+	flowers
+        lightlonggrass
+        lightmedgrass
+        lightshortgrass
+	lightlonggrass
+        lightlonggrass
+    ]
+    layer = 0_Vegetation
+    condition = 145 135 60
+    obsolete = true
+}
+
+rule
+{
+    label = KnoxMap tree Small tree
+    bitmap = 1
+    color = 255 0 4
+    tiles = [
+        e_redmaple_1_0
+        e_redmaple_1_1
+        e_americanlinden_1_0
+        e_americanlinden_1_1
+        e_yellowwood_1_0
+        e_yellowwood_1_1
+        e_riverbirch_1_0
+        e_riverbirch_1_1
+        e_dogwood_1_0
+        e_dogwood_1_1
+        e_easternredbud_1_0
+        e_easternredbud_1_1
+        e_cockspurhawthorn_1_0
+        e_cockspurhawthorn_1_1
+        e_carolinasilverbell_1_0
+        e_carolinasilverbell_1_1
+        e_virginiapine_1_0
+        e_virginiapine_1_1
+        e_canadianhemlock_1_0
+        e_canadianhemlock_1_1
+        e_americanholly_1_0
+        e_americanholly_1_1
+    ]
+    layer = 0_Vegetation
+}
+
+rule
+{
+    label = KnoxMap tree Big tree
+    bitmap = 1
+    color = 255 0 1
+    tiles = [
+        e_redmapleJUMBO_1_6
+        e_redmapleJUMBO_1_7
+        e_americanlindenJUMBO_1_6
+        e_americanlindenJUMBO_1_7
+        e_yellowwoodJUMBO_1_6
+        e_yellowwoodJUMBO_1_7
+        e_riverbirchJUMBO_1_6
+        e_riverbirchJUMBO_1_7
+        e_dogwoodJUMBO_1_6
+        e_dogwoodJUMBO_1_7
+        e_easternredbudJUMBO_1_6
+        e_easternredbudJUMBO_1_7
+        e_cockspurhawthornJUMBO_1_6
+        e_cockspurhawthornJUMBO_1_7
+        e_carolinasilverbellJUMBO_1_6
+        e_carolinasilverbellJUMBO_1_7
+        e_virginiapineJUMBO_1_0
+        e_canadianhemlockJUMBO_1_0
+        e_americanhollyJUMBO_1_0
+    ]
+    layer = 0_Vegetation
+}
+
+rule
+{
+    label = KnoxMap tree Huge tree
+    bitmap = 1
+    color = 255 0 2
+    tiles = [
+        e_redmapleJUMBOXL_1_3
+        e_americanlindenJUMBOXL_1_3
+        e_yellowwoodJUMBOXL_1_3
+        e_riverbirchJUMBOXL_1_3
+        e_dogwoodJUMBOXL_1_3
+        e_easternredbudJUMBOXL_1_3
+        e_cockspurhawthornJUMBOXL_1_3
+        e_carolinasilverbellJUMBOXL_1_3
+        e_virginiapineJUMBOXL_1_0
+        e_canadianhemlockJUMBOXL_1_0
+        e_americanhollyJUMBOXL_1_0
+    ]
+    layer = 0_Vegetation
+}
+
+rule
+{
+    label = KnoxMap tree Giant tree
+    bitmap = 1
+    color = 255 0 3
+    tiles = [
+        e_redmapleJUMBOXXL_1_3
+        e_americanlindenJUMBOXXL_1_3
+        e_yellowwoodJUMBOXXL_1_3
+        e_riverbirchJUMBOXXL_1_3
+        e_dogwoodJUMBOXXL_1_3
+        e_easternredbudJUMBOXXL_1_3
+        e_cockspurhawthornJUMBOXXL_1_3
+        e_carolinasilverbellJUMBOXXL_1_3
+        e_virginiapineJUMBOXXL_1_0
+        e_canadianhemlockJUMBOXXL_1_0
+        e_americanhollyJUMBOXXL_1_0
+    ]
+    layer = 0_Vegetation
+}
+
+rule
+{
+    label = KnoxMap road Kerb W
+    bitmap = 1
+    color = 12 34 200
+    tiles = street_curbs_01_40
+    layer = 0_Curbs
+}
+
+rule
+{
+    label = KnoxMap road Kerb N
+    bitmap = 1
+    color = 12 34 201
+    tiles = street_curbs_01_41
+    layer = 0_Curbs
+}
+
+rule
+{
+    label = KnoxMap road Kerb S
+    bitmap = 1
+    color = 12 34 202
+    tiles = street_curbs_01_42
+    layer = 0_Curbs
+}
+
+rule
+{
+    label = KnoxMap road Kerb E
+    bitmap = 1
+    color = 12 34 203
+    tiles = street_curbs_01_43
+    layer = 0_Curbs
+}
+
+rule
+{
+    label = KnoxMap road Kerb NW
+    bitmap = 1
+    color = 12 34 204
+    tiles = street_curbs_01_44
+    layer = 0_Curbs
+}
+
+rule
+{
+    label = KnoxMap road Kerb SW
+    bitmap = 1
+    color = 12 34 205
+    tiles = street_curbs_01_45
+    layer = 0_Curbs
+}
+
+rule
+{
+    label = KnoxMap road Kerb NE
+    bitmap = 1
+    color = 12 34 206
+    tiles = street_curbs_01_46
+    layer = 0_Curbs
+}
+
+rule
+{
+    label = KnoxMap road Kerb SE
+    bitmap = 1
+    color = 12 34 207
+    tiles = street_curbs_01_2
+    layer = 0_Curbs
+}
+
+rule
+{
+    label = KnoxMap road Kerb diag NW 0
+    bitmap = 1
+    color = 12 34 208
+    tiles = street_curbs_01_diag_16
+    layer = 0_Curbs
+}
+
+rule
+{
+    label = KnoxMap road Kerb diag NW 1
+    bitmap = 1
+    color = 12 34 209
+    tiles = street_curbs_01_diag_26
+    layer = 0_Curbs
+}
+
+rule
+{
+    label = KnoxMap road Kerb diag NE 0
+    bitmap = 1
+    color = 12 34 210
+    tiles = street_curbs_01_diag_56
+    layer = 0_Curbs
+}
+
+rule
+{
+    label = KnoxMap road Kerb diag NE 1
+    bitmap = 1
+    color = 12 34 211
+    tiles = street_curbs_01_diag_66
+    layer = 0_Curbs
+}
+
+rule
+{
+    label = KnoxMap road Kerb diag SW 0
+    bitmap = 1
+    color = 12 34 212
+    tiles = street_curbs_01_diag_56
+    layer = 0_Curbs
+}
+
+rule
+{
+    label = KnoxMap road Kerb diag SW 1
+    bitmap = 1
+    color = 12 34 213
+    tiles = street_curbs_01_diag_66
+    layer = 0_Curbs
+}
+
+rule
+{
+    label = KnoxMap road Kerb diag SE 0
+    bitmap = 1
+    color = 12 34 214
+    tiles = street_curbs_01_diag_16
+    layer = 0_Curbs
+}
+
+rule
+{
+    label = KnoxMap road Kerb diag SE 1
+    bitmap = 1
+    color = 12 34 215
+    tiles = street_curbs_01_diag_26
+    layer = 0_Curbs
+}
+
+rule
+{
+    label = KnoxMap road Centre line yellow N
+    bitmap = 1
+    color = 12 35 200
+    tiles = street_trafficlines_01_18
+    layer = 0_FloorOverlay5
+}
+
+rule
+{
+    label = KnoxMap road Centre line yellow W
+    bitmap = 1
+    color = 12 35 201
+    tiles = street_trafficlines_01_16
+    layer = 0_FloorOverlay5
+}
+
+rule
+{
+    label = KnoxMap road Centre line white N
+    bitmap = 1
+    color = 12 35 202
+    tiles = street_trafficlines_01_2
+    layer = 0_FloorOverlay5
+}
+
+rule
+{
+    label = KnoxMap road Centre line white W
+    bitmap = 1
+    color = 12 35 203
+    tiles = street_trafficlines_01_0
+    layer = 0_FloorOverlay5
+}
+
+rule
+{
+    label = KnoxMap road Edge line W
+    bitmap = 1
+    color = 12 35 204
+    tiles = street_trafficlines_01_0
+    layer = 0_FloorOverlay5
+}
+
+rule
+{
+    label = KnoxMap road Edge line N
+    bitmap = 1
+    color = 12 35 205
+    tiles = street_trafficlines_01_2
+    layer = 0_FloorOverlay5
+}
+
+rule
+{
+    label = KnoxMap road Edge line E
+    bitmap = 1
+    color = 12 35 206
+    tiles = street_trafficlines_01_4
+    layer = 0_FloorOverlay5
+}
+
+rule
+{
+    label = KnoxMap road Edge line S
+    bitmap = 1
+    color = 12 35 207
+    tiles = street_trafficlines_01_6
+    layer = 0_FloorOverlay5
+}
+
+rule
+{
+    label = KnoxMap road Asphalt grime
+    bitmap = 1
+    color = 12 36 200
+    tiles = [
+        overlay_grime_floor_01_28
+        overlay_grime_floor_01_29
+        overlay_grime_floor_01_30
+        overlay_grime_floor_01_31
+        overlay_grime_floor_01_36
+        overlay_grime_floor_01_37
+        overlay_grime_floor_01_38
+        overlay_grime_floor_01_39
+    ]
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Asphalt cracks
+    bitmap = 1
+    color = 12 36 201
+    tiles = [
+        d_streetcracks_1_0
+        d_streetcracks_1_1
+        d_streetcracks_1_2
+        d_streetcracks_1_3
+        d_streetcracks_1_4
+        d_streetcracks_1_5
+        d_streetcracks_1_6
+        d_streetcracks_1_7
+        d_streetcracks_1_8
+        d_streetcracks_1_9
+        d_streetcracks_1_10
+        d_streetcracks_1_11
+        d_streetcracks_1_12
+        d_streetcracks_1_13
+        d_streetcracks_1_14
+        d_streetcracks_1_15
+    ]
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Street lamp N
+    bitmap = 1
+    color = 12 36 202
+    tiles = lighting_outdoor_01_8
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Street lamp E
+    bitmap = 1
+    color = 12 36 203
+    tiles = lighting_outdoor_01_9
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Street lamp S
+    bitmap = 1
+    color = 12 36 204
+    tiles = lighting_outdoor_01_10
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Street lamp W
+    bitmap = 1
+    color = 12 36 205
+    tiles = lighting_outdoor_01_11
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Fire hydrant
+    bitmap = 1
+    color = 12 36 206
+    tiles = street_decoration_01_12
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Storm drain
+    bitmap = 1
+    color = 12 36 207
+    tiles = [
+        street_decoration_01_13
+        street_decoration_01_14
+    ]
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Litter
+    bitmap = 1
+    color = 12 36 208
+    tiles = [
+        trash_01_0
+        trash_01_1
+        trash_01_2
+        trash_01_3
+        trash_01_4
+        trash_01_5
+        trash_01_6
+        trash_01_7
+        trash_01_8
+        trash_01_9
+        trash_01_10
+        trash_01_11
+        trash_01_12
+    ]
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Mailbox
+    bitmap = 1
+    color = 12 36 209
+    tiles = [
+        street_decoration_01_18
+        street_decoration_01_19
+    ]
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Dustbin
+    bitmap = 1
+    color = 12 36 210
+    tiles = trashcontainers_01_16
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Bench Y0
+    bitmap = 1
+    color = 12 41 200
+    tiles = furniture_seating_outdoor_01_023
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Bench Y1
+    bitmap = 1
+    color = 12 41 201
+    tiles = furniture_seating_outdoor_01_022
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Bench X0
+    bitmap = 1
+    color = 12 41 202
+    tiles = furniture_seating_outdoor_01_020
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Bench X1
+    bitmap = 1
+    color = 12 41 203
+    tiles = furniture_seating_outdoor_01_021
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Kiosk N
+    bitmap = 1
+    color = 12 41 212
+    tiles = street_decoration_01_081
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Kiosk E
+    bitmap = 1
+    color = 12 41 213
+    tiles = street_decoration_01_082
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Kiosk S
+    bitmap = 1
+    color = 12 41 214
+    tiles = street_decoration_01_083
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Kiosk W
+    bitmap = 1
+    color = 12 41 215
+    tiles = street_decoration_01_080
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Postbox N
+    bitmap = 1
+    color = 12 41 216
+    tiles = street_decoration_01_008
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Postbox E
+    bitmap = 1
+    color = 12 41 217
+    tiles = street_decoration_01_011
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Postbox S
+    bitmap = 1
+    color = 12 41 218
+    tiles = street_decoration_01_010
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Postbox W
+    bitmap = 1
+    color = 12 41 219
+    tiles = street_decoration_01_009
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Manhole cover
+    bitmap = 1
+    color = 12 41 220
+    tiles = street_decoration_01_015
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Dog house
+    bitmap = 1
+    color = 12 41 221
+    tiles = constructedobjects_01_004
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Parking block X0
+    bitmap = 1
+    color = 12 41 230
+    tiles = street_decoration_01_032
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Parking block X1
+    bitmap = 1
+    color = 12 41 231
+    tiles = street_decoration_01_033
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Parking block X2
+    bitmap = 1
+    color = 12 41 232
+    tiles = street_decoration_01_034
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Parking block Y0
+    bitmap = 1
+    color = 12 41 233
+    tiles = street_decoration_01_037
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Parking block Y1
+    bitmap = 1
+    color = 12 41 234
+    tiles = street_decoration_01_036
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Parking block Y2
+    bitmap = 1
+    color = 12 41 235
+    tiles = street_decoration_01_035
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Utility pole
+    bitmap = 1
+    color = 12 36 211
+    tiles = street_decoration_01_024
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Yard grill
+    bitmap = 1
+    color = 12 37 200
+    tiles = appliances_cooking_01_035
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Yard chair_w
+    bitmap = 1
+    color = 12 37 201
+    tiles = furniture_seating_outdoor_01_016
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Yard chair_n
+    bitmap = 1
+    color = 12 37 202
+    tiles = furniture_seating_outdoor_01_017
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Yard chair_e
+    bitmap = 1
+    color = 12 37 203
+    tiles = furniture_seating_outdoor_01_019
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Yard chair_s
+    bitmap = 1
+    color = 12 37 204
+    tiles = furniture_seating_outdoor_01_018
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Yard table_x0
+    bitmap = 1
+    color = 12 37 205
+    tiles = furniture_seating_outdoor_01_026
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Yard table_x1
+    bitmap = 1
+    color = 12 37 206
+    tiles = furniture_seating_outdoor_01_027
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Yard table_y0
+    bitmap = 1
+    color = 12 37 207
+    tiles = furniture_seating_outdoor_01_025
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Yard table_y1
+    bitmap = 1
+    color = 12 37 208
+    tiles = furniture_seating_outdoor_01_024
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Yard line_x0
+    bitmap = 1
+    color = 12 37 209
+    tiles = appliances_laundry_01_026
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Yard line_xm
+    bitmap = 1
+    color = 12 37 210
+    tiles = appliances_laundry_01_030
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Yard line_x1
+    bitmap = 1
+    color = 12 37 211
+    tiles = appliances_laundry_01_027
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Yard line_y0
+    bitmap = 1
+    color = 12 37 212
+    tiles = appliances_laundry_01_029
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Yard line_ym
+    bitmap = 1
+    color = 12 37 213
+    tiles = appliances_laundry_01_031
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Yard line_y1
+    bitmap = 1
+    color = 12 37 214
+    tiles = appliances_laundry_01_028
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Yard bed_nw
+    bitmap = 1
+    color = 12 37 215
+    tiles = carpentry_03_053
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Yard bed_w
+    bitmap = 1
+    color = 12 37 216
+    tiles = carpentry_03_042
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Yard bed_sw
+    bitmap = 1
+    color = 12 37 217
+    tiles = carpentry_03_054
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Yard bed_n
+    bitmap = 1
+    color = 12 37 218
+    tiles = carpentry_03_041
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Yard bed_s
+    bitmap = 1
+    color = 12 37 219
+    tiles = carpentry_03_040
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Yard bed_ne
+    bitmap = 1
+    color = 12 37 220
+    tiles = carpentry_03_055
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Yard bed_e
+    bitmap = 1
+    color = 12 37 221
+    tiles = carpentry_03_043
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Yard bed_se
+    bitmap = 1
+    color = 12 37 222
+    tiles = carpentry_03_052
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Yard bed_soil
+    bitmap = 1
+    color = 12 37 223
+    tiles = [
+        floors_exterior_natural_01_016
+        floors_exterior_natural_01_017
+    ]
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Works pallet
+    bitmap = 1
+    color = 12 39 200
+    tiles = construction_01_5
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Works bricks
+    bitmap = 1
+    color = 12 39 201
+    tiles = construction_01_4
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Works drum
+    bitmap = 1
+    color = 12 39 202
+    tiles = [
+        crafted_01_24
+        crafted_01_25
+        crafted_01_26
+        crafted_01_27
+        crafted_01_28
+        crafted_01_29
+        crafted_01_30
+        crafted_01_31
+        crafted_01_32
+    ]
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Works barrel
+    bitmap = 1
+    color = 12 39 203
+    tiles = [
+        industry_01_22
+        industry_01_23
+    ]
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Works crate
+    bitmap = 1
+    color = 12 39 204
+    tiles = [
+        carpentry_01_16
+        carpentry_01_19
+    ]
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Works tires
+    bitmap = 1
+    color = 12 39 205
+    tiles = [
+        location_business_machinery_01_40
+        location_business_machinery_01_41
+        location_business_machinery_01_42
+        location_business_machinery_01_43
+        location_business_machinery_01_44
+        location_business_machinery_01_45
+        location_business_machinery_01_48
+        location_business_machinery_01_49
+        location_business_machinery_01_50
+        location_business_machinery_01_51
+        location_business_machinery_01_52
+    ]
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Dumpster blue s0
+    bitmap = 1
+    color = 12 39 206
+    tiles = trashcontainers_01_10
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Dumpster blue s1
+    bitmap = 1
+    color = 12 39 207
+    tiles = trashcontainers_01_11
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Dumpster blue e0
+    bitmap = 1
+    color = 12 39 208
+    tiles = trashcontainers_01_9
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Dumpster blue e1
+    bitmap = 1
+    color = 12 39 209
+    tiles = trashcontainers_01_8
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Dumpster orange s0
+    bitmap = 1
+    color = 12 39 210
+    tiles = trashcontainers_01_14
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Dumpster orange s1
+    bitmap = 1
+    color = 12 39 211
+    tiles = trashcontainers_01_15
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Dumpster orange e0
+    bitmap = 1
+    color = 12 39 212
+    tiles = trashcontainers_01_13
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Dumpster orange e1
+    bitmap = 1
+    color = 12 39 213
+    tiles = trashcontainers_01_12
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Speed limit 25 S
+    bitmap = 1
+    color = 12 38 200
+    tiles = street_roadsigns_erika_01_18
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Speed limit 25 E
+    bitmap = 1
+    color = 12 38 201
+    tiles = street_roadsigns_erika_01_19
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Speed limit 35 S
+    bitmap = 1
+    color = 12 38 202
+    tiles = street_roadsigns_erika_01_20
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Speed limit 35 E
+    bitmap = 1
+    color = 12 38 203
+    tiles = street_roadsigns_erika_01_21
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Speed limit 45 S
+    bitmap = 1
+    color = 12 38 204
+    tiles = street_roadsigns_erika_01_24
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Speed limit 45 E
+    bitmap = 1
+    color = 12 38 205
+    tiles = street_roadsigns_erika_01_25
+    layer = 0_Furniture
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 0 0_Floor
+    bitmap = 0
+    color = 202 32 202
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 0 0_FloorOverlay6
+    bitmap = 0
+    color = 202 32 202
+    tiles = industry_railroad_01_0
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 1 0_Floor
+    bitmap = 0
+    color = 200 30 200
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 1 0_FloorOverlay6
+    bitmap = 0
+    color = 200 30 200
+    tiles = industry_railroad_01_1
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 2 0_Floor
+    bitmap = 0
+    color = 203 33 203
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 2 0_FloorOverlay6
+    bitmap = 0
+    color = 203 33 203
+    tiles = industry_railroad_01_2
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 3 0_Floor
+    bitmap = 0
+    color = 205 35 205
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 3 0_FloorOverlay6
+    bitmap = 0
+    color = 205 35 205
+    tiles = industry_railroad_01_3
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 4 0_Floor
+    bitmap = 0
+    color = 201 31 201
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 4 0_FloorOverlay6
+    bitmap = 0
+    color = 201 31 201
+    tiles = industry_railroad_01_4
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 5 0_Floor
+    bitmap = 0
+    color = 204 34 204
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 5 0_FloorOverlay6
+    bitmap = 0
+    color = 204 34 204
+    tiles = industry_railroad_01_5
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 8 0_Floor
+    bitmap = 0
+    color = 206 1 8
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 8 0_FloorOverlay6
+    bitmap = 0
+    color = 206 1 8
+    tiles = industry_railroad_01_8
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 9 0_Floor
+    bitmap = 0
+    color = 206 1 9
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 9 0_FloorOverlay6
+    bitmap = 0
+    color = 206 1 9
+    tiles = industry_railroad_01_9
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 10 0_Floor
+    bitmap = 0
+    color = 206 1 10
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 10 0_FloorOverlay6
+    bitmap = 0
+    color = 206 1 10
+    tiles = industry_railroad_01_10
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 11 0_Floor
+    bitmap = 0
+    color = 206 1 11
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 11 0_FloorOverlay6
+    bitmap = 0
+    color = 206 1 11
+    tiles = industry_railroad_01_11
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 12 0_Floor
+    bitmap = 0
+    color = 206 1 12
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 12 0_FloorOverlay6
+    bitmap = 0
+    color = 206 1 12
+    tiles = industry_railroad_01_12
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 13 0_Floor
+    bitmap = 0
+    color = 206 1 13
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 13 0_FloorOverlay6
+    bitmap = 0
+    color = 206 1 13
+    tiles = industry_railroad_01_13
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 16 0_Floor
+    bitmap = 0
+    color = 206 1 16
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 16 0_FloorOverlay6
+    bitmap = 0
+    color = 206 1 16
+    tiles = industry_railroad_01_16
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 17 0_Floor
+    bitmap = 0
+    color = 206 1 17
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 17 0_FloorOverlay6
+    bitmap = 0
+    color = 206 1 17
+    tiles = industry_railroad_01_17
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 18 0_Floor
+    bitmap = 0
+    color = 206 1 18
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 18 0_FloorOverlay6
+    bitmap = 0
+    color = 206 1 18
+    tiles = industry_railroad_01_18
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 19 0_Floor
+    bitmap = 0
+    color = 206 1 19
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 19 0_FloorOverlay6
+    bitmap = 0
+    color = 206 1 19
+    tiles = industry_railroad_01_19
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 20 0_Floor
+    bitmap = 0
+    color = 206 1 20
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 20 0_FloorOverlay6
+    bitmap = 0
+    color = 206 1 20
+    tiles = industry_railroad_01_20
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 24 0_Floor
+    bitmap = 0
+    color = 206 1 24
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 24 0_FloorOverlay6
+    bitmap = 0
+    color = 206 1 24
+    tiles = industry_railroad_01_24
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 25 0_Floor
+    bitmap = 0
+    color = 206 1 25
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 25 0_FloorOverlay6
+    bitmap = 0
+    color = 206 1 25
+    tiles = industry_railroad_01_25
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 26 0_Floor
+    bitmap = 0
+    color = 206 1 26
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 26 0_FloorOverlay6
+    bitmap = 0
+    color = 206 1 26
+    tiles = industry_railroad_01_26
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 27 0_Floor
+    bitmap = 0
+    color = 206 1 27
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 27 0_FloorOverlay6
+    bitmap = 0
+    color = 206 1 27
+    tiles = industry_railroad_01_27
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 28 0_Floor
+    bitmap = 0
+    color = 206 1 28
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 28 0_FloorOverlay6
+    bitmap = 0
+    color = 206 1 28
+    tiles = industry_railroad_01_28
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 29 0_Floor
+    bitmap = 0
+    color = 206 1 29
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 29 0_FloorOverlay6
+    bitmap = 0
+    color = 206 1 29
+    tiles = industry_railroad_01_29
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 30 0_Floor
+    bitmap = 0
+    color = 206 1 30
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 30 0_FloorOverlay6
+    bitmap = 0
+    color = 206 1 30
+    tiles = industry_railroad_01_30
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 31 0_Floor
+    bitmap = 0
+    color = 206 1 31
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 31 0_FloorOverlay6
+    bitmap = 0
+    color = 206 1 31
+    tiles = industry_railroad_01_31
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 32 0_Floor
+    bitmap = 0
+    color = 206 1 32
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 32 0_FloorOverlay6
+    bitmap = 0
+    color = 206 1 32
+    tiles = industry_railroad_01_32
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 33 0_Floor
+    bitmap = 0
+    color = 206 1 33
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 33 0_FloorOverlay6
+    bitmap = 0
+    color = 206 1 33
+    tiles = industry_railroad_01_33
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 34 0_Floor
+    bitmap = 0
+    color = 206 1 34
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 34 0_FloorOverlay6
+    bitmap = 0
+    color = 206 1 34
+    tiles = industry_railroad_01_34
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 35 0_Floor
+    bitmap = 0
+    color = 206 1 35
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 35 0_FloorOverlay6
+    bitmap = 0
+    color = 206 1 35
+    tiles = industry_railroad_01_35
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 36 0_Floor
+    bitmap = 0
+    color = 206 1 36
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 36 0_FloorOverlay6
+    bitmap = 0
+    color = 206 1 36
+    tiles = industry_railroad_01_36
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 37 0_Floor
+    bitmap = 0
+    color = 206 1 37
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 37 0_FloorOverlay6
+    bitmap = 0
+    color = 206 1 37
+    tiles = industry_railroad_01_37
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 38 0_Floor
+    bitmap = 0
+    color = 206 1 38
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 38 0_FloorOverlay6
+    bitmap = 0
+    color = 206 1 38
+    tiles = industry_railroad_01_38
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 39 0_Floor
+    bitmap = 0
+    color = 206 1 39
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 39 0_FloorOverlay6
+    bitmap = 0
+    color = 206 1 39
+    tiles = industry_railroad_01_39
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 40 0_Floor
+    bitmap = 0
+    color = 206 1 40
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 40 0_FloorOverlay6
+    bitmap = 0
+    color = 206 1 40
+    tiles = industry_railroad_01_40
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 41 0_Floor
+    bitmap = 0
+    color = 206 1 41
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 41 0_FloorOverlay6
+    bitmap = 0
+    color = 206 1 41
+    tiles = industry_railroad_01_41
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 46 0_Floor
+    bitmap = 0
+    color = 206 1 46
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 46 0_FloorOverlay6
+    bitmap = 0
+    color = 206 1 46
+    tiles = industry_railroad_01_46
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 47 0_Floor
+    bitmap = 0
+    color = 206 1 47
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 47 0_FloorOverlay6
+    bitmap = 0
+    color = 206 1 47
+    tiles = industry_railroad_01_47
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 48 0_Floor
+    bitmap = 0
+    color = 206 1 48
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 48 0_FloorOverlay6
+    bitmap = 0
+    color = 206 1 48
+    tiles = industry_railroad_01_48
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 49 0_Floor
+    bitmap = 0
+    color = 206 1 49
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 49 0_FloorOverlay6
+    bitmap = 0
+    color = 206 1 49
+    tiles = industry_railroad_01_49
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 50 0_Floor
+    bitmap = 0
+    color = 206 1 50
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 50 0_FloorOverlay6
+    bitmap = 0
+    color = 206 1 50
+    tiles = industry_railroad_01_50
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 51 0_Floor
+    bitmap = 0
+    color = 206 1 51
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 51 0_FloorOverlay6
+    bitmap = 0
+    color = 206 1 51
+    tiles = industry_railroad_01_51
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 52 0_Floor
+    bitmap = 0
+    color = 206 1 52
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 52 0_FloorOverlay6
+    bitmap = 0
+    color = 206 1 52
+    tiles = industry_railroad_01_52
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 53 0_Floor
+    bitmap = 0
+    color = 206 1 53
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 53 0_FloorOverlay6
+    bitmap = 0
+    color = 206 1 53
+    tiles = industry_railroad_01_53
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 54 0_Floor
+    bitmap = 0
+    color = 206 1 54
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 54 0_FloorOverlay6
+    bitmap = 0
+    color = 206 1 54
+    tiles = industry_railroad_01_54
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 55 0_Floor
+    bitmap = 0
+    color = 206 1 55
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 55 0_FloorOverlay6
+    bitmap = 0
+    color = 206 1 55
+    tiles = industry_railroad_01_55
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 56 0_Floor
+    bitmap = 0
+    color = 206 1 56
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 56 0_FloorOverlay6
+    bitmap = 0
+    color = 206 1 56
+    tiles = industry_railroad_01_56
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 57 0_Floor
+    bitmap = 0
+    color = 206 1 57
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 57 0_FloorOverlay6
+    bitmap = 0
+    color = 206 1 57
+    tiles = industry_railroad_01_57
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 58 0_Floor
+    bitmap = 0
+    color = 206 1 58
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 58 0_FloorOverlay6
+    bitmap = 0
+    color = 206 1 58
+    tiles = industry_railroad_01_58
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 59 0_Floor
+    bitmap = 0
+    color = 206 1 59
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 59 0_FloorOverlay6
+    bitmap = 0
+    color = 206 1 59
+    tiles = industry_railroad_01_59
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 60 0_Floor
+    bitmap = 0
+    color = 206 1 60
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 60 0_FloorOverlay6
+    bitmap = 0
+    color = 206 1 60
+    tiles = industry_railroad_01_60
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 61 0_Floor
+    bitmap = 0
+    color = 206 1 61
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 61 0_FloorOverlay6
+    bitmap = 0
+    color = 206 1 61
+    tiles = industry_railroad_01_61
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 62 0_Floor
+    bitmap = 0
+    color = 206 1 62
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 62 0_FloorOverlay6
+    bitmap = 0
+    color = 206 1 62
+    tiles = industry_railroad_01_62
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 63 0_Floor
+    bitmap = 0
+    color = 206 1 63
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 1 63 0_FloorOverlay6
+    bitmap = 0
+    color = 206 1 63
+    tiles = industry_railroad_01_63
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 0 0_Floor
+    bitmap = 0
+    color = 206 2 0
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 0 0_FloorOverlay6
+    bitmap = 0
+    color = 206 2 0
+    tiles = industry_railroad_02_0
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 1 0_Floor
+    bitmap = 0
+    color = 206 2 1
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 1 0_FloorOverlay6
+    bitmap = 0
+    color = 206 2 1
+    tiles = industry_railroad_02_1
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 2 0_Floor
+    bitmap = 0
+    color = 206 2 2
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 2 0_FloorOverlay6
+    bitmap = 0
+    color = 206 2 2
+    tiles = industry_railroad_02_2
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 3 0_Floor
+    bitmap = 0
+    color = 206 2 3
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 3 0_FloorOverlay6
+    bitmap = 0
+    color = 206 2 3
+    tiles = industry_railroad_02_3
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 4 0_Floor
+    bitmap = 0
+    color = 206 2 4
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 4 0_FloorOverlay6
+    bitmap = 0
+    color = 206 2 4
+    tiles = industry_railroad_02_4
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 5 0_Floor
+    bitmap = 0
+    color = 206 2 5
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 5 0_FloorOverlay6
+    bitmap = 0
+    color = 206 2 5
+    tiles = industry_railroad_02_5
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 6 0_Floor
+    bitmap = 0
+    color = 206 2 6
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 6 0_FloorOverlay6
+    bitmap = 0
+    color = 206 2 6
+    tiles = industry_railroad_02_6
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 7 0_Floor
+    bitmap = 0
+    color = 206 2 7
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 7 0_FloorOverlay6
+    bitmap = 0
+    color = 206 2 7
+    tiles = industry_railroad_02_7
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 8 0_Floor
+    bitmap = 0
+    color = 206 2 8
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 8 0_FloorOverlay6
+    bitmap = 0
+    color = 206 2 8
+    tiles = industry_railroad_02_8
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 9 0_Floor
+    bitmap = 0
+    color = 206 2 9
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 9 0_FloorOverlay6
+    bitmap = 0
+    color = 206 2 9
+    tiles = industry_railroad_02_9
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 10 0_Floor
+    bitmap = 0
+    color = 206 2 10
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 10 0_FloorOverlay6
+    bitmap = 0
+    color = 206 2 10
+    tiles = industry_railroad_02_10
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 11 0_Floor
+    bitmap = 0
+    color = 206 2 11
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 11 0_FloorOverlay6
+    bitmap = 0
+    color = 206 2 11
+    tiles = industry_railroad_02_11
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 12 0_Floor
+    bitmap = 0
+    color = 206 2 12
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 12 0_FloorOverlay6
+    bitmap = 0
+    color = 206 2 12
+    tiles = industry_railroad_02_12
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 16 0_Floor
+    bitmap = 0
+    color = 206 2 16
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 16 0_FloorOverlay6
+    bitmap = 0
+    color = 206 2 16
+    tiles = industry_railroad_02_16
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 17 0_Floor
+    bitmap = 0
+    color = 206 2 17
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 17 0_FloorOverlay6
+    bitmap = 0
+    color = 206 2 17
+    tiles = industry_railroad_02_17
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 18 0_Floor
+    bitmap = 0
+    color = 206 2 18
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 18 0_FloorOverlay6
+    bitmap = 0
+    color = 206 2 18
+    tiles = industry_railroad_02_18
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 19 0_Floor
+    bitmap = 0
+    color = 206 2 19
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 19 0_FloorOverlay6
+    bitmap = 0
+    color = 206 2 19
+    tiles = industry_railroad_02_19
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 20 0_Floor
+    bitmap = 0
+    color = 206 2 20
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 20 0_FloorOverlay6
+    bitmap = 0
+    color = 206 2 20
+    tiles = industry_railroad_02_20
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 21 0_Floor
+    bitmap = 0
+    color = 206 2 21
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 21 0_FloorOverlay6
+    bitmap = 0
+    color = 206 2 21
+    tiles = industry_railroad_02_21
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 22 0_Floor
+    bitmap = 0
+    color = 206 2 22
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 22 0_FloorOverlay6
+    bitmap = 0
+    color = 206 2 22
+    tiles = industry_railroad_02_22
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 23 0_Floor
+    bitmap = 0
+    color = 206 2 23
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 23 0_FloorOverlay6
+    bitmap = 0
+    color = 206 2 23
+    tiles = industry_railroad_02_23
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 24 0_Floor
+    bitmap = 0
+    color = 206 2 24
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 24 0_FloorOverlay6
+    bitmap = 0
+    color = 206 2 24
+    tiles = industry_railroad_02_24
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 25 0_Floor
+    bitmap = 0
+    color = 206 2 25
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 25 0_FloorOverlay6
+    bitmap = 0
+    color = 206 2 25
+    tiles = industry_railroad_02_25
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 26 0_Floor
+    bitmap = 0
+    color = 206 2 26
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 26 0_FloorOverlay6
+    bitmap = 0
+    color = 206 2 26
+    tiles = industry_railroad_02_26
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 27 0_Floor
+    bitmap = 0
+    color = 206 2 27
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 27 0_FloorOverlay6
+    bitmap = 0
+    color = 206 2 27
+    tiles = industry_railroad_02_27
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 28 0_Floor
+    bitmap = 0
+    color = 206 2 28
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 28 0_FloorOverlay6
+    bitmap = 0
+    color = 206 2 28
+    tiles = industry_railroad_02_28
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 32 0_Floor
+    bitmap = 0
+    color = 206 2 32
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 32 0_FloorOverlay6
+    bitmap = 0
+    color = 206 2 32
+    tiles = industry_railroad_02_32
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 33 0_Floor
+    bitmap = 0
+    color = 206 2 33
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 33 0_FloorOverlay6
+    bitmap = 0
+    color = 206 2 33
+    tiles = industry_railroad_02_33
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 34 0_Floor
+    bitmap = 0
+    color = 206 2 34
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 34 0_FloorOverlay6
+    bitmap = 0
+    color = 206 2 34
+    tiles = industry_railroad_02_34
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 35 0_Floor
+    bitmap = 0
+    color = 206 2 35
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 35 0_FloorOverlay6
+    bitmap = 0
+    color = 206 2 35
+    tiles = industry_railroad_02_35
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 36 0_Floor
+    bitmap = 0
+    color = 206 2 36
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 36 0_FloorOverlay6
+    bitmap = 0
+    color = 206 2 36
+    tiles = industry_railroad_02_36
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 37 0_Floor
+    bitmap = 0
+    color = 206 2 37
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 37 0_FloorOverlay6
+    bitmap = 0
+    color = 206 2 37
+    tiles = industry_railroad_02_37
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 38 0_Floor
+    bitmap = 0
+    color = 206 2 38
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 38 0_FloorOverlay6
+    bitmap = 0
+    color = 206 2 38
+    tiles = industry_railroad_02_38
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 39 0_Floor
+    bitmap = 0
+    color = 206 2 39
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 39 0_FloorOverlay6
+    bitmap = 0
+    color = 206 2 39
+    tiles = industry_railroad_02_39
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 40 0_Floor
+    bitmap = 0
+    color = 206 2 40
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 40 0_FloorOverlay6
+    bitmap = 0
+    color = 206 2 40
+    tiles = industry_railroad_02_40
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 41 0_Floor
+    bitmap = 0
+    color = 206 2 41
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 41 0_FloorOverlay6
+    bitmap = 0
+    color = 206 2 41
+    tiles = industry_railroad_02_41
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 42 0_Floor
+    bitmap = 0
+    color = 206 2 42
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 42 0_FloorOverlay6
+    bitmap = 0
+    color = 206 2 42
+    tiles = industry_railroad_02_42
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 45 0_Floor
+    bitmap = 0
+    color = 206 2 45
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 45 0_FloorOverlay6
+    bitmap = 0
+    color = 206 2 45
+    tiles = industry_railroad_02_45
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 46 0_Floor
+    bitmap = 0
+    color = 206 2 46
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 46 0_FloorOverlay6
+    bitmap = 0
+    color = 206 2 46
+    tiles = industry_railroad_02_46
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 47 0_Floor
+    bitmap = 0
+    color = 206 2 47
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 47 0_FloorOverlay6
+    bitmap = 0
+    color = 206 2 47
+    tiles = industry_railroad_02_47
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 48 0_Floor
+    bitmap = 0
+    color = 206 2 48
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 48 0_FloorOverlay6
+    bitmap = 0
+    color = 206 2 48
+    tiles = industry_railroad_02_48
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 49 0_Floor
+    bitmap = 0
+    color = 206 2 49
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 49 0_FloorOverlay6
+    bitmap = 0
+    color = 206 2 49
+    tiles = industry_railroad_02_49
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 50 0_Floor
+    bitmap = 0
+    color = 206 2 50
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 50 0_FloorOverlay6
+    bitmap = 0
+    color = 206 2 50
+    tiles = industry_railroad_02_50
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 51 0_Floor
+    bitmap = 0
+    color = 206 2 51
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 51 0_FloorOverlay6
+    bitmap = 0
+    color = 206 2 51
+    tiles = industry_railroad_02_51
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 52 0_Floor
+    bitmap = 0
+    color = 206 2 52
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 52 0_FloorOverlay6
+    bitmap = 0
+    color = 206 2 52
+    tiles = industry_railroad_02_52
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 53 0_Floor
+    bitmap = 0
+    color = 206 2 53
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 53 0_FloorOverlay6
+    bitmap = 0
+    color = 206 2 53
+    tiles = industry_railroad_02_53
+    layer = 0_FloorOverlay6
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 54 0_Floor
+    bitmap = 0
+    color = 206 2 54
+    tiles = lightgravel
+    layer = 0_Floor
+}
+
+rule
+{
+    label = KnoxMap road Rail 2 54 0_FloorOverlay6
+    bitmap = 0
+    color = 206 2 54
+    tiles = industry_railroad_02_54
+    layer = 0_FloorOverlay6
+}
