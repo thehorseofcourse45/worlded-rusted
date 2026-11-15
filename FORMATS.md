@@ -37,7 +37,7 @@ UTF-8, LF line endings, one space of indent per level, 2695 lines, 327 KB.
 - Layers carry `level` (floor); there is no `visible` attribute. `<data>` is base64 + zlib in
   every layer; csv and gzip stay supported by the reader but were not seen.
 - A tile's name is `<tileset name>_<gid - firstgid>`, as before. Gids are not dense: the file lists
-  only the tilesets WorldEd loaded (646 here), each spanning a 32 gid step in this file.
+  only the tilesets WorldEd loaded (646 here); each `firstgid` is the previous one plus that tileset's tile count (8 or 32 in the first entries).
 - No `<properties>` elements. Everything after the layers (`objectgroup`, `bmp-settings`,
   `bmp-image`) is WorldEd state that an editor must keep byte for byte.
 - `parse_tmx` reads this file unchanged (15 layers, 300x300; test `real_tmx.rs`).
