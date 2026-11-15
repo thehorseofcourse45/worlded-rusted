@@ -20,8 +20,11 @@ Full editor in five stages (roadmap in `docs/superpowers/specs/2026-11-15-viewer
 - Viewer UI not hand-checked: pan, zoom, layer toggles, hover readout, double-click open (`docs/viewer-checklist.md`).
 - Deferred minors: output folder keeps stale cells after a failed run; `worlded .` gives a bad name; list-valued `condition` in Rules.txt ignored; stray `./config` can override the exe's config; empty alias accepted silently; worker panic lets other threads continue; viewer decodes tile pages on the UI thread.
 
+- Stage 4a (v0.6.0): `worlded <project>.pzw` compiles lots from the cells' TMX: ground generated from the pictures embedded in each TMX (landscape + vegetation, gzip u32 index into a colour list) merged with the layers (generated wins per layer where it has a tile; Walls/Furniture/FloorOverlay5 stay as edited), plus buildings. Spec `docs/superpowers/specs/2026-11-15-lots-from-tmx-design.md` (Findings, Results), plan `docs/superpowers/plans/2026-11-15-lots-from-tmx.md`. Tests: oracle vs bitmap mode (byte for byte), vs WorldEd by alias, edit round trip, levels/rooms/seam, CLI errors. Opt-in buildings oracle: `WORLDED_ACCEPTANCE=1 cargo test --release -p worlded-compile --test tmx_mode with_buildings` (about 65 s).
+- Found: a stage 2 ground bug (vegetation rules win over landscape rules on a shared layer) fixed in Rust and the Python reference.
+
 ## Git (as of last check)
-- `main` = `origin/main` at the v0.5.0 commit. No open PRs. Pre-releases v0.2.0 to v0.5.1.
+- `main` = `origin/main` at the v0.5.0 commit. No open PRs. Pre-releases v0.2.0 to v0.6.0.
 
 ## Next steps
 1. Hand-check the editor and viewer (needs user, needs a GUI): `docs/editing-checklist.md`, `docs/viewer-checklist.md`.

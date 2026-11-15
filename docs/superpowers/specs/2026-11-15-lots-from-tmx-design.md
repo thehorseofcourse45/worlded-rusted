@@ -87,3 +87,22 @@ Tests are written before the code they test.
 ## Not verified until the user does it
 
 Lot files from either mode have never been tried in Project Zomboid. The merge rule was measured on one generated map. The editor's `Floor` edits do not survive compilation wherever a bitmap generates ground, as in WorldEd; if you want hand edits to win instead, that is a later option, not part of 4a.
+
+## Results (2026-11-15)
+
+Compared, all passing:
+- TMX mode equals bitmap mode byte for byte on the one-cell oracle project (ground only), and on a generated 600 x 600 map with the 121 building lots of the real1 fixture (9 lot cells, 27 files; opt-in test `tmx_mode_matches_worlded_with_buildings`).
+- Against WorldEd by alias group: 0 of 90,000 squares differ on the one-cell project (committed test `tmx_mode_matches_worlded_by_alias`); 1,776 of 422,696 (0.42%) differ on the building map. The differing squares are building wall tiles (for example `walls_exterior_house_08` where WorldEd has `_02`). Both modes give the same bytes, so this is in the shared building code of stage 2, not in TMX mode. Not investigated further.
+- Edit round trip: a `Furniture` edit changes exactly its square's stack; a `Floor` edit changes nothing, as WorldEd does.
+- Levels, rooms, the 300-tile cell seam, the 64-level limit, the command-line errors: tests in `tests/tmx_mode.rs` and `tests/cli.rs`.
+
+Found on the way:
+- The comparison with WorldEd exposed a stage 2 ground bug: where the landscape and the vegetation picture both give a tile on one layer, WorldEd lets the vegetation tile win; the compiler used file order. Fixed in `terrain.rs` and in the Python reference `knoxbuild/terrain.py` (unit test added). It changed which tile wins on about 5,900 of 90,000 squares of the oracle map.
+- `worlded_lots.py` assigned maps to cells by sorted file name (wrong on 2 x 2 maps); fixed.
+
+Not checked:
+- Rules marked `obsolete = true` in `Rules.txt` (40 of them) are applied; whether WorldEd skips them could not be seen on the test map.
+- Rules come from `Rules.txt`, not from the copy embedded in each `.tmx`.
+- Random picks inside a rule's entry list (trees, flowers, grass) cannot match WorldEd's; the WorldEd comparison treats the groups of one such rule as one class.
+- The merge rule was measured on one generated map (seven generated layers).
+- No lot file from either mode has been loaded in Project Zomboid.
