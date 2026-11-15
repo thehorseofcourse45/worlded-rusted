@@ -96,12 +96,14 @@ Compared, all passing:
 - Edit round trip: a `Furniture` edit changes exactly its square's stack; a `Floor` edit changes nothing, as WorldEd does.
 - Levels, rooms, the 300-tile cell seam, the 64-level limit, the command-line errors: tests in `tests/tmx_mode.rs` and `tests/cli.rs`.
 
+Found by the stage 4a review and fixed: cells are now built when a window needs them and dropped behind it (memory had grown with the width of the world times the worker count); a relative map path is resolved against the project folder, not the working directory; a layer named `0_Floor` without a level attribute no longer gets the key `0_0_Floor`; world sizes of 0 or over 10,000 cells are errors; the warnings for missing maps are printed before the "no cell has a .tmx file" error; a folder named `x.pzw` is a map folder. Left (minor): generator-only layers are ordered by first rule use, not by the fixed layer table; layer order can depend on which cells a window touches; an unparsable `seed` or oversized `level` silently becomes 0; the 64-level message mentions lot level attributes.
+
 Found on the way:
 - The comparison with WorldEd exposed a stage 2 ground bug: where the landscape and the vegetation picture both give a tile on one layer, WorldEd lets the vegetation tile win; the compiler used file order. Fixed in `terrain.rs` and in the Python reference `knoxbuild/terrain.py` (unit test added). It changed which tile wins on about 5,900 of 90,000 squares of the oracle map.
 - `worlded_lots.py` assigned maps to cells by sorted file name (wrong on 2 x 2 maps); fixed.
 
 Not checked:
-- Rules marked `obsolete = true` in `Rules.txt` (40 of them) are applied; whether WorldEd skips them could not be seen on the test map.
+- `obsolete = true` rules (40 in `Rules.txt`): WorldEd applies them, so the compiler does too. Checked with a picture holding the 8 colours whose obsolete rule shadows an earlier active one: for `64 0 0` WorldEd's lots hold only the obsolete rule's `_1_3` trees (never the active rule's `_1_2`), for `255 0 255` only the obsolete rule's `_1_2`/`_1_1` trees (never the active `_1_3`): the later rule wins, as in file order.
 - Rules come from `Rules.txt`, not from the copy embedded in each `.tmx`.
 - Random picks inside a rule's entry list (trees, flowers, grass) cannot match WorldEd's; the WorldEd comparison treats the groups of one such rule as one class.
 - The merge rule was measured on one generated map (seven generated layers).

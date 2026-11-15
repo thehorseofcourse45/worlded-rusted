@@ -92,7 +92,7 @@ fn run(args: Vec<String>) -> Result<(), String> {
         return Err(USAGE.to_string());
     }
     let project = PathBuf::from(positional.remove(0));
-    let pzw_mode = project.extension().is_some_and(|e| e.eq_ignore_ascii_case("pzw"));
+    let pzw_mode = project.extension().is_some_and(|e| e.eq_ignore_ascii_case("pzw")) && !project.is_dir();
     if pzw_mode {
         if let Some(opt) = given.first() {
             return Err(format!("{opt} is for a map folder; a .pzw project takes its seed and blending from the maps\n\n{USAGE}"));

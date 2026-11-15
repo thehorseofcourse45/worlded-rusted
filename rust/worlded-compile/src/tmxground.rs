@@ -8,9 +8,10 @@ use crate::blends::Blend;
 use crate::rules::Ruleset;
 use crate::terrain::{ground_layers, Grid, Layers, Palette};
 use crate::CompileError;
-use std::cell::Cell as Counter;
+use std::cell::{Cell as Counter, RefCell};
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
+use std::rc::Rc;
 use worlded_core::pzw::{parse_pzw, resolve_map};
 use worlded_core::tmx::{parse_bmp_images, parse_tmx_str, tile_name, BmpImage, Tmx};
 
@@ -24,6 +25,7 @@ pub struct Generator<'a> {
     pub blends: &'a [Blend],
 }
 
+#[derive(Clone)]
 pub struct TmxWorld {
     pub cells_x: u32,
     pub cells_y: u32,
@@ -51,6 +53,9 @@ impl TmxWorld {
     /// ground; a world origin other than 70,0 is an error.
     pub fn open(pzw: &Path) -> Result<TmxWorld, CompileError> {
         let world = parse_pzw(pzw).map_err(|e| perr(pzw, e.to_string()))?;
+        if world.width == 0 || world.height == 0 || world.width > 10_000 || world.height > 10_000 {
+            return Err(perr(pzw, format!("world size {} x {} cells is not supported (1 to 10000 each)", world.width, world.height)));
+        }
         if world.origin != (70, 0) {
             return Err(perr(pzw, format!("world origin {},{} is not supported: only 70,0", world.origin.0, world.origin.1)));
         }
@@ -80,22 +85,12 @@ impl TmxWorld {
         !self.maps.is_empty()
     }
 
-    /// Reads and prepares every `.tmx` cell that overlaps tile rows `[y_lo, y_hi)`.
-    pub fn load_rows(&self, y_lo: i64, y_hi: i64, gen: &Generator) -> Result<RowCells, CompileError> {
-        let mut cells = HashMap::new();
-        let mut skipped = 0;
-        if y_hi > y_lo {
-            let (j0, j1) = (y_lo.max(0) / CELL, (y_hi - 1).max(0) / CELL);
-            for j in j0..=j1.min(self.cells_y as i64 - 1) {
-                for i in 0..self.cells_x {
-                    let Some(path) = self.maps.get(&(i, j as u32)) else { continue };
-                    let (eff, n) = build_cell(path, i, j as u32, gen)?;
-                    skipped += n;
-                    cells.insert((i, j as u32), eff);
-                }
-            }
-        }
-        Ok(RowCells { cells, size: self.size_tiles(), skipped: Counter::new(skipped) })
+    /// A row of lot windows over this world. Nothing is read yet: each `.tmx` cell is read, generated
+    /// and merged when a window first needs it, and dropped once the windows have moved past it, so a
+    /// row holds at most the cells under one window (memory does not grow with the width of the world).
+    /// The rows of tiles `[y_lo, y_hi)` are only a hint and no longer limit anything.
+    pub fn load_rows<'a>(&self, _y_lo: i64, _y_hi: i64, gen: &'a Generator<'a>) -> Result<RowCells<'a>, CompileError> {
+        Ok(RowCells { world: self.clone(), gen, cells: RefCell::new(HashMap::new()), skipped: Counter::new(0) })
     }
 }
 
@@ -152,7 +147,9 @@ fn build_cell(path: &Path, i: u32, j: u32, gen: &Generator) -> Result<(Effective
             }
             grid.data[k] = id;
         }
-        layers.push((format!("{}_{}", l.level, l.name), l.level, grid));
+        // a name like `0_Floor` (level taken from it, no level attribute) already is the key
+        let key = if l.name.starts_with(&format!("{}_", l.level)) { l.name.clone() } else { format!("{}_{}", l.level, l.name) };
+        layers.push((key, l.level, grid));
     }
     // keep the file's order, but within a level only (a stable sort by level)
     layers.sort_by_key(|(_, level, _)| *level);
@@ -180,36 +177,53 @@ fn build_cell(path: &Path, i: u32, j: u32, gen: &Generator) -> Result<(Effective
     Ok((Effective { pal, layers }, skipped))
 }
 
-/// The `.tmx` cells one row of lot windows needs, prepared.
-pub struct RowCells {
-    cells: HashMap<(u32, u32), Effective>,
-    size: (i64, i64),
+/// The `.tmx` cells one row of lot windows reads, built on demand and kept only while needed.
+pub struct RowCells<'a> {
+    world: TmxWorld,
+    gen: &'a Generator<'a>,
+    cells: RefCell<HashMap<(u32, u32), Rc<Effective>>>,
     skipped: Counter<usize>,
 }
 
-impl RowCells {
-    /// Squares whose tile id no tileset of their map covers (left empty).
+impl RowCells<'_> {
+    /// Squares whose tile id no tileset of their map covers (left empty), in the cells built so far.
     pub fn skipped(&self) -> usize {
         self.skipped.get()
     }
 
+    /// Cells currently held.
+    pub fn cached(&self) -> usize {
+        self.cells.borrow().len()
+    }
+
     /// `win x win` squares starting at tile `(x0, y0)`: the layer grids, keyed `"<level>_<name>"`
     /// (union of the layers of the cells touched, level order then first-seen order), and a mask
-    /// that is true where the square lies inside the world.
-    pub fn window(&self, x0: i64, y0: i64, win: usize, pal: &mut Palette) -> (Layers, Vec<bool>) {
-        let mut touched: Vec<(u32, u32)> = self
-            .cells
-            .keys()
-            .copied()
-            .filter(|&(i, j)| {
-                let (cx, cy) = (i as i64 * CELL, j as i64 * CELL);
-                cx < x0 + win as i64 && cx + CELL > x0 && cy < y0 + win as i64 && cy + CELL > y0
-            })
-            .collect();
-        touched.sort_by_key(|&(i, j)| (j, i));
+    /// that is true where the square lies inside the world. A damaged `.tmx` is an error here.
+    pub fn window(&self, x0: i64, y0: i64, win: usize, pal: &mut Palette) -> Result<(Layers, Vec<bool>), CompileError> {
+        let size = self.world.size_tiles();
+        // windows move left to right: cells that end before this one starts are not needed again
+        self.cells.borrow_mut().retain(|&(i, _), _| i as i64 * CELL + CELL > x0);
+        let (i0, i1) = (x0.max(0) / CELL, (x0 + win as i64 - 1).min(size.0 - 1) / CELL);
+        let (j0, j1) = (y0.max(0) / CELL, (y0 + win as i64 - 1).min(size.1 - 1) / CELL);
+        let mut touched: Vec<(u32, u32)> = Vec::new();
+        if i1 >= i0 && j1 >= j0 {
+            for j in j0..=j1 {
+                for i in i0..=i1 {
+                    let key = (i as u32, j as u32);
+                    let Some(path) = self.world.maps.get(&key) else { continue };
+                    if !self.cells.borrow().contains_key(&key) {
+                        let (eff, n) = build_cell(path, key.0, key.1, self.gen)?;
+                        self.skipped.set(self.skipped.get() + n);
+                        self.cells.borrow_mut().insert(key, Rc::new(eff));
+                    }
+                    touched.push(key);
+                }
+            }
+        }
+        let held: Vec<Rc<Effective>> = touched.iter().map(|k| self.cells.borrow()[k].clone()).collect();
         let mut keys: Vec<(i32, usize, String)> = Vec::new();
-        for c in &touched {
-            for (key, level, _) in &self.cells[c].layers {
+        for eff in &held {
+            for (key, level, _) in &eff.layers {
                 if !keys.iter().any(|k| k.2 == *key) {
                     keys.push((*level, keys.len(), key.clone()));
                 }
@@ -220,8 +234,7 @@ impl RowCells {
         for (_, _, k) in &keys {
             layers.entry(k, win, win);
         }
-        for &(i, j) in &touched {
-            let eff = &self.cells[&(i, j)];
+        for (&(i, j), eff) in touched.iter().zip(&held) {
             // the cell's palette numbers in the caller's palette
             let map: Vec<u32> = eff.pal.names.iter().map(|n| if n.is_empty() { 0 } else { pal.of(n) }).collect();
             let (cx, cy) = (i as i64 * CELL, j as i64 * CELL);
@@ -243,10 +256,10 @@ impl RowCells {
         for r in 0..win {
             for c in 0..win {
                 let (tx, ty) = (x0 + c as i64, y0 + r as i64);
-                inside[r * win + c] = tx >= 0 && ty >= 0 && tx < self.size.0 && ty < self.size.1;
+                inside[r * win + c] = tx >= 0 && ty >= 0 && tx < size.0 && ty < size.1;
             }
         }
-        (layers, inside)
+        Ok((layers, inside))
     }
 }
 
@@ -263,9 +276,12 @@ mod tests {
         (load_rules(&cfg.join("Rules.txt")).unwrap(), load_blends(&cfg.join("Blends.txt")).unwrap())
     }
 
-    fn rows(w: &TmxWorld, y0: i64, y1: i64) -> RowCells {
+    fn rows(w: &TmxWorld, y0: i64, y1: i64) -> RowCells<'static> {
+        // the generator lives as long as the test process: a RowCells borrows it
         let (rules, blends) = env();
-        w.load_rows(y0, y1, &Generator { rules: &rules, blends: &blends }).unwrap()
+        let (rules, blends): (&'static Ruleset, &'static [Blend]) = (Box::leak(Box::new(rules)), Box::leak(blends.into_boxed_slice()));
+        let gen: &'static Generator<'static> = Box::leak(Box::new(Generator { rules, blends }));
+        w.load_rows(y0, y1, gen).unwrap()
     }
 
     /// A project folder with one `.tmx` per `(cell x, cell y, tmx text)`; returns the `.pzw` path.
@@ -328,7 +344,7 @@ mod tests {
     fn layer_keys_use_level_and_file_order() {
         let p = project("keys", "70,0", 1, 1, &[(0, 0, tmx(300, &[("Floor", 0, &[]), ("Walls", 1, &[]), ("Furniture", 0, &[])], ""))]);
         let w = TmxWorld::open(&p).unwrap();
-        let (layers, _) = rows(&w, 0, 10).window(0, 0, 4, &mut Palette::default());
+        let (layers, _) = rows(&w, 0, 10).window(0, 0, 4, &mut Palette::default()).unwrap();
         let keys: Vec<&str> = layers.0.iter().map(|(k, _)| k.as_str()).collect();
         assert_eq!(keys, vec!["0_Floor", "0_Furniture", "1_Walls"]);
     }
@@ -342,13 +358,13 @@ mod tests {
         assert_eq!(w.size_tiles(), (600, 300));
         let r = rows(&w, 0, 20);
         let mut pal = Palette::default();
-        let (layers, inside) = r.window(290, 0, 20, &mut pal);
+        let (layers, inside) = r.window(290, 0, 20, &mut pal).unwrap();
         assert_eq!(name_at(&pal, &layers, "0_Floor", 9, 5, 20), "t_1");
         assert_eq!(name_at(&pal, &layers, "0_Floor", 10, 5, 20), "t_2");
         assert!(inside.iter().all(|v| *v));
-        let (_, inside) = r.window(-5, -3, 10, &mut pal);
+        let (_, inside) = r.window(-5, -3, 10, &mut pal).unwrap();
         assert!(!inside[0] && !inside[4 * 10 + 4] && inside[3 * 10 + 5] && inside[9 * 10 + 9]);
-        let (_, inside) = r.window(595, 295, 10, &mut pal);
+        let (_, inside) = r.window(595, 295, 10, &mut pal).unwrap();
         assert!(inside[0] && !inside[5] && !inside[5 * 10]);
     }
 
@@ -359,7 +375,7 @@ mod tests {
         let p = project("union", "70,0", 2, 1, &[(0, 0, a), (1, 0, b)]);
         let r = rows(&TmxWorld::open(&p).unwrap(), 0, 5);
         let mut pal = Palette::default();
-        let (layers, _) = r.window(298, 0, 4, &mut pal);
+        let (layers, _) = r.window(298, 0, 4, &mut pal).unwrap();
         assert_eq!(name_at(&pal, &layers, "0_Walls2", 1, 0, 4), "t_0");
         assert_eq!(name_at(&pal, &layers, "0_Walls2", 2, 0, 4), "", "the right cell has no Walls2");
         assert_eq!(name_at(&pal, &layers, "0_Floor", 2, 0, 4), "t_1");
@@ -371,7 +387,7 @@ mod tests {
         let text = tmx(300, &[("Floor", 0, &[(1, 1, 5)])], "").replace("firstgid=\"1\"", "firstgid=\"9\"");
         let p = project("gid", "70,0", 1, 1, &[(0, 0, text)]);
         let r = rows(&TmxWorld::open(&p).unwrap(), 0, 10);
-        let (layers, _) = r.window(0, 0, 5, &mut Palette::default());
+        let (layers, _) = r.window(0, 0, 5, &mut Palette::default()).unwrap();
         assert_eq!(layers.get("0_Floor").unwrap().get(1, 1), 0);
         assert_eq!(r.skipped(), 1);
     }
@@ -390,10 +406,10 @@ mod tests {
         let (rules, blends) = env();
         let gen = Generator { rules: &rules, blends: &blends };
         let p = project("size", "70,0", 1, 1, &[(0, 0, tmx(299, &[("Floor", 0, &[])], ""))]);
-        let e = TmxWorld::open(&p).unwrap().load_rows(0, 5, &gen).err().unwrap().to_string();
+        let e = TmxWorld::open(&p).unwrap().load_rows(0, 5, &gen).unwrap().window(0, 0, 4, &mut Palette::default()).err().unwrap().to_string();
         assert!(e.contains("c_0_0.tmx") && e.contains("300"), "{e}");
         let p = project("neg", "70,0", 1, 1, &[(0, 0, tmx(300, &[("Floor", -1, &[])], ""))]);
-        assert!(TmxWorld::open(&p).unwrap().load_rows(0, 5, &gen).err().unwrap().to_string().contains("level -1"));
+        assert!(TmxWorld::open(&p).unwrap().load_rows(0, 5, &gen).unwrap().window(0, 0, 4, &mut Palette::default()).err().unwrap().to_string().contains("level -1"));
     }
 
     /// Dark grass over the whole landscape, an unknown colour in the vegetation picture.
@@ -406,7 +422,7 @@ mod tests {
         let text = tmx(300, &[("Floor", 0, &[(5, 5, 6)])], &pictures());
         let r = rows(&TmxWorld::open(&project("floor", "70,0", 1, 1, &[(0, 0, text)])).unwrap(), 0, 20);
         let mut pal = Palette::default();
-        let (layers, _) = r.window(0, 0, 20, &mut pal);
+        let (layers, _) = r.window(0, 0, 20, &mut pal).unwrap();
         let n = name_at(&pal, &layers, "0_Floor", 5, 5, 20);
         assert!(n.starts_with("blends_natural_01_"), "generated ground, not the hand edit: {n}");
     }
@@ -416,7 +432,7 @@ mod tests {
         let text = tmx(300, &[("Floor", 0, &[]), ("Furniture", 0, &[(6, 6, 2)]), ("Vegetation", 0, &[(7, 7, 3)])], &pictures());
         let r = rows(&TmxWorld::open(&project("stay", "70,0", 1, 1, &[(0, 0, text)])).unwrap(), 0, 20);
         let mut pal = Palette::default();
-        let (layers, _) = r.window(0, 0, 20, &mut pal);
+        let (layers, _) = r.window(0, 0, 20, &mut pal).unwrap();
         assert_eq!(name_at(&pal, &layers, "0_Furniture", 6, 6, 20), "t_1");
         assert_eq!(name_at(&pal, &layers, "0_Vegetation", 7, 7, 20), "t_2", "the picture gives no vegetation there");
         assert!(name_at(&pal, &layers, "0_Floor", 0, 0, 20).starts_with("blends_natural_01_"), "ground still generated");
@@ -427,7 +443,7 @@ mod tests {
         let text = tmx(300, &[("Floor", 0, &[(5, 5, 6)])], "");
         let r = rows(&TmxWorld::open(&project("nopic", "70,0", 1, 1, &[(0, 0, text)])).unwrap(), 0, 20);
         let mut pal = Palette::default();
-        let (layers, _) = r.window(0, 0, 20, &mut pal);
+        let (layers, _) = r.window(0, 0, 20, &mut pal).unwrap();
         assert_eq!(name_at(&pal, &layers, "0_Floor", 5, 5, 20), "t_5");
         assert_eq!(name_at(&pal, &layers, "0_Floor", 6, 6, 20), "");
     }
@@ -437,7 +453,7 @@ mod tests {
         let text = tmx(300, &[("Floor", 0, &[(5, 5, 6)])], &(picture(0, &["1 2 3"]) + &picture(1, &["1 2 3"])));
         let r = rows(&TmxWorld::open(&project("unk", "70,0", 1, 1, &[(0, 0, text)])).unwrap(), 0, 20);
         let mut pal = Palette::default();
-        let (layers, _) = r.window(0, 0, 20, &mut pal);
+        let (layers, _) = r.window(0, 0, 20, &mut pal).unwrap();
         assert_eq!(name_at(&pal, &layers, "0_Floor", 5, 5, 20), "t_5");
         assert_eq!(name_at(&pal, &layers, "0_Floor", 6, 6, 20), "");
     }
@@ -450,4 +466,51 @@ mod tests {
         m.data = vec![3, 4];
         assert_eq!(merge_layer(&g, &m).data, vec![3, 7]);
     }
+
+    #[test]
+    fn cells_are_built_when_a_window_needs_them_and_dropped_behind_it() {
+        let maps: Vec<(u32, u32, String)> = (0..12).map(|i| (i, 0, tmx(300, &[("Floor", 0, &[(1, 1, 2)])], ""))).collect();
+        let r = rows(&TmxWorld::open(&project("lazy", "70,0", 12, 1, &maps)).unwrap(), 0, 300);
+        assert_eq!(r.cached(), 0, "nothing is read before a window asks");
+        let mut pal = Palette::default();
+        let (mut peak, mut x0) = (0, -1);
+        while x0 < 3600 {
+            r.window(x0, -1, 258, &mut pal).unwrap();
+            peak = peak.max(r.cached());
+            x0 += 256;
+        }
+        assert!(peak <= 3, "at most the cells under one window are kept, peak {peak}");
+        // a damaged map is found when a window needs it, and names the file
+        let p = project("lazybad", "70,0", 1, 1, &[(0, 0, tmx(299, &[("Floor", 0, &[])], ""))]);
+        let e = rows(&TmxWorld::open(&p).unwrap(), 0, 5).window(0, 0, 4, &mut Palette::default()).err().unwrap().to_string();
+        assert!(e.contains("c_0_0.tmx") && e.contains("300"), "{e}");
+    }
+
+    #[test]
+    fn a_layer_named_with_its_level_and_no_level_attribute_merges_with_the_generated_layer() {
+        let text = tmx(300, &[("0_Floor", 0, &[(5, 5, 6)]), ("0_Furniture", 0, &[(6, 6, 2)])], &pictures()).replace(" level=\"0\"", "");
+        let r = rows(&TmxWorld::open(&project("prefixed", "70,0", 1, 1, &[(0, 0, text)])).unwrap(), 0, 20);
+        let mut pal = Palette::default();
+        let (layers, _) = r.window(0, 0, 20, &mut pal).unwrap();
+        let keys: Vec<&str> = layers.0.iter().map(|(k, _)| k.as_str()).collect();
+        assert!(keys.contains(&"0_Floor") && !keys.iter().any(|k| k.starts_with("0_0_")), "{keys:?}");
+        assert!(name_at(&pal, &layers, "0_Floor", 5, 5, 20).starts_with("blends_natural_01_"), "the generated ground replaces the hand edit");
+        assert_eq!(name_at(&pal, &layers, "0_Furniture", 6, 6, 20), "t_1");
+    }
+
+    #[test]
+    fn world_sizes_of_zero_or_absurd_are_errors() {
+        for (w, h) in [(0u32, 1u32), (1, 0), (20_000, 1)] {
+            let p = project("size0", "70,0", 1, 1, &[]);
+            let text = std::fs::read_to_string(&p).unwrap().replace("width=\"1\" height=\"1\"", &format!("width=\"{w}\" height=\"{h}\""));
+            std::fs::write(&p, text).unwrap();
+            let e = TmxWorld::open(&p).err().unwrap().to_string();
+            assert!(e.contains("size") && e.contains(&w.to_string()), "{e}");
+        }
+        // a negative size is read as a huge one
+        let p = project("sizeneg", "70,0", 1, 1, &[]);
+        std::fs::write(&p, std::fs::read_to_string(&p).unwrap().replace("width=\"1\"", "width=\"-1\"")).unwrap();
+        assert!(TmxWorld::open(&p).is_err());
+    }
 }
+

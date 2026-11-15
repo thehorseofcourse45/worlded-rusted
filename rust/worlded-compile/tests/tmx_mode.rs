@@ -227,10 +227,10 @@ fn tmx_mode_matches_worlded_with_buildings() {
     }
     // and WorldEd by alias. 1,776 of 422,696 squares (0.42%) differ on this map: building wall tiles
     // (for example walls_exterior_house_08 where WorldEd has _02). That is in the shared building
-    // code of stage 2, not in TMX mode (both modes give the same bytes); the ceiling stops it growing.
+    // code of stage 2, not in TMX mode (both modes give the same bytes); the ceiling (the count seen) stops it growing.
     let (squares, differing, first) = compare_by_alias(&out, &project.join("lots"), &cells);
     eprintln!("compared {squares} squares in {} cells, {differing} differ from WorldEd by alias; first: {first:?}", cells.len());
-    assert!(differing * 200 < squares, "{differing} of {squares} squares differ from WorldEd by alias; first: {first:?}");
+    assert!(differing <= 1776, "{differing} of {squares} squares differ from WorldEd by alias; first: {first:?}");
 }
 
 // ---- synthetic projects -------------------------------------------------------------------
@@ -411,4 +411,33 @@ fn compile_keep_dir(pzw: &Path, tag: &str) -> PathBuf {
     let o = Options { keep_source: Some(src.clone()), ..opts(false) };
     compile_map(pzw, &out, &o, &|_, _| {}).unwrap();
     src
+}
+
+#[test]
+fn two_by_two_cells_equal_bitmap_mode_byte_for_byte() {
+    // the same cell four times: any cell that generated with the wrong tile origin or the wrong seam
+    // handling would differ from the 600 x 600 bitmap, whose random picks use world coordinates
+    let dir = tmp("two_by_two").join("rt");
+    std::fs::create_dir_all(dir.join("tmx")).unwrap();
+    let tmx_text = std::fs::read_to_string(fixture().join("tmx/rt_70_0.tmx")).unwrap();
+    let imgs = parse_bmp_images(&tmx_text).unwrap();
+    let mut pzw = String::from("<?xml version=\"1.0\"?>\n<world version=\"1.0\" width=\"2\" height=\"2\">\n <GenerateLots><worldOrigin origin=\"70,0\"/></GenerateLots>\n");
+    for (x, y) in [(0, 0), (1, 0), (0, 1), (1, 1)] {
+        let f = format!("tmx/rt_{}_{y}.tmx", 70 + x);
+        std::fs::write(dir.join(&f), &tmx_text).unwrap();
+        pzw += &format!(" <cell x=\"{x}\" y=\"{y}\" map=\"{f}\">\n </cell>\n");
+    }
+    std::fs::write(dir.join("rt.pzw"), pzw + "</world>\n").unwrap();
+    for (img, name) in [(&imgs[0], "rt.bmp"), (&imgs[1], "rt_veg.bmp")] {
+        let big = BmpImage { index: img.index, seed: img.seed, colors: img.colors.clone(), width: 600, height: 600, pixels: (0..600 * 600).map(|i| img.pixels[(i / 600 % 300) * 300 + i % 300]).collect() };
+        write_bmp(&big, &dir.join(name));
+    }
+    let (a, b) = (tmp("two_by_two_bitmap"), tmp("two_by_two_tmx"));
+    compile_map(&dir, &a, &opts(true), &|_, _| {}).unwrap();
+    compile_map(&dir.join("rt.pzw"), &b, &opts(false), &|_, _| {}).unwrap();
+    assert_eq!(files(&a), files(&b));
+    assert!(files(&a).len() >= 27, "nine lot cells");
+    for f in files(&a) {
+        assert!(std::fs::read(a.join(&f)).unwrap() == std::fs::read(b.join(&f)).unwrap(), "{f}: TMX mode differs from bitmap mode");
+    }
 }

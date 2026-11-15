@@ -155,3 +155,24 @@ fn missing_named_tmx_warns_and_compiles_the_rest() {
     assert!(String::from_utf8_lossy(&out.stderr).contains("gone_71_0.tmx"));
     assert!(pzw.parent().unwrap().join("lots/82_0.lotheader").exists());
 }
+
+#[test]
+fn when_every_named_tmx_is_missing_the_error_still_lists_them() {
+    let pzw = pzw_project("wcc_pzw_allgone");
+    std::fs::remove_file(pzw.parent().unwrap().join("tmx/rt_70_0.tmx")).unwrap();
+    let out = exe().arg(&pzw).output().unwrap();
+    let err = String::from_utf8_lossy(&out.stderr);
+    assert!(!out.status.success() && err.contains("no cell has a .tmx file"));
+    assert!(err.contains("rt_70_0.tmx"), "the file the project names is in the message: {err}");
+}
+
+#[test]
+fn a_folder_named_like_a_project_is_a_map_folder() {
+    let dir = tmp("wcc_pzw_dir").join("x.pzw");
+    std::fs::create_dir_all(&dir).unwrap();
+    let out = exe().arg(&dir).output().unwrap();
+    let err = String::from_utf8_lossy(&out.stderr);
+    assert!(!out.status.success() && err.contains("x.pzw") && !err.contains("panicked"), "{err}");
+    assert!(!err.contains("no cell has a .tmx"), "treated as a map folder, not a project: {err}");
+}
+

@@ -54,3 +54,15 @@ fn resolve_map_tries_the_path_then_the_pzw_folder_then_its_tmx_folder() {
     assert_eq!(resolve_map(&cell(None), &dir), None);
     assert_eq!(resolve_map(&cell(Some("Z:/stale/missing.tmx".into())), &dir), None);
 }
+
+#[test]
+fn a_relative_map_path_is_resolved_against_the_pzw_folder() {
+    use worlded_core::pzw::{resolve_map, Cell};
+    let dir = std::env::temp_dir().join(format!("wc_resolve_rel_{}", std::process::id()));
+    let _ = std::fs::remove_dir_all(&dir);
+    std::fs::create_dir_all(dir.join("sub")).unwrap();
+    std::fs::write(dir.join("sub/x.tmx"), "x").unwrap();
+    let cell = Cell { x: 0, y: 0, map: Some("sub/x.tmx".into()) };
+    // the folder the process runs in has no sub/x.tmx; the project's folder has
+    assert_eq!(resolve_map(&cell, &dir), Some(dir.join("sub/x.tmx")));
+}

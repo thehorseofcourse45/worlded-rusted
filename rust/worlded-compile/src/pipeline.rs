@@ -97,7 +97,7 @@ struct Shared<'a> {
 /// `progress(done_rows, rows)` is called after each row of cells.
 pub fn compile_map(input: &Path, out: &Path, opts: &Options, progress: &(dyn Fn(usize, usize) + Sync)) -> Result<usize, CompileError> {
     // A path ending in .pzw compiles from the cells' .tmx maps; a folder from the bitmaps.
-    let tmx_mode = input.extension().is_some_and(|e| e.eq_ignore_ascii_case("pzw"));
+    let tmx_mode = input.extension().is_some_and(|e| e.eq_ignore_ascii_case("pzw")) && !input.is_dir();
     let (folder, name, pzw) = if tmx_mode {
         let folder = input.parent().filter(|p| !p.as_os_str().is_empty()).unwrap_or(Path::new(".")).to_path_buf();
         (folder, input.file_stem().map(|n| n.to_string_lossy().to_string()).unwrap_or_default(), input.to_path_buf())
@@ -108,11 +108,11 @@ pub fn compile_map(input: &Path, out: &Path, opts: &Options, progress: &(dyn Fn(
     let project: &Path = &folder;
     let (tmx, size) = if tmx_mode {
         let t = TmxWorld::open(&pzw)?;
-        if !t.has_maps() {
-            return Err(perr(&pzw, "no cell has a .tmx file"));
-        }
         for w in &t.warnings {
             eprintln!("warning: {w}");
+        }
+        if !t.has_maps() {
+            return Err(perr(&pzw, "no cell has a .tmx file"));
         }
         let size = t.size_tiles();
         (Some(t), size)
@@ -224,14 +224,15 @@ fn do_row(s: &Shared, cy: i64) -> Result<usize, CompileError> {
     } else {
         None
     };
-    let rows = s.tmx.as_ref().map(|t| t.load_rows(wy0 - 1, wy0 + side + 1, &Generator { rules: &rules, blends: &blends })).transpose()?;
+    let gen = Generator { rules: &rules, blends: &blends };
+    let rows = s.tmx.as_ref().map(|t| t.load_rows(wy0 - 1, wy0 + side + 1, &gen)).transpose()?;
     let win = SIDE + 2;
     let mut written = 0;
     for cx in ORIGIN_X / side..=(ORIGIN_X + w - 1) / side {
         let wx0 = cx * side - ORIGIN_X;
         let (layers, inside) = if let Some(rows) = &rows {
             // the editor already chose and blended every tile: take them as saved
-            rows.window(wx0 - 1, wy0 - 1, win, &mut pal)
+            rows.window(wx0 - 1, wy0 - 1, win, &mut pal)?
         } else {
             let (land_strip, veg_strip) = strips.as_ref().expect("bitmap mode reads strips");
             let (mut lw, mut vg) = (vec![0u8; win * win * 3], vec![0u8; win * win * 3]);

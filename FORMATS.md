@@ -62,7 +62,7 @@ UTF-8, LF line endings, one space of indent per level, 2695 lines, 327 KB.
   real `chunkdata`. Comparisons with WorldEd are by alias group, `chunkdata` ignored.
 - `worlded <project>.pzw` (stage 4a) compiles lots from such maps: ground from the pictures, merged
   with the layers, plus buildings. Rules are read from `Rules.txt` (the embedded copies are ignored),
-  `obsolete = true` rules are not skipped (not checked against WorldEd), blends are per 300 x 300 cell.
+  `obsolete = true` rules are applied (WorldEd applies them too: where one shares colour, layer and condition with an earlier active rule, the later one's tiles appear), blends are per 300 x 300 cell.
 
 ## `.pack` (Project Zomboid texture pack, `media/texturepacks/*.pack`)
 
