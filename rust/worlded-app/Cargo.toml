@@ -1,0 +1,14 @@
+[package]
+name = "worlded-app"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+
+[[bin]]
+name = "worlded-view"
+path = "src/main.rs"
+
+[dependencies]
+worlded-core = { path = "../worlded-core" }
+eframe = "0.29"
+rfd = "0.15"

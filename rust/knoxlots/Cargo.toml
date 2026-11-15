@@ -7,5 +7,3 @@ description = "Reads and writes Project Zomboid lot files (.lotheader, .lotpack,
 
 [dependencies]
 
-[profile.release]
-opt-level = 3

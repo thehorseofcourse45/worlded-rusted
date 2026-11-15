@@ -1,3 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["knoxlots", "worlded-core"]
+members = ["knoxlots", "worlded-core", "worlded-app"]
+
+[profile.release]
+opt-level = 3
