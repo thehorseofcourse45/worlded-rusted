@@ -1,4 +1,5 @@
 //! Project model and file formats for the worlded viewer (no UI).
+pub mod edit;
 pub mod pack;
 pub mod pzw;
 pub mod tmx;
