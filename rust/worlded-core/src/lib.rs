@@ -4,6 +4,7 @@ pub mod pack;
 pub mod pzw;
 pub mod tmx;
 pub mod tmxdoc;
+pub mod tools;
 
 #[derive(Debug)]
 pub enum CoreError {
