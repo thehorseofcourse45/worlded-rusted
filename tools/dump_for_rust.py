@@ -35,6 +35,37 @@ def main(argv):
                for b in load_blends(argv[1])]
         emit(out)
         return 0
+    if what == "mix":  # mix x,y,salt x,y,salt ... -> one u64 per line
+        import numpy as np
+        from knoxbuild.terrain import mix
+        emit([str(int(mix(np.array([int(t.split(",")[0])]), np.array([int(t.split(",")[1])]), int(t.split(",")[2]))[0])) for t in argv[1:]])
+        return 0
+    if what == "stack":  # stack name... -> names in stack order
+        from knoxbuild.terrain import stack_order
+        emit(stack_order(argv[1:]))
+        return 0
+    if what == "terrain":  # terrain <rules> w h x0 y0 seed <land colours> <veg colours>
+        import numpy as np
+        from knoxbuild.rules import load_rules
+        from knoxbuild.terrain import Palette, ground_layers
+        rules = load_rules(argv[1])
+        w, h, x0, y0, seed = (int(v) for v in argv[2:7])
+        lc = [tuple(int(v) for v in c.split(",")) for c in argv[7].split(";")]
+        vc = [tuple(int(v) for v in c.split(",")) for c in argv[8].split(";")]
+        land = np.zeros((h, w, 3), np.uint8)
+        veg = np.zeros((h, w, 3), np.uint8)
+        for y in range(h):
+            for x in range(w):
+                land[y, x] = lc[(x * 7 + y * 13 + (x * y) % 5) % len(lc)]
+                veg[y, x] = vc[(x * 3 + y * 5 + (x ^ y) % 7) % len(vc)]
+        pal = Palette()
+        out = []
+        for name, arr in ground_layers(land, veg, rules, pal, seed, x0, y0).items():
+            out.append("L|" + name)
+            out += [" ".join(map(str, row.tolist())) for row in arr]
+        out.append("P|" + "|".join(pal.names))
+        emit(out)
+        return 0
     print("unknown dump", what, file=sys.stderr)
     return 2
 

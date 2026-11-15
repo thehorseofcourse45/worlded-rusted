@@ -2,6 +2,7 @@
 pub mod blends;
 pub mod bmp;
 pub mod rules;
+pub mod terrain;
 
 use std::path::PathBuf;
 
