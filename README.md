@@ -66,13 +66,18 @@ checkout (they import `knoxbuild.bitmaps` and `knoxpaths` from it); copy these f
 set `KNOXMAP_DIR` for the experiment scripts. The mapping tools (WorldEd) must be installed as KnoxMap
 installs them for the experiments and for `Rules.txt` / `Blends.txt`.
 
+## Viewer (editor stage 1)
+
+`rust/worlded-app` builds `worlded-view.exe`, a read-only viewer: open a WorldEd `.pzw`, see its cells, double-click one to see its `.tmx` as isometric tiles with a layer panel. Tile art is read from your own Project Zomboid install (`media/texturepacks/*.pack`; set the folder in the app). Design: `docs/superpowers/specs/`, plan: `docs/superpowers/plans/`, checklist: `docs/viewer-checklist.md`, formats: `FORMATS.md`.
+The `.tmx` reader follows the public Tiled format and is not yet checked against a real WorldEd file.
+
 ## Build and test
 
 Standalone: `python tools/worlded.py <map folder> <out folder>` (or `worlded.exe` from the release) builds and compiles a map with no WorldEd or KnoxMap. Rules.txt and Blends.txt are in `config/` (GPL data files, see `config/README.txt`).
 A map folder needs `<name>.bmp`, `<name>_veg.bmp`, `<name>.pzw` and `buildings/*.tbx` (the `.bmp` files are gitignored, so `real1` here has no pictures; make your own or export one from KnoxMap).
 
 ```
-cd rust/knoxlots && cargo test --release && cargo build --release
+cd rust && cargo test --release && cargo build --release
 python -m unittest discover -s tests -p "test_[bt]*.py"
 python tools/map_source.py rust/knoxlots/fixtures/real/real1 out.src --worlded-seams
 knoxlots compile out.src out.lots

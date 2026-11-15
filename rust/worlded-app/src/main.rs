@@ -35,8 +35,14 @@ impl App {
             message: String::new(),
         };
         app.load_packs();
-        if let Some(p) = app.settings.last_project.clone() {
+        if let Some(p) = std::env::args_os().nth(1).map(PathBuf::from).or_else(|| app.settings.last_project.clone()) {
             app.open_project(p);
+        }
+        // optional second argument: open that cell straight away (index in the project cell list)
+        if let Some(i) = std::env::args().nth(2).and_then(|a| a.parse::<usize>().ok()) {
+            if app.project.as_ref().is_some_and(|(_, w)| i < w.cells.len()) {
+                app.open_cell(i);
+            }
         }
         app
     }

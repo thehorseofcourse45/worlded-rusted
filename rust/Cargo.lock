@@ -3898,6 +3898,7 @@ name = "worlded-app"
 version = "0.1.0"
 dependencies = [
  "eframe",
+ "image",
  "rfd",
  "worlded-core",
 ]

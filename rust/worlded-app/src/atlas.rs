@@ -57,3 +57,55 @@ impl Atlas {
         Some(Sprite { tex: handle.id(), uv, w: e.w as f32, h: e.h as f32, ox: e.ox as f32, oy: e.oy as f32 })
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn le(v: &mut Vec<u8>, n: u32) {
+        v.extend_from_slice(&n.to_le_bytes());
+    }
+
+    fn pack_dir() -> std::path::PathBuf {
+        let img = image::RgbaImage::from_pixel(4, 4, image::Rgba([1, 2, 3, 255]));
+        let mut png = Vec::new();
+        img.write_to(&mut std::io::Cursor::new(&mut png), image::ImageFormat::Png).unwrap();
+        let mut v = b"PZPK".to_vec();
+        for n in [1u32, 1] {
+            le(&mut v, n);
+        }
+        le(&mut v, 2);
+        v.extend_from_slice(b"P0");
+        le(&mut v, 2);
+        le(&mut v, 1);
+        for (name, x) in [("a_0", 0u32), ("a_1", 2)] {
+            le(&mut v, name.len() as u32);
+            v.extend_from_slice(name.as_bytes());
+            for n in [x, 0, 2, 4, 0, 192, 128, 256] {
+                le(&mut v, n);
+            }
+        }
+        le(&mut v, png.len() as u32);
+        v.extend_from_slice(&png);
+        let dir = std::env::temp_dir().join("wa_atlas_packs");
+        let _ = std::fs::remove_dir_all(&dir);
+        std::fs::create_dir_all(&dir).unwrap();
+        std::fs::write(dir.join("p.pack"), v).unwrap();
+        dir
+    }
+
+    #[test]
+    fn atlas_decodes_each_page_once_and_unknown_is_none() {
+        let (set, _) = PackSet::open_dir(&pack_dir()).unwrap();
+        let ctx = egui::Context::default();
+        let mut atlas = Atlas::default();
+        let a = atlas.sprite(&ctx, Some(&set), "a_0").unwrap();
+        let b = atlas.sprite(&ctx, Some(&set), "a_1").unwrap();
+        assert_eq!(atlas.decoded, 1); // both tiles share one page
+        assert_eq!((a.w, a.h, a.oy), (2.0, 4.0, 192.0));
+        assert_eq!(b.uv.min.x, 0.5);
+        assert!(atlas.sprite(&ctx, Some(&set), "nope").is_none());
+        assert!(atlas.sprite(&ctx, None, "a_0").is_some()); // cached from before
+        assert!(Atlas::default().sprite(&ctx, None, "a_0").is_none()); // no packs, placeholder
+    }
+}
