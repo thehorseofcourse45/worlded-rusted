@@ -15,6 +15,8 @@ struct App {
     packs: Option<PackSet>,
     pack_note: String,
     project: Option<(PathBuf, World)>,
+    /// Resolved .tmx of each cell of the open project (None = missing).
+    maps: Vec<Option<PathBuf>>,
     world_state: world_view::ViewState,
     cell: Option<cell_view::CellState>,
     atlas: atlas::Atlas,
@@ -29,6 +31,7 @@ impl App {
             packs: None,
             pack_note: String::new(),
             project: None,
+            maps: Vec::new(),
             world_state: Default::default(),
             cell: None,
             atlas: Default::default(),
@@ -64,7 +67,9 @@ impl App {
                 Ok(_) | Err(_) => format!("No tile packs found in {}: tiles are drawn as placeholders.", dir.display()),
             },
         };
-        self.cell = self.cell.take().map(|c| cell_view::CellState::new(c.title, c.tmx));
+        if let Some(c) = &mut self.cell {
+            c.reset_art();
+        }
     }
 
     fn open_project(&mut self, path: PathBuf) {
@@ -73,6 +78,8 @@ impl App {
                 self.message = format!("Opened {} ({} cells)", path.display(), w.cells.len());
                 self.settings.last_project = Some(path.clone());
                 self.save_settings();
+                let dir = path.parent().unwrap_or(std::path::Path::new(".")).to_path_buf();
+                self.maps = w.cells.iter().map(|c| world_view::resolve_map(c, &dir)).collect();
                 self.project = Some((path, w));
                 self.cell = None;
                 self.world_state = Default::default();
@@ -82,11 +89,17 @@ impl App {
     }
 
     fn open_cell(&mut self, i: usize) {
-        let Some((pzw, world)) = &self.project else { return };
+        let Some((_, world)) = &self.project else { return };
         let cell = &world.cells[i];
-        let Some(path) = world_view::resolve_map(cell, pzw.parent().unwrap_or(std::path::Path::new("."))) else { return };
+        let Some(path) = self.maps.get(i).cloned().flatten() else {
+            self.message = format!("Cell {},{} has no .tmx file", cell.x, cell.y);
+            return;
+        };
         match parse_tmx(&path) {
-            Ok(t) => self.cell = Some(cell_view::CellState::new(format!("cell {},{}", cell.x, cell.y), t)),
+            Ok(t) => {
+                self.message = format!("Opened cell {},{}", cell.x, cell.y);
+                self.cell = Some(cell_view::CellState::new(format!("cell {},{}", cell.x, cell.y), t));
+            }
             Err(e) => self.message = format!("Could not read {}: {e}", path.display()),
         }
     }
@@ -130,8 +143,8 @@ impl eframe::App for App {
         egui::CentralPanel::default().show(ctx, |ui| {
             if let Some(c) = &mut self.cell {
                 c.show(ui, &mut self.atlas, self.packs.as_ref());
-            } else if let Some((pzw, world)) = &self.project {
-                open = world_view::show(ui, world, pzw.parent().unwrap_or(std::path::Path::new(".")), &mut self.world_state);
+            } else if let Some((_, world)) = &self.project {
+                open = world_view::show(ui, world, &self.maps, &mut self.world_state);
             } else {
                 ui.label("Open a WorldEd project (.pzw) to begin.");
             }

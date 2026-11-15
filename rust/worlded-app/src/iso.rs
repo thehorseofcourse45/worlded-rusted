@@ -8,6 +8,9 @@ pub const HALF_H: f32 = 32.0;
 pub const LEVEL_PX: f32 = 192.0;
 pub const FRAME_W: f32 = 128.0;
 pub const FRAME_H: f32 = 256.0;
+/// Largest frames (jumbo trees, 896 x 1024) reach this far past a normal frame.
+const MARGIN_X: f32 = 384.0;
+const MARGIN_Y: f32 = 768.0;
 
 /// Top vertex of the tile diamond.
 pub fn tile_top(tx: i32, ty: i32, level: i32) -> (f32, f32) {
@@ -49,7 +52,7 @@ pub fn visible_tiles(tmx: &Tmx, visible: &[bool], clip: Rect, mut f: impl FnMut(
             let (tx, ty) = ((i % w) as i32, (i / w) as i32);
             let (sx, sy) = tile_top(tx, ty, level);
             let (fx, fy) = (sx - HALF_W, sy - (FRAME_H - 2.0 * HALF_H));
-            if fx > clip.x1 || fx + FRAME_W < clip.x0 || fy > clip.y1 || fy + FRAME_H < clip.y0 {
+            if fx - MARGIN_X > clip.x1 || fx + FRAME_W + MARGIN_X < clip.x0 || fy - MARGIN_Y > clip.y1 || fy + FRAME_H + MARGIN_Y < clip.y0 {
                 continue;
             }
             f(li, gid, tx, ty, fx, fy);
@@ -95,9 +98,12 @@ mod tests {
         let mut n = 0;
         visible_tiles(&t, &[true, true], all, |_, _, _, _, _, _| n += 1);
         assert_eq!(n, 5);
-        let mut seen = vec![];
-        visible_tiles(&t, &[true, false], Rect { x0: -200.0, y0: -300.0, x1: -100.0, y1: 0.0 }, |_, _, tx, ty, _, _| seen.push((tx, ty)));
-        assert_eq!(seen, vec![(0, 1)]); // only the west-most tile reaches that window
+        let mut n = 0;
+        visible_tiles(&t, &[true, false], Rect { x0: 5000.0, y0: 0.0, x1: 6000.0, y1: 100.0 }, |_, _, _, _, _, _| n += 1);
+        assert_eq!(n, 0); // far to the east: culled
+        let mut n = 0;
+        visible_tiles(&t, &[true, false], Rect { x0: 0.0, y0: 0.0, x1: 10.0, y1: 10.0 }, |_, _, _, _, _, _| n += 1);
+        assert_eq!(n, 4); // a window on the map: all four tiles (their frames reach it)
     }
 
     #[test]

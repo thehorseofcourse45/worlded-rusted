@@ -55,3 +55,16 @@ fn damaged_tmx_is_error() {
     let bad = r#"<map width="2" height="2"><layer name="a"><data encoding="base64" compression="zlib">!!!</data></layer></map>"#;
     assert!(parse_tmx_str(bad).is_err());
 }
+
+#[test]
+fn wrong_root_missing_size_and_zip_bombs_are_errors() {
+    assert!(parse_tmx_str("<world width=\"1\" height=\"1\"/>").is_err());
+    assert!(parse_tmx_str("<map/>").is_err());
+    assert!(parse_tmx_str("<map width=\"abc\" height=\"1\"/>").is_err());
+    // 1x1 map whose data inflates to 1 MB: must stop and fail, not allocate it all
+    let mut z = ZlibEncoder::new(Vec::new(), Compression::default());
+    z.write_all(&vec![0u8; 1 << 20]).unwrap();
+    let data = base64::engine::general_purpose::STANDARD.encode(z.finish().unwrap());
+    let bomb = format!(r#"<map width="1" height="1"><layer name="a"><data encoding="base64" compression="zlib">{data}</data></layer></map>"#);
+    assert!(parse_tmx_str(&bomb).is_err());
+}

@@ -34,7 +34,8 @@ pub struct ViewState {
 }
 
 /// Paints the world; returns the index of a cell that was double-clicked.
-pub fn show(ui: &mut eframe::egui::Ui, world: &World, pzw_dir: &std::path::Path, st: &mut ViewState) -> Option<usize> {
+/// `maps[i]` is the resolved TMX of cell i (see `resolve_map`), looked up once when the project opens.
+pub fn show(ui: &mut eframe::egui::Ui, world: &World, maps: &[Option<std::path::PathBuf>], st: &mut ViewState) -> Option<usize> {
     use eframe::egui::{self, Color32, Pos2, Sense, Stroke};
     if st.zoom == 0.0 {
         st.zoom = 1.0;
@@ -53,11 +54,16 @@ pub fn show(ui: &mut eframe::egui::Ui, world: &World, pzw_dir: &std::path::Path,
     for (i, cell) in world.cells.iter().enumerate() {
         let r = cell_rect(cell, st.zoom);
         let rect = egui::Rect::from_min_size(Pos2::new(origin.x + r.x, origin.y + r.y), egui::vec2(r.w, r.h));
-        let found = resolve_map(cell, pzw_dir).is_some();
+        if !resp.rect.intersects(rect) {
+            continue;
+        }
+        let found = maps.get(i).is_some_and(|m| m.is_some());
         let fill = if found { Color32::from_rgb(60, 90, 60) } else { Color32::from_rgb(70, 50, 50) };
         painter.rect(rect.shrink(1.0), 2.0, fill, Stroke::new(1.0_f32, Color32::GRAY));
         let label = if found { format!("{},{}", cell.x, cell.y) } else { format!("{},{}\nmissing .tmx", cell.x, cell.y) };
-        painter.text(rect.center(), egui::Align2::CENTER_CENTER, label, egui::FontId::proportional(14.0), Color32::WHITE);
+        if rect.width() >= 40.0 {
+            painter.text(rect.center(), egui::Align2::CENTER_CENTER, label, egui::FontId::proportional(14.0), Color32::WHITE);
+        }
         if found && resp.double_clicked() && resp.interact_pointer_pos().is_some_and(|p| rect.contains(p)) {
             opened = Some(i);
         }

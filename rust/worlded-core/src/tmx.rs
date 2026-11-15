@@ -32,8 +32,15 @@ pub fn parse_tmx(path: &Path) -> Result<Tmx, CoreError> {
 pub fn parse_tmx_str(text: &str) -> Result<Tmx, CoreError> {
     let doc = roxmltree::Document::parse(text).map_err(|e| CoreError::Parse(e.to_string()))?;
     let root = doc.root_element();
+    if root.tag_name().name() != "map" {
+        return Err(CoreError::Parse("root element is not <map>".into()));
+    }
     let dim = |n: roxmltree::Node, k: &str| n.attribute(k).and_then(|v| v.parse::<u32>().ok()).unwrap_or(0);
     let (width, height) = (dim(root, "width"), dim(root, "height"));
+    let size_ok = |k: &str| root.attribute(k).is_some_and(|v| v.parse::<u32>().is_ok());
+    if !size_ok("width") || !size_ok("height") || (width as u64 * height as u64) > 4_000_000 {
+        return Err(CoreError::Parse("map needs numeric width and height (at most 4 million tiles)".into()));
+    }
     let tilesets = root
         .children()
         .filter(|n| n.has_tag_name("tileset"))
@@ -42,7 +49,7 @@ pub fn parse_tmx_str(text: &str) -> Result<Tmx, CoreError> {
     let mut layers = Vec::new();
     for n in root.children().filter(|n| n.has_tag_name("layer")) {
         let data = n.children().find(|c| c.has_tag_name("data")).ok_or_else(|| CoreError::Parse("layer without data".into()))?;
-        let mut gids = decode(data.text().unwrap_or(""), data.attribute("encoding"), data.attribute("compression"))?;
+        let mut gids = decode(data.text().unwrap_or(""), data.attribute("encoding"), data.attribute("compression"), width as usize * height as usize)?;
         let want = width as usize * height as usize;
         if gids.len() != want {
             return Err(CoreError::Parse(format!("layer has {} tiles, map needs {want}", gids.len())));
@@ -57,7 +64,7 @@ pub fn parse_tmx_str(text: &str) -> Result<Tmx, CoreError> {
     Ok(Tmx { width, height, tilesets, layers })
 }
 
-fn decode(text: &str, encoding: Option<&str>, compression: Option<&str>) -> Result<Vec<u32>, CoreError> {
+fn decode(text: &str, encoding: Option<&str>, compression: Option<&str>, want: usize) -> Result<Vec<u32>, CoreError> {
     let bad = |s: &str| CoreError::Parse(s.to_string());
     match encoding {
         Some("csv") => text
@@ -71,8 +78,8 @@ fn decode(text: &str, encoding: Option<&str>, compression: Option<&str>) -> Resu
             let raw = base64::engine::general_purpose::STANDARD.decode(clean).map_err(|_| bad("bad base64"))?;
             let mut bytes = Vec::new();
             match compression {
-                Some("zlib") => flate2::read::ZlibDecoder::new(&raw[..]).read_to_end(&mut bytes).map(|_| ()),
-                Some("gzip") => flate2::read::GzDecoder::new(&raw[..]).read_to_end(&mut bytes).map(|_| ()),
+                Some("zlib") => flate2::read::ZlibDecoder::new(&raw[..]).take(want as u64 * 4 + 1).read_to_end(&mut bytes).map(|_| ()),
+                Some("gzip") => flate2::read::GzDecoder::new(&raw[..]).take(want as u64 * 4 + 1).read_to_end(&mut bytes).map(|_| ()),
                 None | Some("") => {
                     bytes = raw;
                     Ok(())

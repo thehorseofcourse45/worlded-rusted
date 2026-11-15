@@ -3,7 +3,7 @@ use eframe::egui::{self, ColorImage, TextureHandle, TextureOptions};
 use std::collections::{HashMap, HashSet};
 use worlded_core::pack::PackSet;
 
-#[derive(Clone)]
+#[derive(Clone, Copy)]
 pub struct Sprite {
     pub tex: egui::TextureId,
     pub uv: egui::Rect,
@@ -12,6 +12,9 @@ pub struct Sprite {
     pub h: f32,
     pub ox: f32,
     pub oy: f32,
+    /// Full frame size (128 x 256 for ordinary tiles, larger for trees).
+    pub fw: f32,
+    pub fh: f32,
 }
 
 #[derive(Default)]
@@ -27,13 +30,13 @@ impl Atlas {
     /// `None` when there is no art for the name (unknown tile, no packs, damaged page).
     pub fn sprite(&mut self, ctx: &egui::Context, packs: Option<&PackSet>, name: &str) -> Option<Sprite> {
         if let Some(s) = self.sprites.get(name) {
-            return s.clone();
+            return *s;
         }
         let s = packs.and_then(|p| self.build(ctx, p, name));
         if s.is_none() && self.warned.insert(name.to_string()) {
             eprintln!("no art for tile {name}");
         }
-        self.sprites.insert(name.to_string(), s.clone());
+        self.sprites.insert(name.to_string(), s);
         s
     }
 
@@ -49,12 +52,15 @@ impl Atlas {
             self.pages.insert(key, page);
         }
         let (handle, pw, ph) = self.pages.get(&key)?.as_ref()?;
+        if e.x.checked_add(e.w)? > *pw || e.y.checked_add(e.h)? > *ph {
+            return None; // damaged entry: rectangle outside its page
+        }
         let (pw, ph) = (*pw as f32, *ph as f32);
         let uv = egui::Rect::from_min_max(
             egui::pos2(e.x as f32 / pw, e.y as f32 / ph),
             egui::pos2((e.x + e.w) as f32 / pw, (e.y + e.h) as f32 / ph),
         );
-        Some(Sprite { tex: handle.id(), uv, w: e.w as f32, h: e.h as f32, ox: e.ox as f32, oy: e.oy as f32 })
+        Some(Sprite { tex: handle.id(), uv, w: e.w as f32, h: e.h as f32, ox: e.ox as f32, oy: e.oy as f32, fw: e.fw as f32, fh: e.fh as f32 })
     }
 }
 
@@ -66,7 +72,7 @@ mod tests {
         v.extend_from_slice(&n.to_le_bytes());
     }
 
-    fn pack_dir() -> std::path::PathBuf {
+    fn pack_dir(tag: &str) -> std::path::PathBuf {
         let img = image::RgbaImage::from_pixel(4, 4, image::Rgba([1, 2, 3, 255]));
         let mut png = Vec::new();
         img.write_to(&mut std::io::Cursor::new(&mut png), image::ImageFormat::Png).unwrap();
@@ -87,7 +93,7 @@ mod tests {
         }
         le(&mut v, png.len() as u32);
         v.extend_from_slice(&png);
-        let dir = std::env::temp_dir().join("wa_atlas_packs");
+        let dir = std::env::temp_dir().join(format!("wa_atlas_packs_{tag}"));
         let _ = std::fs::remove_dir_all(&dir);
         std::fs::create_dir_all(&dir).unwrap();
         std::fs::write(dir.join("p.pack"), v).unwrap();
@@ -96,7 +102,7 @@ mod tests {
 
     #[test]
     fn atlas_decodes_each_page_once_and_unknown_is_none() {
-        let (set, _) = PackSet::open_dir(&pack_dir()).unwrap();
+        let (set, _) = PackSet::open_dir(&pack_dir("once")).unwrap();
         let ctx = egui::Context::default();
         let mut atlas = Atlas::default();
         let a = atlas.sprite(&ctx, Some(&set), "a_0").unwrap();
@@ -107,5 +113,16 @@ mod tests {
         assert!(atlas.sprite(&ctx, Some(&set), "nope").is_none());
         assert!(atlas.sprite(&ctx, None, "a_0").is_some()); // cached from before
         assert!(Atlas::default().sprite(&ctx, None, "a_0").is_none()); // no packs, placeholder
+    }
+
+    #[test]
+    fn entry_outside_its_page_is_no_art_not_a_panic() {
+        let dir = pack_dir("bad");
+        let mut bytes = std::fs::read(dir.join("p.pack")).unwrap();
+        // entry a_0 starts at 4+4+4+(4+2)+4+4+(4+3) = 33; its x is the next u32: make x = u32::MAX
+        bytes[33..37].copy_from_slice(&u32::MAX.to_le_bytes());
+        std::fs::write(dir.join("p.pack"), bytes).unwrap();
+        let (set, _) = PackSet::open_dir(&dir).unwrap();
+        assert!(Atlas::default().sprite(&egui::Context::default(), Some(&set), "a_0").is_none());
     }
 }
