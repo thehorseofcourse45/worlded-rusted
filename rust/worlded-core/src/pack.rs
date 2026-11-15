@@ -116,3 +116,47 @@ impl Pack {
         Ok((img.width(), img.height(), img.into_raw()))
     }
 }
+
+/// Every `*.pack` in a folder, searched by tile name (the first pack that has the name wins).
+pub struct PackSet {
+    packs: Vec<Pack>,
+    index: HashMap<String, usize>,
+}
+
+impl PackSet {
+    /// Packs that fail to open are skipped; the error list says which.
+    pub fn open_dir(dir: &Path) -> Result<(PackSet, Vec<String>), CoreError> {
+        let mut files: Vec<PathBuf> = std::fs::read_dir(dir)?
+            .filter_map(|e| e.ok().map(|e| e.path()))
+            .filter(|p| p.extension().is_some_and(|x| x == "pack"))
+            .collect();
+        files.sort();
+        let (mut packs, mut index, mut errors) = (Vec::new(), HashMap::new(), Vec::new());
+        for f in files {
+            match Pack::open(&f) {
+                Ok(p) => {
+                    for n in p.names() {
+                        index.entry(n.clone()).or_insert(packs.len());
+                    }
+                    packs.push(p);
+                }
+                Err(e) => errors.push(format!("{}: {e}", f.display())),
+            }
+        }
+        Ok((PackSet { packs, index }, errors))
+    }
+
+    /// (pack number, entry) for a tile name.
+    pub fn lookup(&self, name: &str) -> Option<(usize, &Entry)> {
+        let i = *self.index.get(name)?;
+        self.packs[i].entry(name).map(|e| (i, e))
+    }
+
+    pub fn page_rgba(&self, pack: usize, page: usize) -> Result<(u32, u32, Vec<u8>), CoreError> {
+        self.packs.get(pack).ok_or_else(|| CoreError::Parse("no such pack".into()))?.page_rgba(page)
+    }
+
+    pub fn tile_count(&self) -> usize {
+        self.index.len()
+    }
+}

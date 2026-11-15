@@ -86,3 +86,19 @@ fn opens_the_big_real_pack_quickly() {
     assert!(p.names().count() > 1000);
     assert!(t.elapsed().as_secs() < 5, "took {:?}", t.elapsed());
 }
+
+#[test]
+fn pack_set_finds_tiles_across_a_folder_and_skips_junk() {
+    let dir = std::env::temp_dir().join("wc_packset");
+    let _ = std::fs::remove_dir_all(&dir);
+    std::fs::create_dir_all(&dir).unwrap();
+    std::fs::write(dir.join("a.pack"), synthetic()).unwrap();
+    std::fs::write(dir.join("junk.pack"), b"nope").unwrap();
+    std::fs::write(dir.join("readme.txt"), b"x").unwrap();
+    let (set, errors) = worlded_core::pack::PackSet::open_dir(&dir).unwrap();
+    assert_eq!(set.tile_count(), 2);
+    assert_eq!(errors.len(), 1);
+    let (pack, e) = set.lookup("t_1").unwrap();
+    assert_eq!(set.page_rgba(pack, e.page).unwrap().0, 2);
+    assert!(set.lookup("zzz").is_none());
+}

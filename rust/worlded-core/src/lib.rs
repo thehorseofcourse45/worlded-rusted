@@ -1,7 +1,6 @@
 //! Project model and file formats for the worlded viewer (no UI).
 pub mod pack;
 pub mod pzw;
-pub mod tilesets;
 pub mod tmx;
 
 #[derive(Debug)]
