@@ -13,12 +13,36 @@ empty or missing `map` has no TMX.
 
 ## `.tmx` (one 300x300 cell map)
 
-**No real TMX file was available when this was written.** The parser follows the public Tiled
-TMX format that WorldEd's maps are based on: `<map width height>`, `<tileset firstgid name ...>`,
-`<layer name visible>` with `<data encoding="base64|csv" compression="zlib|gzip|none">` holding
-`width*height` little-endian u32 global tile ids; the top 3 bits (0xE0000000) are flip flags and
-are masked off. A tile's name is `<tileset name>_<gid - firstgid>`. Unverified against WorldEd
-output; fix here if a real file differs.
+Checked on a real WorldEd file (`rust/worlded-core/tests/data/real_cell_a.tmx`, made by
+`tools/make_real_tmx.py` from `PZWorldEd_cli --generate-map`; named `<bmp>_<originX+x>_<originY+y>.tmx`).
+UTF-8, LF line endings, one space of indent per level, 2695 lines, 327 KB.
+
+```
+<map version="2.0" orientation="levelisometric" width="300" height="300" tilewidth="64" tileheight="32">
+ <tileset firstgid="1" name="Fire_01" tilewidth="64" tileheight="128">   x646, in firstgid order
+  [<tileoffset x="-128" y="0"/>]        only on the oversized tree tilesets (tilewidth 320/448)
+  <image source="<relative path>/Fire_01.png" width="512" height="512"/>
+ </tileset>
+ <layer name="Floor" level="0" width="300" height="300">   x15: Floor, FloorOverlay..FloorOverlay6,
+  <data encoding="base64" compression="zlib">                Curbs, Walls, Walls2, Furniture..Furniture4, Vegetation
+   (base64 of zlib of 300*300 little-endian u32 gids, one unbroken line, indented 3 spaces)
+  </data>
+ </layer>
+ <objectgroup name="Lots" level="0" width="300" height="300"/>
+ <bmp-settings version="1">  rules-file, blends-file, aliases, rules, blends (WorldEd BMP-to-TMX settings)
+ <bmp-image index="0" seed="1"><pixels>base64 zlib</pixels></bmp-image>   index 0 and 1
+</map>
+```
+
+- Layers carry `level` (floor); there is no `visible` attribute. `<data>` is base64 + zlib in
+  every layer; csv and gzip stay supported by the reader but were not seen.
+- A tile's name is `<tileset name>_<gid - firstgid>`, as before. Gids are not dense: the file lists
+  only the tilesets WorldEd loaded (646 here), each spanning a 32 gid step in this file.
+- No `<properties>` elements. Everything after the layers (`objectgroup`, `bmp-settings`,
+  `bmp-image`) is WorldEd state that an editor must keep byte for byte.
+- `parse_tmx` reads this file unchanged (15 layers, 300x300; test `real_tmx.rs`).
+- Only one real cell was made so far (a second one would be the same shape: every 300x300 cell
+  has all 15 layers).
 
 ## `.pack` (Project Zomboid texture pack, `media/texturepacks/*.pack`)
 
