@@ -3,7 +3,7 @@ use worlded_core::tmx::{Layer, Tmx};
 use worlded_core::tools::{bucket_fill, erase, paint, pick, rect_fill};
 
 fn map(w: u32, h: u32, gids: Vec<u32>) -> Tmx {
-    Tmx { width: w, height: h, tilesets: vec![], layers: vec![Layer { name: "L".into(), visible: true, gids }] }
+    Tmx { width: w, height: h, tilesets: vec![], layers: vec![Layer { name: "L".into(), visible: true, level: 0, gids }] }
 }
 
 fn empty(w: u32, h: u32) -> Tmx {

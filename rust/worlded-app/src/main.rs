@@ -1,14 +1,16 @@
-//! worlded-view: read-only viewer for WorldEd projects.
+//! worlded-view: viewer and tile editor for WorldEd projects.
 mod atlas;
 mod cell_view;
+mod document;
 mod iso;
 mod settings;
+mod tools;
 mod world_view;
 
 use eframe::egui;
 use settings::Settings;
 use std::path::PathBuf;
-use worlded_core::{pack::PackSet, pzw::World, tmx::parse_tmx};
+use worlded_core::{pack::PackSet, pzw::World};
 
 struct App {
     settings: Settings,
@@ -21,6 +23,16 @@ struct App {
     cell: Option<cell_view::CellState>,
     atlas: atlas::Atlas,
     message: String,
+    /// A close or "back to world" waiting for an answer about unsaved changes.
+    confirm: Option<Confirm>,
+    allow_quit: bool,
+    last_title: String,
+}
+
+#[derive(Clone, Copy, PartialEq)]
+enum Confirm {
+    Back,
+    Quit,
 }
 
 impl App {
@@ -36,6 +48,9 @@ impl App {
             cell: None,
             atlas: Default::default(),
             message: String::new(),
+            confirm: None,
+            allow_quit: false,
+            last_title: String::new(),
         };
         app.load_packs();
         if let Some(p) = std::env::args_os().nth(1).map(PathBuf::from).or_else(|| app.settings.last_project.clone()) {
@@ -95,10 +110,10 @@ impl App {
             self.message = format!("Cell {},{} has no .tmx file", cell.x, cell.y);
             return;
         };
-        match parse_tmx(&path) {
-            Ok(t) => {
+        match document::Document::open(&path) {
+            Ok(d) => {
                 self.message = format!("Opened cell {},{}", cell.x, cell.y);
-                self.cell = Some(cell_view::CellState::new(format!("cell {},{}", cell.x, cell.y), t));
+                self.cell = Some(cell_view::CellState::new(format!("cell {},{}", cell.x, cell.y), d));
             }
             Err(e) => self.message = format!("Could not read {}: {e}", path.display()),
         }
@@ -107,6 +122,7 @@ impl App {
 
 impl eframe::App for App {
     fn update(&mut self, ctx: &egui::Context, _: &mut eframe::Frame) {
+        self.handle_keys_and_close(ctx);
         egui::TopBottomPanel::top("menu").show(ctx, |ui| {
             ui.horizontal(|ui| {
                 if ui.button("Open project...").clicked() {
@@ -122,20 +138,31 @@ impl eframe::App for App {
                     }
                 }
                 if self.cell.is_some() && ui.button("Back to world").clicked() {
-                    self.cell = None;
+                    if self.cell.as_ref().is_some_and(|c| c.doc.is_dirty()) {
+                        self.confirm = Some(Confirm::Back);
+                    } else {
+                        self.cell = None;
+                    }
                 }
             });
+            if let Some(c) = &mut self.cell {
+                c.toolbar(ui);
+                if let Some(why) = &c.doc.read_only {
+                    ui.colored_label(egui::Color32::from_rgb(220, 120, 60), format!("Read-only: {why}"));
+                }
+            }
             if !self.pack_note.is_empty() {
                 ui.colored_label(egui::Color32::from_rgb(220, 170, 60), &self.pack_note);
             }
         });
         egui::TopBottomPanel::bottom("status").show(ctx, |ui| {
             let hover = self.cell.as_ref().and_then(|c| c.hover).map(|(x, y)| format!("   tile {x}, {y}")).unwrap_or_default();
-            ui.label(format!("{}{hover}", self.message));
+            let status = self.cell.as_ref().map(|c| c.status.clone()).filter(|s| !s.is_empty()).unwrap_or_else(|| self.message.clone());
+            ui.label(format!("{status}{hover}"));
         });
         if let Some(c) = &mut self.cell {
             egui::SidePanel::left("layers").show(ctx, |ui| {
-                ui.heading(&c.title);
+                ui.heading(format!("{}{}", c.title, if c.doc.is_dirty() { " *" } else { "" }));
                 c.layers_panel(ui);
             });
         }
@@ -151,6 +178,86 @@ impl eframe::App for App {
         });
         if let Some(i) = open {
             self.open_cell(i);
+        }
+    }
+}
+
+impl App {
+    fn handle_keys_and_close(&mut self, ctx: &egui::Context) {
+        use egui::{Key, Modifiers};
+        let dirty = self.cell.as_ref().is_some_and(|c| c.doc.is_dirty());
+        if ctx.input(|i| i.viewport().close_requested()) && dirty && !self.allow_quit {
+            ctx.send_viewport_cmd(egui::ViewportCommand::CancelClose);
+            self.confirm = Some(Confirm::Quit);
+        }
+        if let Some(c) = &mut self.cell {
+            if !ctx.wants_keyboard_input() {
+                let cs = Modifiers::COMMAND | Modifiers::SHIFT;
+                let (save_as, save, redo_shift, redo, undo) = ctx.input_mut(|i| {
+                    (
+                        i.consume_key(cs, Key::S),
+                        i.consume_key(Modifiers::COMMAND, Key::S),
+                        i.consume_key(cs, Key::Z),
+                        i.consume_key(Modifiers::COMMAND, Key::Y),
+                        i.consume_key(Modifiers::COMMAND, Key::Z),
+                    )
+                });
+                if c.doc.read_only.is_none() {
+                    if save_as {
+                        if let Some(p) = rfd::FileDialog::new().add_filter("TMX map", &["tmx"]).save_file() {
+                            c.save_as(&p);
+                        }
+                    } else if save {
+                        c.save();
+                    } else if redo_shift || redo {
+                        c.redo();
+                    } else if undo {
+                        c.undo();
+                    }
+                }
+            }
+            let title = format!("worlded viewer - {}{}", c.title, if c.doc.is_dirty() { " *" } else { "" });
+            if title != self.last_title {
+                ctx.send_viewport_cmd(egui::ViewportCommand::Title(title.clone()));
+                self.last_title = title;
+            }
+        }
+        if let Some(what) = self.confirm {
+            let name = self.cell.as_ref().map(|c| c.title.clone()).unwrap_or_default();
+            let mut choice = None;
+            egui::Window::new("Unsaved changes").collapsible(false).resizable(false).anchor(egui::Align2::CENTER_CENTER, [0.0, 0.0]).show(ctx, |ui| {
+                ui.label(format!("{name} has unsaved changes."));
+                ui.horizontal(|ui| {
+                    if ui.button("Save").clicked() {
+                        choice = Some(true);
+                    }
+                    if ui.button("Discard").clicked() {
+                        choice = Some(false);
+                    }
+                    if ui.button("Cancel").clicked() {
+                        self.confirm = None;
+                    }
+                });
+            });
+            if let Some(save) = choice {
+                let mut ok = true;
+                if save {
+                    if let Some(c) = &mut self.cell {
+                        c.save();
+                        ok = !c.doc.is_dirty();
+                    }
+                }
+                if ok {
+                    self.confirm = None;
+                    match what {
+                        Confirm::Back => self.cell = None,
+                        Confirm::Quit => {
+                            self.allow_quit = true;
+                            ctx.send_viewport_cmd(egui::ViewportCommand::Close);
+                        }
+                    }
+                }
+            }
         }
     }
 }

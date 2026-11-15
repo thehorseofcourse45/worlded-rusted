@@ -23,11 +23,6 @@ pub fn tile_at(x: f32, y: f32) -> (i32, i32) {
     (((a + b) / 2.0).floor() as i32, ((b - a) / 2.0).floor() as i32)
 }
 
-/// Level of a layer named like `0_Floor` or `2_Walls`; 0 when the name has no number.
-pub fn layer_level(name: &str) -> i32 {
-    name.split('_').next().and_then(|n| n.parse().ok()).unwrap_or(0)
-}
-
 #[derive(Clone, Copy, Debug)]
 pub struct Rect {
     pub x0: f32,
@@ -44,7 +39,7 @@ pub fn visible_tiles(tmx: &Tmx, visible: &[bool], clip: Rect, mut f: impl FnMut(
         if !visible.get(li).copied().unwrap_or(layer.visible) {
             continue;
         }
-        let level = layer_level(&layer.name);
+        let level = layer.level;
         for (i, &gid) in layer.gids.iter().enumerate() {
             if gid == 0 {
                 continue;
@@ -74,8 +69,14 @@ mod tests {
     }
 
     #[test]
-    fn levels_come_from_layer_names() {
-        assert_eq!((layer_level("0_Floor"), layer_level("3_Walls"), layer_level("Floor")), (0, 3, 0));
+    fn levels_come_from_the_attribute_then_the_name() {
+        let t = parse_tmx_str(
+            r#"<map width="1" height="1"><layer name="Walls" level="2"><data encoding="csv">0</data></layer>
+              <layer name="3_Walls"><data encoding="csv">0</data></layer>
+              <layer name="Floor"><data encoding="csv">0</data></layer></map>"#,
+        )
+        .unwrap();
+        assert_eq!(t.layers.iter().map(|l| l.level).collect::<Vec<_>>(), vec![2, 3, 0]);
         assert_eq!(tile_top(0, 0, 1).1, -LEVEL_PX);
     }
 

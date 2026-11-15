@@ -19,6 +19,9 @@ pub struct TilesetRef {
 pub struct Layer {
     pub name: String,
     pub visible: bool,
+    /// Floor the layer sits on: the `level` attribute, else a number prefix in the name
+    /// (`2_Walls`), else 0.
+    pub level: i32,
     /// Row-major, width * height global tile ids; 0 is empty. Flip flags are removed.
     pub gids: Vec<u32>,
 }
@@ -75,6 +78,11 @@ pub(crate) fn parse_inner(text: &str, lenient: bool) -> Result<(Tmx, Vec<RawLaye
         layers.push(Layer {
             name: n.attribute("name").unwrap_or("").to_string(),
             visible: n.attribute("visible") != Some("0"),
+            level: n
+                .attribute("level")
+                .and_then(|v| v.parse().ok())
+                .or_else(|| n.attribute("name").and_then(|v| v.split('_').next()).and_then(|v| v.parse().ok()))
+                .unwrap_or(0),
             gids,
         });
     }
