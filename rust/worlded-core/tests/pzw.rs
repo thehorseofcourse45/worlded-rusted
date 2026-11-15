@@ -34,3 +34,23 @@ fn damaged_xml_is_error_not_panic() {
     assert!(parse_pzw(&p).is_err());
     assert!(parse_pzw(&dir.join("nope.pzw")).is_err());
 }
+
+#[test]
+fn resolve_map_tries_the_path_then_the_pzw_folder_then_its_tmx_folder() {
+    use worlded_core::pzw::{resolve_map, Cell};
+    let dir = std::env::temp_dir().join(format!("wc_resolve_{}", std::process::id()));
+    let _ = std::fs::remove_dir_all(&dir);
+    std::fs::create_dir_all(dir.join("tmx")).unwrap();
+    let direct = dir.join("direct.tmx");
+    let beside = dir.join("beside.tmx");
+    let in_tmx = dir.join("tmx").join("in_tmx.tmx");
+    for f in [&direct, &beside, &in_tmx] {
+        std::fs::write(f, "x").unwrap();
+    }
+    let cell = |map: Option<PathBuf>| Cell { x: 0, y: 0, map };
+    assert_eq!(resolve_map(&cell(Some(direct.clone())), &dir), Some(direct));
+    assert_eq!(resolve_map(&cell(Some("Z:/stale/beside.tmx".into())), &dir), Some(beside));
+    assert_eq!(resolve_map(&cell(Some("Z:/stale/in_tmx.tmx".into())), &dir), Some(in_tmx));
+    assert_eq!(resolve_map(&cell(None), &dir), None);
+    assert_eq!(resolve_map(&cell(Some("Z:/stale/missing.tmx".into())), &dir), None);
+}

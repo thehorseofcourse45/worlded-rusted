@@ -16,16 +16,7 @@ pub fn cell_rect(cell: &Cell, zoom: f32) -> R {
     R { x: cell.x as f32 * s, y: cell.y as f32 * s, w: s, h: s }
 }
 
-/// Where a cell TMX really is: the path in the project if it exists, else the same file name
-/// beside the `.pzw` or in a `tmx` folder beside it. `None` when no file is found.
-pub fn resolve_map(cell: &Cell, pzw_dir: &std::path::Path) -> Option<std::path::PathBuf> {
-    let p = cell.map.as_ref()?;
-    if p.exists() {
-        return Some(p.clone());
-    }
-    let name = p.file_name()?;
-    [pzw_dir.join(name), pzw_dir.join("tmx").join(name)].into_iter().find(|c| c.exists())
-}
+pub use worlded_core::pzw::resolve_map;
 
 #[derive(Default)]
 pub struct ViewState {

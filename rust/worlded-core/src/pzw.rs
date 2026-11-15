@@ -47,3 +47,14 @@ pub fn parse_pzw(path: &Path) -> Result<World, CoreError> {
         cells,
     })
 }
+
+/// Where a cell TMX really is: the path in the project if it exists, else the same file name
+/// beside the `.pzw` or in a `tmx` folder beside it. `None` when no file is found.
+pub fn resolve_map(cell: &Cell, pzw_dir: &Path) -> Option<PathBuf> {
+    let p = cell.map.as_ref()?;
+    if p.exists() {
+        return Some(p.clone());
+    }
+    let name = p.file_name()?;
+    [pzw_dir.join(name), pzw_dir.join("tmx").join(name)].into_iter().find(|c| c.exists())
+}

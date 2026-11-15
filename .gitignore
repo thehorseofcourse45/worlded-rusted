@@ -6,3 +6,4 @@ bx/
 bench*/
 *.bmp
 *.kcell
+.superpowers/
