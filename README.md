@@ -66,6 +66,10 @@ checkout (they import `knoxbuild.bitmaps` and `knoxpaths` from it); copy these f
 set `KNOXMAP_DIR` for the experiment scripts. The mapping tools (WorldEd) must be installed as KnoxMap
 installs them for the experiments and for `Rules.txt` / `Blends.txt`.
 
+## Compiler in Rust (editor stage 2)
+
+`rust/worlded-compile` is the whole map pipeline in Rust: `worlded.exe <map folder>` turns `<name>.bmp`, `<name>_veg.bmp`, `<name>.pzw` and `buildings/*.tbx` into lot files, with no Python, WorldEd or KnoxMap. It is a port of `knoxbuild/` and `tools/map_source.py`, and the tests prove it: the cell sources are byte-identical to the Python ones (generated maps, all 113 `real1` buildings, a sweep of every roof type), and the lot files equal Python plus `knoxlots compile`. Speed on a generated 64-cell map: 2.3 s for the Rust program (to lot files) against 18.7 s for the Python cell sources alone. `tools/dump_for_rust.py` and `tools/make_test_map.py` are the Python oracle and the test-map generator the tests use.
+
 ## Viewer (editor stage 1)
 
 `rust/worlded-app` builds `worlded-view.exe`, a read-only viewer: open a WorldEd `.pzw`, see its cells, double-click one to see its `.tmx` as isometric tiles with a layer panel. Tile art is read from your own Project Zomboid install (`media/texturepacks/*.pack`; set the folder in the app). Design: `docs/superpowers/specs/`, plan: `docs/superpowers/plans/`, checklist: `docs/viewer-checklist.md`, formats: `FORMATS.md`.

@@ -1,5 +1,5 @@
 //! Roof and ceiling tiles of a building (port of knoxbuild/buildroofs.py).
-use crate::tbx::{attr_int, Attrs, Building, Entry, R};
+use crate::tbx::{attr_int, Attrs, Building, Entry, MAX_SIZE, R};
 use std::collections::{BTreeMap, BTreeSet};
 
 pub type Squares = BTreeMap<(i64, i64), Vec<String>>;
@@ -44,7 +44,7 @@ fn pt5(d: &str) -> &'static str {
 pub fn roof_squares(b: &Building, o: &Attrs) -> R<Squares> {
     let kind = o.get("RoofType").map(String::as_str).unwrap_or("");
     let mut depth = o.get("Depth").cloned().unwrap_or_default();
-    let (x0, y0, mut w, mut h) = (attr_int(o, "x")?, attr_int(o, "y")?, attr_int(o, "width")?, attr_int(o, "height")?);
+    let (x0, y0, mut w, mut h) = rect(o)?;
     let slopes = pick_entry(b, o, "SlopeTiles", "RoofSlope")?;
     let caps = pick_entry(b, o, "CapTiles", "RoofCap")?;
     let capped = |d: &str| o.get(&format!("capped{d}")).map_or(false, |v| v == "true");
@@ -212,8 +212,13 @@ pub fn roof_squares(b: &Building, o: &Attrs) -> R<Squares> {
     Ok(out)
 }
 
+/// A roof rectangle; sizes and positions are bounded so a damaged file cannot ask for billions of squares.
 fn rect(o: &Attrs) -> R<(i64, i64, i64, i64)> {
-    Ok((attr_int(o, "x")?, attr_int(o, "y")?, attr_int(o, "width")?, attr_int(o, "height")?))
+    let r = (attr_int(o, "x")?, attr_int(o, "y")?, attr_int(o, "width")?, attr_int(o, "height")?);
+    if r.0.abs() > 1_000_000 || r.1.abs() > 1_000_000 || !(0..=MAX_SIZE).contains(&r.2) || !(0..=MAX_SIZE).contains(&r.3) {
+        return Err(format!("roof rectangle {} {} {} {} is out of range", r.0, r.1, r.2, r.3));
+    }
+    Ok(r)
 }
 
 /// `tops.get("West1") or next(iter(tops.values()), "")`

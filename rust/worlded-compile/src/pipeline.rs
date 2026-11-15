@@ -39,6 +39,11 @@ pub struct Lot {
     pub level: i64,
 }
 
+/// An error in one lot, named by its building file.
+fn lot_error(project: &Path, l: &Lot, msg: String) -> CompileError {
+    perr(&project.join("buildings").join(format!("{}.tbx", l.name)), msg)
+}
+
 fn perr(p: &Path, m: impl Into<String>) -> CompileError {
     CompileError::Parse(p.to_path_buf(), m.into())
 }
@@ -103,7 +108,8 @@ pub fn compile_map(project: &Path, out: &Path, opts: &Options, progress: &(dyn F
     }
     // Room tables need every building at once (they touch, and a later lot takes squares).
     let with_floors: Vec<(&Building, i64, i64, i64)> = lots.iter().zip(&buildings).filter(|(_, b)| !b.floors.is_empty()).map(|(l, b)| (b, l.tx, l.ty, l.level)).collect();
-    let placed = placed_rooms(&with_floors).map_err(|m| perr(project, m))?;
+    let floor_lots: Vec<usize> = lots.iter().zip(&buildings).enumerate().filter(|(_, (_, b))| !b.floors.is_empty()).map(|(i, _)| i).collect();
+    let placed = placed_rooms(&with_floors).map_err(|e| lot_error(project, &lots[floor_lots[e.lot]], e.msg))?;
 
     let spawn_path = project.join(format!("{name}_ZombieSpawnMap.bmp"));
     let (manifest, spawn) = if spawn_path.exists() {
@@ -160,14 +166,9 @@ fn do_row(s: &Shared, cy: i64) -> Result<usize, CompileError> {
     let (w, h) = s.size;
     let (lo, hi) = (cy * side - MARGIN, cy * side + side + MARGIN);
     // the lots that reach this row, in project order: a square's tiles depend only on the lots covering it
-    let band: Vec<(&Building, i64, i64, i64)> = s
-        .lots
-        .iter()
-        .zip(&s.buildings)
-        .filter(|(l, b)| l.ty - MARGIN < hi && l.ty + b.height + MARGIN > lo)
-        .map(|(l, b)| (b, l.tx, l.ty, l.level))
-        .collect();
-    let world = compose_lots(&band).map_err(|m| perr(s.project, m))?;
+    let band_idx: Vec<usize> = (0..s.lots.len()).filter(|&i| s.lots[i].ty - MARGIN < hi && s.lots[i].ty + s.buildings[i].height + MARGIN > lo).collect();
+    let band: Vec<(&Building, i64, i64, i64)> = band_idx.iter().map(|&i| (&s.buildings[i], s.lots[i].tx, s.lots[i].ty, s.lots[i].level)).collect();
+    let world = compose_lots(&band).map_err(|e| lot_error(s.project, &s.lots[band_idx[e.lot]], e.msg))?;
     let mut room_squares: HashSet<(i64, i64, i64)> = HashSet::new();
     for (b, tx, ty, base) in &band {
         for (z, floor) in b.floors.iter().enumerate() {
@@ -267,6 +268,9 @@ fn do_row(s: &Shared, cy: i64) -> Result<usize, CompileError> {
             }
         }
         let nlev = stacks.iter().map(|((_, _, z), _)| *z).max().unwrap_or(0) + 1;
+        if nlev > 64 {
+            return Err(perr(&s.project.join(format!("{}.pzw", s.name)), format!("cell {cx}_{cy} would need {nlev} levels; the most a lot file holds is 64 (check the lot level attributes)")));
+        }
         let mut tile_names: Vec<String> = Vec::new();
         let mut index: BTreeMap<&str, u32> = BTreeMap::new();
         let mut levels: Vec<Vec<Vec<u32>>> = vec![vec![Vec::new(); SIDE * SIDE]; nlev];

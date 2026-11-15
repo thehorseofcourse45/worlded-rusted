@@ -1,6 +1,6 @@
 //! The room and building tables of a lot header, from the buildings placed in a cell
 //! (port of knoxbuild/buildheader.py; see its docstring for the rules and what is not done).
-use crate::tbx::{Building, R};
+use crate::tbx::{Building, LotError, R};
 use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
 
 pub const CELL: i64 = 256;
@@ -88,7 +88,7 @@ fn find(parent: &mut [usize], mut i: usize) -> usize {
 /// Room entries for buildings placed in project order, as `cell_tables` wants them. `lots` is
 /// `[(building, tx, ty, base level)]`. One item per building group, at the north-west corner of its
 /// first part.
-pub fn placed_rooms(lots: &[(&Building, i64, i64, i64)]) -> R<Vec<(i64, i64, Vec<Room>)>> {
+pub fn placed_rooms(lots: &[(&Building, i64, i64, i64)]) -> Result<Vec<(i64, i64, Vec<Room>)>, LotError> {
     let mut order: Vec<usize> = (0..lots.len()).collect();
     order.sort_by_key(|&i| (lots[i].2.div_euclid(300), lots[i].1.div_euclid(300), i));
     let rank: HashMap<usize, usize> = order.iter().enumerate().map(|(r, &i)| (i, r)).collect();
@@ -151,7 +151,7 @@ pub fn placed_rooms(lots: &[(&Building, i64, i64, i64)]) -> R<Vec<(i64, i64, Vec
                 continue;
             }
             // parts of one room number in one lot stay one entry each (nothing joins them)
-            entries.push(Room { name: room_name(lots[k.0].0, k.2)?, z: k.1, rects: room_rects(&squares[k]) });
+            entries.push(Room { name: room_name(lots[k.0].0, k.2).map_err(|msg| LotError { lot: k.0, msg })?, z: k.1, rects: room_rects(&squares[k]) });
         }
         out.push((lots[first].1, lots[first].2, entries));
     }

@@ -171,3 +171,42 @@ fn missing_rules_file_is_an_error_naming_it() {
     let e = compile_map(&project, &root.join("out"), &opts, &|_, _| {}).unwrap_err().to_string();
     assert!(e.contains("Rules.txt"), "{e}");
 }
+
+fn project_with(dir: &str) -> Option<(PathBuf, PathBuf)> {
+    if !python_available() {
+        return None;
+    }
+    let root = tmp(dir);
+    let project = root.join("tm");
+    python(&["tools/make_test_map.py", project.to_str().unwrap(), "--size", "300"]);
+    Some((root, project))
+}
+
+fn opts() -> Options {
+    Options { seed: 1, seams: false, workers: Some(2), keep_source: None, rules: common::repo().join("config/Rules.txt") }
+}
+
+#[test]
+fn absurd_lot_level_is_an_error_not_an_abort() {
+    let Some((root, project)) = project_with("wcc_level") else { return };
+    let pzw = project.join("tm.pzw");
+    let text = std::fs::read_to_string(&pzw).unwrap().replace("level=\"0\"", "level=\"100000\"");
+    std::fs::write(&pzw, text).unwrap();
+    let e = compile_map(&project, &root.join("out"), &opts(), &|_, _| {}).unwrap_err().to_string();
+    assert!(e.contains("levels") && e.contains("tm.pzw"), "{e}");
+}
+
+#[test]
+fn undefined_room_error_names_the_building_file() {
+    let Some((root, project)) = project_with("wcc_room") else { return };
+    // strip every <room .../> definition from one building: its floor still uses room numbers
+    let tbx = project.join("buildings/real1_0031.tbx");
+    let mut text = std::fs::read_to_string(&tbx).unwrap();
+    while let Some(i) = text.find("<room ") {
+        let j = i + text[i..].find("/>").unwrap() + 2;
+        text.replace_range(i..j, "");
+    }
+    std::fs::write(&tbx, text).unwrap();
+    let e = compile_map(&project, &root.join("out"), &opts(), &|_, _| {}).unwrap_err().to_string();
+    assert!(e.contains("real1_0031.tbx"), "{e}");
+}

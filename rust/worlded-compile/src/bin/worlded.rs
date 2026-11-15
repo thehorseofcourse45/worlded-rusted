@@ -87,7 +87,8 @@ fn run(args: Vec<String>) -> Result<(), String> {
 
 fn main() -> ExitCode {
     let pause = alone_in_console();
-    let result = run(std::env::args().skip(1).collect());
+    let args: Vec<String> = std::env::args_os().skip(1).map(|a| a.to_string_lossy().to_string()).collect();
+    let result = std::panic::catch_unwind(|| run(args)).unwrap_or_else(|_| Err("internal error (see the message above); please report it with the map that caused it".to_string()));
     let code = match &result {
         Ok(()) => ExitCode::SUCCESS,
         Err(e) => {

@@ -155,3 +155,20 @@ fn pitched_roofs_of_every_kind_equal_python() {
     assert_eq!(got.len(), want.len(), "outputs differ in size");
     assert!(got == want, "roof sweep differs from Python");
 }
+
+fn tiny(extra: &str, w: i64, h: i64, rooms: &str) -> String {
+    format!("<building width=\"{w}\" height=\"{h}\"><floor><rooms>{rooms}</rooms>{extra}</floor></building>")
+}
+
+#[test]
+fn absurd_sizes_are_errors_not_aborts() {
+    assert!(parse_tbx(&tiny("", -1, -1, "0")).is_err());
+    assert!(parse_tbx(&tiny("", -2, -3, "0,0,0,0,0,0")).is_err());
+    assert!(parse_tbx(&tiny("", 4_294_967_296, 4_294_967_296, "")).is_err());
+    assert!(parse_tbx(&tiny("", 0, 5_000_000, "")).is_err());
+    // a wall of two billion squares and a roof of 100000 x 100000 are refused when used
+    let wall = parse_tbx(&tiny(r#"<object type="wall" x="1" y="1" dir="W" length="2000000000"/>"#, 2, 2, "0,0,0,0")).unwrap();
+    assert!(level_layers(&wall, 0).is_err());
+    let roof = parse_tbx(&tiny(r#"<object type="roof" RoofType="PeakWE" Depth="One" x="0" y="0" width="100000" height="100000"/>"#, 2, 2, "0,0,0,0")).unwrap();
+    assert!(level_layers(&roof, 0).is_err());
+}

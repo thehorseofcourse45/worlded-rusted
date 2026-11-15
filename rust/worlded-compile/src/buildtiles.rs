@@ -2,7 +2,7 @@
 //! What each part of a building becomes was worked out from WorldEd output; see the Python
 //! docstrings and comments, which this keeps rule for rule.
 use crate::buildroofs::{entry, upper_layers};
-use crate::tbx::{attr_int, int, Attrs, Building, Entry, R};
+use crate::tbx::{attr_int, int, Attrs, Building, Entry, LotError, MAX_SIZE, R};
 use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
 
 pub type Stack = Vec<(String, String)>;
@@ -89,6 +89,9 @@ pub fn level_layers(b: &Building, z: usize) -> R<Layers> {
                 Some(v) => int(v)?,
                 None => 1,
             };
+            if length.abs() > MAX_SIZE || attr_int(o, "x")?.abs() > 1_000_000 || attr_int(o, "y")?.abs() > 1_000_000 {
+                return Err(format!("wall of length {length} at {},{} is out of range", attr_int(o, "x")?, attr_int(o, "y")?));
+            }
             for i in 0..length {
                 let (x, y) = (attr_int(o, "x")? + if horizontal { i } else { 0 }, attr_int(o, "y")? + if horizontal { 0 } else { i });
                 custom_walls.insert((x, y, if horizontal { "North" } else { "West" }), o);
@@ -470,11 +473,11 @@ pub fn level_tiles(b: &Building, z: usize) -> R<Tiles> {
 /// Compose (building, x, y, base level) placements in project order. Rooms replace earlier lot
 /// squares. Outside rooms, only populated layers replace matching earlier layers; empty squares
 /// preserve the underlying lot.
-pub fn compose_lots(lots: &[(&Building, i64, i64, i64)]) -> R<BTreeMap<(i64, i64, i64), Vec<String>>> {
+pub fn compose_lots(lots: &[(&Building, i64, i64, i64)]) -> Result<BTreeMap<(i64, i64, i64), Vec<String>>, LotError> {
     let mut world: BTreeMap<(i64, i64, i64), Stack> = BTreeMap::new();
-    for (b, tx, ty, base) in lots {
+    for (lot, (b, tx, ty, base)) in lots.iter().enumerate() {
         for (z, floor) in b.floors.iter().enumerate() {
-            let layers = level_layers(b, z)?;
+            let layers = level_layers(b, z).map_err(|msg| LotError { lot, msg })?;
             let mut rooms: BTreeSet<(i64, i64)> = BTreeSet::new();
             for (y, row) in floor.rooms.iter().enumerate() {
                 for (x, r) in row.iter().enumerate() {

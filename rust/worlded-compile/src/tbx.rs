@@ -3,6 +3,16 @@
 use std::collections::HashMap;
 
 pub type R<T> = Result<T, String>;
+
+/// An error from one lot of a map: its position in the list of lots handed to the function.
+#[derive(Debug)]
+pub struct LotError {
+    pub lot: usize,
+    pub msg: String,
+}
+
+/// Largest building (squares each way) and largest roof or wall run the parser accepts.
+pub const MAX_SIZE: i64 = 4096;
 pub type Attrs = HashMap<String, String>;
 
 /// One tile entry: `{enum: tile name}`, keeping the order the file lists them in
@@ -125,6 +135,9 @@ pub fn parse_tbx(text: &str) -> R<Building> {
     }
     let w = int(root.attribute("width").ok_or("missing width")?)?;
     let h = int(root.attribute("height").ok_or("missing height")?)?;
+    if !(0..=MAX_SIZE).contains(&w) || !(0..=MAX_SIZE).contains(&h) {
+        return Err(format!("building size {w} x {h} is outside 0..={MAX_SIZE}"));
+    }
     let mut floors = Vec::new();
     for f in kids.iter().filter(|n| tag(n, "floor")) {
         let grid_el = f.children().find(|n| n.is_element() && tag(n, "rooms"));
