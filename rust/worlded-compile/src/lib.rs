@@ -4,6 +4,7 @@ pub mod blends;
 pub mod bmp;
 pub mod buildroofs;
 pub mod buildtiles;
+pub mod header;
 pub mod rules;
 pub mod tbx;
 pub mod terrain;

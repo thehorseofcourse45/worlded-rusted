@@ -110,6 +110,27 @@ def main(argv):
             lots.append((parse_tbx(open(a[i], encoding="utf-8").read()), int(a[i + 1]), int(a[i + 2]), int(a[i + 3])))
         emit([f"{x} {y} {z}|" + ";".join(t) for (x, y, z), t in sorted(compose_lots(lots).items())])
         return 0
+    if what == "header":  # header <cx,cy;cx,cy> <tbx> x y base ... -> placed rooms and cell tables
+        from knoxbuild.buildheader import cell_tables, placed_rooms
+        from knoxbuild.buildtiles import parse_tbx
+        cells = [tuple(int(v) for v in c.split(",")) for c in argv[1].split(";")]
+        a = argv[2:]
+        lots = [(parse_tbx(open(a[i], encoding="utf-8").read()), int(a[i + 1]), int(a[i + 2]), int(a[i + 3])) for i in range(0, len(a), 4)]
+        placed = placed_rooms(lots)
+
+        def rooms_text(rooms):
+            return [f"R|{r['name']}|{r['z']}|" + ",".join(" ".join(map(str, q)) for q in r["rects"]) for r in rooms]
+        out = []
+        for tx, ty, entries in placed:
+            out.append(f"P|{tx}|{ty}")
+            out += rooms_text(entries)
+        for cx, cy in cells:
+            rooms, buildings = cell_tables(cx, cy, placed)
+            out.append(f"C|{cx}|{cy}")
+            out += rooms_text(rooms)
+            out += ["B|" + ",".join(map(str, b)) for b in buildings]
+        emit(out)
+        return 0
     print("unknown dump", what, file=sys.stderr)
     return 2
 
