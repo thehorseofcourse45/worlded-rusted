@@ -69,7 +69,7 @@ impl TmxWorld {
                 (_, Some(p)) => {
                     maps.insert((c.x as u32, c.y as u32), p);
                 }
-                (Some(named), None) => warnings.push(format!("cell {},{}: {} not found, no ground there", c.x, c.y, named.display())),
+                (Some(named), None) => warnings.push(format!("cell {},{}: {named} not found, no ground there", c.x, c.y)),
                 (None, None) => {}
             }
         }

@@ -161,6 +161,16 @@ pub fn encode_data(gids: &[u32], encoding: &str, compression: &str) -> Result<St
     }
 }
 
+/// A brand-new empty cell map in WorldEd's format: 300x300 (or the given size), one tileset,
+/// empty `0_Floor`/`0_FloorOverlay` layers. Parses with `parse_tmx_str` and `tmxdoc::open`.
+pub fn empty_map_xml(w: u32, h: u32) -> String {
+    let zeros = vec![0u32; (w * h) as usize];
+    let data = encode_data(&zeros, "base64", "zlib").unwrap_or_default();
+    format!(
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<map version=\"1.0\" orientation=\"isometric\" width=\"{w}\" height=\"{h}\" tilewidth=\"64\" tileheight=\"32\">\n <tileset firstgid=\"1\" name=\"floors_exterior_natural_01\" tilewidth=\"64\" tileheight=\"128\"/>\n <layer name=\"0_Floor\" width=\"{w}\" height=\"{h}\"><data encoding=\"base64\" compression=\"zlib\">{data}</data></layer>\n <layer name=\"0_FloorOverlay\" width=\"{w}\" height=\"{h}\"><data encoding=\"base64\" compression=\"zlib\">{data}</data></layer>\n</map>\n"
+    )
+}
+
 /// Side of the embedded pictures: one picture pixel per tile of a 300 x 300 cell.
 const PICTURE_SIDE: u32 = 300;
 
@@ -211,4 +221,22 @@ pub fn parse_bmp_images(text: &str) -> Result<Vec<BmpImage>, CoreError> {
         out.push(BmpImage { index, seed, colors, width: PICTURE_SIDE, height: PICTURE_SIDE, pixels });
     }
     Ok(out)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn empty_map_xml_parses_and_round_trips_through_the_document() {
+        let text = empty_map_xml(300, 300);
+        let t = parse_tmx_str(&text).unwrap();
+        assert_eq!((t.width, t.height), (300, 300));
+        assert_eq!(t.layers.len(), 2);
+        assert_eq!(t.layers[0].name, "0_Floor");
+        assert!(t.layers.iter().all(|l| l.gids.iter().all(|&g| g == 0)));
+        let doc = crate::tmxdoc::open(text.clone()).unwrap();
+        assert_eq!(doc.text(), text.as_str(), "an untouched new map round-trips");
+        assert!(doc.dirty_layers().is_empty());
+    }
 }

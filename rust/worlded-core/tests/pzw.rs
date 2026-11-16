@@ -22,7 +22,7 @@ fn missing_map_path_is_none() {
     std::fs::write(&p, r#"<world version="1.0" width="1" height="1"><cell x="0" y="0" map=""/><cell x="1" y="0"/></world>"#).unwrap();
     let w = parse_pzw(&p).unwrap();
     assert_eq!(w.cells.len(), 2);
-    assert!(w.cells.iter().all(|c| c.map.is_none()));
+    assert!(w.cells.iter().all(|c| c.map.as_deref().map_or(true, |m| m.is_empty())), "empty or absent map attribute means no map");
 }
 
 #[test]
@@ -47,12 +47,12 @@ fn resolve_map_tries_the_path_then_the_pzw_folder_then_its_tmx_folder() {
     for f in [&direct, &beside, &in_tmx] {
         std::fs::write(f, "x").unwrap();
     }
-    let cell = |map: Option<PathBuf>| Cell { x: 0, y: 0, map };
-    assert_eq!(resolve_map(&cell(Some(direct.clone())), &dir), Some(direct));
-    assert_eq!(resolve_map(&cell(Some("Z:/stale/beside.tmx".into())), &dir), Some(beside));
-    assert_eq!(resolve_map(&cell(Some("Z:/stale/in_tmx.tmx".into())), &dir), Some(in_tmx));
+    let cell = |map: Option<&str>| Cell { x: 0, y: 0, map: map.map(str::to_string), children: vec![], lead: String::new(), self_closing: false };
+    assert_eq!(resolve_map(&cell(Some(direct.to_str().unwrap())), &dir), Some(direct));
+    assert_eq!(resolve_map(&cell(Some("Z:/stale/beside.tmx")), &dir), Some(beside));
+    assert_eq!(resolve_map(&cell(Some("Z:/stale/in_tmx.tmx")), &dir), Some(in_tmx));
     assert_eq!(resolve_map(&cell(None), &dir), None);
-    assert_eq!(resolve_map(&cell(Some("Z:/stale/missing.tmx".into())), &dir), None);
+    assert_eq!(resolve_map(&cell(Some("Z:/stale/missing.tmx")), &dir), None);
 }
 
 #[test]
@@ -62,7 +62,7 @@ fn a_relative_map_path_is_resolved_against_the_pzw_folder() {
     let _ = std::fs::remove_dir_all(&dir);
     std::fs::create_dir_all(dir.join("sub")).unwrap();
     std::fs::write(dir.join("sub/x.tmx"), "x").unwrap();
-    let cell = Cell { x: 0, y: 0, map: Some("sub/x.tmx".into()) };
+    let cell = Cell { x: 0, y: 0, map: Some("sub/x.tmx".to_string()), children: vec![], lead: String::new(), self_closing: false };
     // the folder the process runs in has no sub/x.tmx; the project's folder has
     assert_eq!(resolve_map(&cell, &dir), Some(dir.join("sub/x.tmx")));
 }
