@@ -2,6 +2,7 @@
 pub mod blend_layers;
 pub mod blends;
 pub mod bmp;
+pub mod bmpimport;
 pub mod buildroofs;
 pub mod buildtiles;
 pub mod header;

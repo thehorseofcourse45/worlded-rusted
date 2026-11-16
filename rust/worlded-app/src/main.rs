@@ -333,6 +333,19 @@ impl eframe::App for App {
                 if self.project.is_some() && ui.add_enabled(self.export.is_none(), egui::Button::new("Export lots")).clicked() {
                     self.start_export();
                 }
+                if self.project.is_some() && ui.button("Import BMP...").clicked() {
+                    if let Some(bmp) = rfd::FileDialog::new().add_filter("Bitmap", &["bmp"]).pick_file() {
+                        if let Some(pzw) = self.project.as_ref().map(|(p, _)| p.clone()) {
+                            match worlded_compile::bmpimport::import_bmp(&pzw, &bmp, None) {
+                                Ok(n) => {
+                                    self.message = format!("{n} cell maps got the pictures of {}", bmp.display());
+                                    self.open_project(pzw);
+                                }
+                                Err(e) => self.message = format!("Import failed: {e}"),
+                            }
+                        }
+                    }
+                }
             });
             if let Some(c) = &mut self.cell {
                 c.toolbar(ui);

@@ -171,7 +171,10 @@ impl World {
     /// position, in WorldEd's format.
     pub fn new_project(name: &str, cells_x: u32, cells_y: u32) -> World {
         let head = format!("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<world version=\"1.0\" width=\"{cells_x}\" height=\"{cells_y}\">");
-        let raw = vec!["\n <GenerateLots>\n  <exportdir path=\"\"/>\n  <ZombieSpawnMap path=\"\"/>\n  <TileDefFolder path=\"\"/>\n  <worldOrigin origin=\"70,0\"/>\n  <numberOfThreads count=\"4\"/>\n </GenerateLots>".to_string()];
+        let raw = vec![
+            "\n <GenerateLots>\n  <exportdir path=\"\"/>\n  <ZombieSpawnMap path=\"\"/>\n  <TileDefFolder path=\"\"/>\n  <worldOrigin origin=\"70,0\"/>\n  <numberOfThreads count=\"4\"/>\n </GenerateLots>".to_string(),
+            format!("\n <bmp path=\"\" x=\"0\" y=\"0\" width=\"{cells_x}\" height=\"{cells_y}\"/>"),
+        ];
         let cells = (0..cells_y as i32).flat_map(|y| (0..cells_x as i32).map(move |x| Cell { x, y, map: Some(format!("tmx/{name}_{}_{}.tmx", 70 + x, y)), children: Vec::new(), lead: "\n ".to_string(), self_closing: true })).collect();
         World { width: cells_x, height: cells_y, origin: (70, 0), head, nl: "\n".to_string(), raw, cells, closing: "\n</world>\n".to_string() }
     }

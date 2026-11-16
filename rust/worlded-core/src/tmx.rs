@@ -187,6 +187,21 @@ pub struct BmpImage {
     pub pixels: Vec<u32>,
 }
 
+/// The `<bmp-image>` element for a 300x300 picture: `<color rgb="r g b"/>` lines then `<pixels>`
+/// as base64 of gzip of little-endian u32 (1-based colour indices, 0 = no colour) — the inverse of
+/// `parse_bmp_images`.
+pub fn bmp_image_xml(index: u32, seed: i64, colors: &[[u8; 3]], pixels: &[u32]) -> String {
+    use std::io::Write;
+    let mut gz = flate2::write::GzEncoder::new(Vec::new(), flate2::Compression::default());
+    for &p in pixels {
+        gz.write_all(&p.to_le_bytes()).unwrap();
+    }
+    let packed = gz.finish().unwrap();
+    let b64 = base64::engine::general_purpose::STANDARD.encode(packed);
+    let cols: String = colors.iter().map(|c| format!("<color rgb=\"{} {} {}\"/>", c[0], c[1], c[2])).collect();
+    format!("<bmp-image index=\"{index}\" seed=\"{seed}\">{cols}<pixels>{b64}</pixels></bmp-image>")
+}
+
 /// The embedded pictures of a cell `.tmx`; empty when it has none. The pixels are base64 of gzip
 /// of `width * height` little-endian `u32`; any other size, an unreadable stream or an index beyond
 /// the colour list is an error.
@@ -238,5 +253,21 @@ mod tests {
         let doc = crate::tmxdoc::open(text.clone()).unwrap();
         assert_eq!(doc.text(), text.as_str(), "an untouched new map round-trips");
         assert!(doc.dirty_layers().is_empty());
+    }
+
+    #[test]
+    fn bmp_image_xml_round_trips_through_parse_bmp_images() {
+        let colors = vec![[255u8, 0, 0], [0, 255, 0], [0, 0, 255]];
+        let mut pixels = vec![0u32; 300 * 300];
+        pixels[0] = 1;
+        pixels[1] = 2;
+        pixels[299 * 300 + 299] = 3;
+        let xml = bmp_image_xml(1, 7, &colors, &pixels);
+        let map = format!("<map>{xml}</map>");
+        let imgs = parse_bmp_images(&map).unwrap();
+        assert_eq!(imgs.len(), 1);
+        assert_eq!((imgs[0].index, imgs[0].seed), (1, 7));
+        assert_eq!(imgs[0].colors, colors);
+        assert_eq!(imgs[0].pixels, pixels);
     }
 }

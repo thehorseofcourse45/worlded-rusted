@@ -9,15 +9,18 @@
 use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
+use worlded_compile::bmpimport;
 use worlded_compile::pipeline::{compile_map, find_rules, Options};
 
 const USAGE: &str = "worlded: compile a map into lot files, no WorldEd or KnoxMap needed.
 
     worlded <map folder> [<out folder>] [--seed N] [--worlded-seams] [--keep-source DIR] [--threads N]
     worlded <project>.pzw [<out folder>] [--keep-source DIR] [--threads N]
+    worlded import-bmp <project>.pzw <image.bmp> [<image_veg.bmp>]
 
 A map folder holds <name>.bmp, <name>_veg.bmp, <name>.pzw and buildings/*.tbx.
 A .pzw project compiles from the .tmx maps its cells list (ground from the pictures embedded in them, merged with their tile layers), plus buildings/*.tbx beside it.
+`import-bmp` writes the picture into every cell's .tmx as `<bmp-image>` elements (the `_veg` file is found by name when not given), like WorldEd's BMPtoTMX.
 Writes the .lotheader / .lotpack / chunkdata files into <out folder> (default: <map folder>/lots, or lots beside the .pzw).
 Double-click to be asked for the folder, or drag a map folder onto worlded.exe.";
 
@@ -39,6 +42,15 @@ fn alone_in_console() -> bool {
 }
 
 fn run(args: Vec<String>) -> Result<(), String> {
+    if args.first().is_some_and(|a| a == "import-bmp") {
+        let rest = &args[1..];
+        if rest.len() < 2 || rest.len() > 3 {
+            return Err(format!("worlded import-bmp <project>.pzw <image.bmp> [<image_veg.bmp>]\n\n{USAGE}"));
+        }
+        let n = bmpimport::import_bmp(Path::new(&rest[0]), Path::new(&rest[1]), rest.get(2).map(|s| Path::new(s))).map_err(|e| e.to_string())?;
+        println!("{n} cell maps got the pictures of {}", rest[1]);
+        return Ok(());
+    }
     let mut positional: Vec<String> = Vec::new();
     let (mut seed, mut seams, mut keep, mut threads) = (1i64, false, None::<PathBuf>, None::<usize>);
     let mut given: Vec<&'static str> = Vec::new(); // options only the bitmap mode takes
