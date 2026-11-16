@@ -185,7 +185,11 @@ impl World {
 /// Where a cell TMX really is: the path in the project if it exists, else the same file name
 /// beside the `.pzw` or in a `tmx` folder beside it. `None` when no file is found.
 pub fn resolve_map(cell: &Cell, pzw_dir: &Path) -> Option<PathBuf> {
-    let p = Path::new(cell.map.as_deref()?);
+    let m = cell.map.as_deref()?;
+    if m.is_empty() {
+        return None;
+    }
+    let p = Path::new(m);
     // a relative path is relative to the project, never to the folder the program runs in
     let direct = if p.is_relative() { pzw_dir.join(p) } else { p.to_path_buf() };
     if direct.exists() {
@@ -264,6 +268,8 @@ mod tests {
         let dir = std::env::temp_dir();
         let c = Cell { x: 0, y: 0, map: Some("Z:/elsewhere/pzw_found.tmx".to_string()), children: vec![], lead: String::new(), self_closing: false };
         assert!(resolve_map(&c, &dir).is_none());
+        let empty = Cell { x: 0, y: 0, map: Some(String::new()), children: vec![], lead: String::new(), self_closing: false };
+        assert!(resolve_map(&empty, &dir).is_none(), "an empty map attribute is no map, not the project folder");
         let f = dir.join("pzw_found.tmx");
         std::fs::write(&f, "<map/>").unwrap();
         assert_eq!(resolve_map(&c, &dir), Some(f));
